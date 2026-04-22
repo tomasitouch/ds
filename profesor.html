@@ -1244,4 +1244,1241 @@
           <div class="stat">
             <div class="stat-label">Próxima evaluación</div>
             <div class="stat-value" id="nextEvalDays">—</div>
-            
+            <div class="stat-meta" id="nextEvalMeta">—</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="dist">
+            <div class="dist-seg" style="width: 43.3%; background: var(--green);"></div>
+            <div class="dist-seg" style="width: 36.7%; background: var(--amber);"></div>
+            <div class="dist-seg" style="width: 20%; background: var(--red);"></div>
+          </div>
+          <div class="dist-leg">
+            <div class="dist-leg-item"><span class="dot dot-g"></span> Adecuado <b>13</b></div>
+            <div class="dist-leg-item"><span class="dot dot-a"></span> Elemental <b>11</b></div>
+            <div class="dist-leg-item"><span class="dot dot-r"></span> Insuficiente <b>6</b></div>
+          </div>
+          <div class="insight">
+            La sección más débil es <b>D · Escritura (58/100)</b>. La más fuerte es <b>E · Reconocimiento de letras (78/100)</b>. 11 estudiantes en nivel Elemental están a menos de 8 puntos del Adecuado.
+          </div>
+          <div class="eval-chart" id="evalChart"></div>
+        </div>
+      </section>
+
+      <div class="beta">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-2); flex-shrink: 0;"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+        <div><b>Análisis de voz</b><span class="beta-tag">Beta</span> Próximamente: subir grabaciones y medir fluidez automática. Disponible Q3 2026.</div>
+      </div>
+    </div>
+
+    <!-- PLAN VIEW -->
+    <div class="plan-view" id="planView">
+      <button class="detail-back" onclick="closePlan()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Volver
+      </button>
+      <div class="plan-view-title" id="planTitle">—</div>
+      <div class="plan-view-sub" id="planSub">—</div>
+      <div class="plan-actions" id="planActions"></div>
+      <div id="planContent"></div>
+    </div>
+
+    <!-- DETAIL VIEW -->
+    <div class="plan-view" id="detailView">
+      <button class="detail-back" onclick="backToBlocks()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Volver a la semana
+      </button>
+      <div class="detail-crumbs" id="detailCrumbs">—</div>
+      <div class="detail-title" id="detailTitle">—</div>
+      <div class="detail-tags" id="detailTags"></div>
+      <div class="action-bar" id="detailActionBar"></div>
+      <div id="detailGrid"></div>
+    </div>
+
+    <!-- STUDENT VIEW -->
+    <div class="plan-view" id="studentView">
+      <button class="detail-back" onclick="closeStudent()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Volver
+      </button>
+      <div id="studentContent"></div>
+    </div>
+  </main>
+</div>
+
+<!-- MODO AULA / PROYECTOR -->
+<div class="stage" id="stage">
+  <div class="stage-top">
+    <div class="stage-brand">Edutek · Modo aula</div>
+    <button class="stage-close" onclick="closeStage()">Cerrar (Esc)</button>
+  </div>
+  <div class="stage-body" id="stageBody"></div>
+</div>
+
+<!-- MODAL: Reportar problema -->
+<div class="modal-bg" id="feedbackModal" onclick="if(event.target===this) closeFeedback()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Reportar problema con la actividad</div>
+      <button class="modal-close" onclick="closeFeedback()">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size: 13px; color: var(--text-2); line-height: 1.55; margin-bottom: 14px;">
+        Cuéntanos qué no funcionó como esperabas. Tu comentario llega al equipo Edutek y nos ayuda a mejorar la actividad.
+      </div>
+      <textarea class="notes-textarea" id="feedbackText" placeholder="Por ejemplo: el grupo Insuficiente no alcanzó a terminar en los 15 min, sería útil tener un texto aún más breve…"></textarea>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeFeedback()">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitFeedback()">Enviar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Resumen para apoderados -->
+<div class="modal-bg" id="summaryModal" onclick="if(event.target===this) closeSummary()">
+  <div class="modal" style="max-width: 720px;">
+    <div class="modal-head">
+      <div class="modal-title">Resumen semanal para apoderados</div>
+      <button class="modal-close" onclick="closeSummary()">×</button>
+    </div>
+    <div class="modal-body" id="summaryBody"></div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeSummary()">Cerrar</button>
+      <button class="btn" onclick="window.print()">Imprimir / PDF</button>
+      <button class="btn btn-primary" onclick="alert('Resumen enviado por correo a los apoderados del curso.')">Enviar a apoderados</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============= NOTES (persistencia) =============
+const NOTES_KEY = 'edutek_notes';
+let _notesCache = null;
+function getNotes() {
+  if (_notesCache) return _notesCache;
+  try { _notesCache = JSON.parse(localStorage.getItem(NOTES_KEY) || '{}'); }
+  catch (e) { _notesCache = {}; }
+  return _notesCache;
+}
+function saveNotes() {
+  try { localStorage.setItem(NOTES_KEY, JSON.stringify(_notesCache)); } catch (e) {}
+}
+function getNote(weekIdx, num) { return getNotes()[`w${weekIdx}-s${num}`] || ''; }
+function setNote(weekIdx, num, text) {
+  _notesCache = getNotes();
+  _notesCache[`w${weekIdx}-s${num}`] = text;
+  saveNotes();
+}
+
+// ============= NOMBRES DE GRUPOS (editables, en modo proyector) =============
+// Por defecto los grupos se llaman "Grupo 1/2/3" (neutro), pero el profesor puede renombrar.
+// La clasificación interna (r/a/g = Insuf/Elem/Adec) sigue intacta en el dashboard privado.
+const GROUP_NAMES_KEY = 'edutek_group_names';
+const DEFAULT_GROUP_NAMES = { r: 'Grupo 1', a: 'Grupo 2', g: 'Grupo 3' };
+function getGroupNames() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(GROUP_NAMES_KEY) || '{}');
+    return Object.assign({}, DEFAULT_GROUP_NAMES, saved);
+  } catch (e) { return Object.assign({}, DEFAULT_GROUP_NAMES); }
+}
+function setGroupName(level, name) {
+  const names = getGroupNames();
+  names[level] = (name || DEFAULT_GROUP_NAMES[level]).trim() || DEFAULT_GROUP_NAMES[level];
+  try { localStorage.setItem(GROUP_NAMES_KEY, JSON.stringify(names)); } catch (e) {}
+}
+
+// ============= COMPLETED ACTIVITIES (persistencia) =============
+const COMPLETED_KEY = 'edutek_completed';
+let _completedCache = null;
+
+function getCompleted() {
+  if (_completedCache) return _completedCache;
+  try {
+    _completedCache = new Set(JSON.parse(localStorage.getItem(COMPLETED_KEY) || '[]'));
+  } catch (e) { _completedCache = new Set(); }
+  return _completedCache;
+}
+function saveCompleted() {
+  try { localStorage.setItem(COMPLETED_KEY, JSON.stringify(Array.from(_completedCache))); }
+  catch (e) { /* localStorage no disponible — solo en memoria */ }
+}
+function sessionKey(weekIdx, num) { return `w${weekIdx}-s${num}`; }
+function isCompleted(weekIdx, num) { return getCompleted().has(sessionKey(weekIdx, num)); }
+function toggleCompleted(weekIdx, num) {
+  const set = getCompleted();
+  const key = sessionKey(weekIdx, num);
+  if (set.has(key)) set.delete(key); else set.add(key);
+  saveCompleted();
+}
+
+// ============= DATE AWARENESS =============
+const TODAY = new Date(2026, 3, 22); // 22 abril 2026 (mes 0-indexado)
+const NEXT_EVAL = new Date(2026, 6, 15); // 15 julio 2026
+const DAYS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+const MONTHS = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+function diffDays(from, to) {
+  return Math.round((to - from) / (1000 * 60 * 60 * 24));
+}
+function fmtDate(d) {
+  return `${d.getDate()} ${MONTHS[d.getMonth()].slice(0,3)}`;
+}
+function fmtDateLong(d) {
+  return `${DAYS[d.getDay()]} ${d.getDate()} de ${MONTHS[d.getMonth()]}`;
+}
+
+// ============= LOGIN =============
+function enterApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').classList.add('active');
+  setTimeout(() => {
+    initDashboard();
+    renderUrgent();
+  }, 20);
+}
+function logout() {
+  document.getElementById('app').classList.remove('active');
+  document.getElementById('loginScreen').style.display = 'flex';
+  showView('dash');
+  window.scrollTo(0, 0);
+}
+
+function showView(view) {
+  document.getElementById('dashView').style.display = view === 'dash' ? 'block' : 'none';
+  document.getElementById('planView').classList.toggle('active', view === 'plan');
+  document.getElementById('detailView').classList.toggle('active', view === 'detail');
+  document.getElementById('studentView').classList.toggle('active', view === 'student');
+}
+
+// ============= DATA: Estudiantes urgentes =============
+const URGENT = [
+  { name: 'Antonia Reyes',  weak: 'Escritura · Comprensión inferencial', score: 38 },
+  { name: 'Mateo Soto',     weak: 'Fluidez · Escritura',                  score: 42 },
+  { name: 'Camila Ortega',  weak: 'Comprensión literal · Vocabulario',    score: 44 },
+  { name: 'Thomas Pizarro', weak: 'Escritura',                            score: 45 },
+  { name: 'Florencia Soto', weak: 'Comprensión inferencial',              score: 46 },
+  { name: 'Lucas Navarro',  weak: 'Vocabulario · Escritura',              score: 48 }
+];
+
+// ============= ROSTER POR GRUPO =============
+const GROUP_ROSTER = {
+  r: ['Antonia Reyes', 'Mateo Soto', 'Camila Ortega', 'Thomas Pizarro', 'Florencia Soto', 'Lucas Navarro'],
+  a: ['Benjamín Álvarez', 'Catalina Pérez', 'Diego Muñoz', 'Emilia Gómez', 'Joaquín Vergara', 'Isidora Rojas', 'Matías Hernández', 'Fernanda Castro', 'Agustina Vera', 'Simón Aravena', 'Javiera Leiva'],
+  g: ['María Paz Contreras', 'Rosa Mellado', 'Valentina Ríos', 'Sofía Castillo', 'Tomás Fuentes', 'Ignacia Herrera', 'Martín Sepúlveda', 'Amanda Bustos', 'Gabriel Tapia', 'Laura Contreras', 'Vicente Soto', 'Constanza Lagos', 'Franco Álvarez']
+};
+
+// ============= PERFIL COMPLETO DE ESTUDIANTES =============
+// Para la vista de estudiante individual con su evolución a través de los trimestres
+const STUDENT_PROFILES = {
+  'Antonia Reyes': { level: 'r', score: 38, evol: [null, 38], sections: { A: 52, B: 38, C: 44, D: 28, E: 62 }, notes: 'Posible derivación PIE. Apoderada comprometida.' },
+  'Mateo Soto':    { level: 'r', score: 42, evol: [null, 42], sections: { A: 58, B: 44, C: 48, D: 32, E: 66 }, notes: 'Lectura silábica laboriosa. Necesita refuerzo en fluidez.' },
+  'Camila Ortega': { level: 'r', score: 44, evol: [null, 44], sections: { A: 60, B: 42, C: 46, D: 34, E: 68 }, notes: 'Tímida en participación oral.' },
+  'Thomas Pizarro':{ level: 'r', score: 45, evol: [null, 45], sections: { A: 55, B: 46, C: 50, D: 38, E: 70 }, notes: 'Escritura muy débil, ortografía básica.' },
+  'Florencia Soto':{ level: 'r', score: 46, evol: [null, 46], sections: { A: 58, B: 48, C: 52, D: 36, E: 72 }, notes: 'Comprensión literal ok, falla en inferencia.' },
+  'Lucas Navarro': { level: 'r', score: 48, evol: [null, 48], sections: { A: 62, B: 50, C: 54, D: 40, E: 68 }, notes: 'Vocabulario limitado. Necesita más exposición.' },
+  'María Paz Contreras': { level: 'g', score: 76, evol: [null, 76], sections: { A: 88, B: 81, C: 79, D: 68, E: 88 }, notes: 'Estudiante destacada. Buen nivel general.' },
+  'Rosa Mellado':  { level: 'g', score: 78, evol: [null, 78], sections: { A: 88, B: 83, C: 80, D: 72, E: 90 }, notes: 'Lectora ávida. Disfruta los desafíos.' }
+};
+
+// ============= EVALUACIONES TRIMESTRALES =============
+const EVAL_HISTORY = [
+  { period: 'Eval 1', when: 'Ene 2026', avg: 63, applied: true },
+  { period: 'Eval 2', when: 'Abr 2026', avg: 67, applied: true },
+  { period: 'Eval 3', when: 'Jul 2026', avg: 74, applied: false }
+];
+
+function renderUrgent() {
+  const c = document.getElementById('urgentList');
+  c.innerHTML = URGENT.map(s => `
+    <div class="stu-row" onclick="openStudent('${s.name}')">
+      <div>
+        <div class="stu-name">${s.name}</div>
+        <div class="stu-section">Áreas débiles: ${s.weak}</div>
+      </div>
+      <div class="level level-r">Insuficiente</div>
+      <div class="stu-score">${s.score}</div>
+      <svg class="stu-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+  `).join('');
+}
+
+// ============= VISTA DE ESTUDIANTE INDIVIDUAL =============
+function openStudent(name) {
+  const profile = STUDENT_PROFILES[name];
+  if (!profile) {
+    alert('Perfil completo de ' + name + ' próximamente.');
+    return;
+  }
+  showView('student');
+
+  const initials = name.split(' ').slice(0,2).map(n => n[0]).join('');
+  const groupLabel = profile.level === 'r' ? 'Insuficiente' : profile.level === 'a' ? 'Elemental' : 'Adecuado';
+  const groupCls = profile.level === 'r' ? 'level-r' : profile.level === 'a' ? 'level-a' : 'level-g';
+
+  // Evolución: mostrar barras de las 3 evaluaciones
+  const evalChart = `
+    <div class="eval-bars">
+      ${EVAL_HISTORY.map((ev, i) => {
+        const score = i === 0 ? 58 : i === 1 ? profile.score : 65;
+        const isFuture = !ev.applied;
+        return `
+          <div class="eval-col">
+            <div class="eval-bar-wrap">
+              <div class="eval-bar ${isFuture ? 'future' : ''}" style="height: ${(score/100)*100}%">
+                <div class="eval-bar-val">${isFuture ? 'meta ' + score : score}</div>
+              </div>
+            </div>
+            <div class="eval-col-label">${ev.period} · ${ev.when}</div>
+          </div>`;
+      }).join('')}
+    </div>`;
+
+  // Per-section scores
+  const sectionLabels = { A: ['Lectura de palabras', 'Sección A'], B: ['Comprensión lectora', 'Sección B'], C: ['Comprensión oral', 'Sección C'], D: ['Escritura', 'Sección D'], E: ['Reconocimiento de letras', 'Sección E'] };
+  const sectionsHtml = Object.keys(sectionLabels).map(k => {
+    const v = profile.sections[k];
+    const color = v >= 75 ? 'var(--green)' : v >= 50 ? 'var(--amber)' : 'var(--red)';
+    const lvl = v >= 75 ? 'Adec' : v >= 50 ? 'Elem' : 'Insuf';
+    return `
+      <div class="section-score-row">
+        <div class="section-score-name">${sectionLabels[k][0]}<small>${sectionLabels[k][1]}</small></div>
+        <div class="section-bar-wrap"><div class="section-bar" style="width:${v}%;background:${color}"></div></div>
+        <div class="section-score-num">${v}</div>
+        <div><span class="level ${v>=75?'level-g':v>=50?'level-a':'level-r'}" style="font-size:10px;padding:2px 6px;">${lvl}</span></div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('studentContent').innerHTML = `
+    <div class="student-header">
+      <div class="student-avatar-big">${initials}</div>
+      <div>
+        <div class="student-name-big">${name}</div>
+        <div class="student-meta-big">4° Básico B · Grupo <span class="level ${groupCls}" style="font-size:11px;">${groupLabel}</span> · Promedio actual: <b>${profile.score}/100</b></div>
+      </div>
+    </div>
+
+    <div class="student-grid">
+      <div>
+        <section class="section student-section">
+          <div class="section-head">
+            <div class="section-title">Desempeño por sección · última evaluación</div>
+          </div>
+          <div class="card">
+            <div class="section-scores">${sectionsHtml}</div>
+          </div>
+        </section>
+
+        <section class="section student-section">
+          <div class="section-head">
+            <div class="section-title">Evolución a través de evaluaciones diagnósticas</div>
+          </div>
+          <div class="card">
+            <div style="font-size: 12.5px; color: var(--text-2); margin-bottom: 14px;">
+              Promedio general en cada evaluación trimestral del semestre.
+            </div>
+            ${evalChart}
+          </div>
+        </section>
+      </div>
+
+      <div>
+        <section class="section student-section">
+          <div class="section-head">
+            <div class="section-title">Notas del profesor</div>
+          </div>
+          <div class="card" style="font-size: 13px; line-height: 1.55; color: var(--text);">
+            ${profile.notes}
+          </div>
+        </section>
+
+        <section class="section student-section">
+          <div class="section-head">
+            <div class="section-title">Acciones</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button class="action-btn" onclick="alert('Reporte individual exportado como PDF.')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Exportar reporte individual
+            </button>
+            <button class="action-btn" onclick="alert('Se enviará el reporte a la apoderada.')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              Enviar reporte al apoderado
+            </button>
+            <button class="action-btn" onclick="alert('Solicitud enviada al equipo PIE para evaluación de derivación.')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+              Solicitar derivación PIE
+            </button>
+          </div>
+        </section>
+      </div>
+    </div>
+  `;
+  window.scrollTo(0, 0);
+}
+
+function closeStudent() {
+  showView('dash');
+  window.scrollTo(0, 0);
+}
+
+// ============= DATA: Sesiones / Actividades =============
+// Cada actividad dura 10-20 min DENTRO de una clase de 1 hora.
+// Los estudiantes se sientan en 3 grupos según su nivel y cada grupo
+// trabaja una variante adaptada de la misma actividad.
+
+const W_CURRENT = [ // Esta semana: 20-24 abr
+  {
+    num: 1, day: 'Lun', date: '20 abr', dateObj: new Date(2026, 3, 20),
+    title: 'Detective de pistas en el texto',
+    oa: 'OA 6', foco: 'Comprensión inferencial', duration: '15 min',
+    setup: 'Disponer al curso en 3 grupos según nivel. Educadora diferencial acompaña al grupo Insuficiente. Repartir el texto correspondiente a cada grupo (Anexo A1 / A2 / A3 disponibles en la plataforma).',
+    groups: {
+      r: { count: 6,
+        pasos: [
+          'Repartir el texto adaptado de 1 párrafo (Anexo A1).',
+          'Educadora lo lee en voz alta señalando cada palabra con el dedo.',
+          'Pedir a los estudiantes que subrayen con destacador 2 pistas que muestren cómo se siente el personaje.',
+          'Cada estudiante explica oralmente la pista que eligió.'
+        ],
+        ejemplo: 'Texto: "El gato bajó las orejas y miró el suelo cuando vio que la puerta estaba cerrada." → pista: "bajó las orejas".',
+        materiales: 'Anexo A1 (1 hoja por estudiante) · destacador amarillo · lápiz',
+        outcome: 'Cada estudiante subraya al menos 2 pistas y explica oralmente una con apoyo 1:1.'
+      },
+      a: { count: 11,
+        pasos: [
+          'Repartir el texto de 2 párrafos (Anexo A2).',
+          'Lectura en pareja, alternando un párrafo cada uno.',
+          'En el cuaderno, anotar 3 pistas que respondan: "¿Por qué crees que el personaje hizo eso?".',
+          'Compartir las pistas dentro del grupo y consensuar las 3 mejores.'
+        ],
+        ejemplo: 'Pista: "El gato esperó hasta que el dueño se durmió" → infiero: "tenía un plan que no quería que vieran".',
+        materiales: 'Anexo A2 (1 hoja por pareja) · cuaderno · lápiz',
+        outcome: 'Lista de 3 pistas con justificación breve escrita en el cuaderno.'
+      },
+      g: { count: 13,
+        pasos: [
+          'Repartir el texto completo de 4 párrafos (Anexo A3).',
+          'Lectura individual silenciosa (5 min).',
+          'Cada estudiante construye 2 preguntas inferenciales propias del texto.',
+          'Intercambiar preguntas con el grupo Elemental y responder las del otro grupo.'
+        ],
+        ejemplo: 'Pregunta inferencial: "¿Por qué el gato decide mentirle al rey sobre quién es su dueño?".',
+        materiales: 'Anexo A3 (1 hoja por estudiante) · cuaderno · lápiz',
+        outcome: '2 preguntas inferenciales bien formuladas + responder 2 del grupo Elemental.'
+      }
+    },
+    closure: 'Cada grupo comparte 1 pista o pregunta destacada en plenaria. La profesora cierra explicando cómo las pistas del texto permiten inferir lo que no se dice explícitamente. (3 min)'
+  },
+  {
+    num: 2, day: 'Mar', date: '21 abr', dateObj: new Date(2026, 3, 21),
+    title: 'Palabra del día · "astuto"',
+    oa: 'OA 10', foco: 'Vocabulario académico', duration: '10 min',
+    setup: 'La palabra "astuto" escrita en el pizarrón en grande. Cada grupo recibe su material específico. La definición operacional para el aula: "que usa la inteligencia con habilidad para conseguir lo que quiere".',
+    groups: {
+      r: { count: 6,
+        pasos: [
+          'Mostrar al grupo 3 imágenes: un zorro escondiéndose, un perro durmiendo, un pez nadando.',
+          'Preguntar cuál de las 3 muestra a alguien "astuto" y por qué.',
+          'Modelar: "el zorro es astuto porque…".',
+          'Cada estudiante repite oralmente una oración usando la palabra.'
+        ],
+        ejemplo: '"El zorro es astuto porque se esconde para que no lo vean."',
+        materiales: 'Tarjeta impresa con 3 imágenes (Anexo V1)',
+        outcome: 'Asociación correcta de la imagen + 1 oración oral usando "astuto".'
+      },
+      a: { count: 11,
+        pasos: [
+          'Escribir individualmente 2 oraciones que usen "astuto".',
+          'Buscar en el diccionario (o proponer) 1 sinónimo y 1 antónimo.',
+          'Compartir las oraciones dentro del grupo y elegir la mejor.'
+        ],
+        ejemplo: 'Sinónimo: "ingenioso" · antónimo: "ingenuo". Oración: "El detective astuto descubrió la pista que nadie vio".',
+        materiales: 'Cuaderno · diccionario (opcional, 1 por grupo)',
+        outcome: '2 oraciones correctas + sinónimo y antónimo válidos.'
+      },
+      g: { count: 13,
+        pasos: [
+          'Crear un mini-cuento de 4 líneas usando "astuto" + 2 palabras de su misma familia léxica (astucia, astutamente).',
+          'Subrayar las 3 palabras de la familia léxica usadas.',
+          'Compartir 1 cuento por grupo a la clase.'
+        ],
+        ejemplo: '"Con astucia, el ratón se acercó astutamente al queso. Su astuto plan funcionó: nadie lo vio."',
+        materiales: 'Cuaderno · lápiz',
+        outcome: 'Texto coherente de 4 líneas usando "astuto" + 2 palabras de su familia.'
+      }
+    },
+    closure: 'Un voluntario por grupo lee su producción. La profesora confirma la definición operacional y deja la palabra anotada para futuras sesiones. (2 min)'
+  },
+  {
+    num: 3, day: 'Mié', date: '22 abr', dateObj: new Date(2026, 3, 22),
+    title: 'Reescribir el final del cuento',
+    oa: 'OA 18', foco: 'Escritura creativa', duration: '20 min',
+    setup: 'Recordar brevemente el cuento "El gato con botas" leído el lunes. Cada grupo recibe el material para escribir un final distinto al original. Mostrar la rúbrica CIAE en la pizarra para que la tengan a la vista.',
+    groups: {
+      r: { count: 6,
+        pasos: [
+          'Repartir plantilla con los inicios sugeridos: "De pronto, el gato…", "Pero esta vez…", "Al final, el rey…", "Y todos…".',
+          'Educadora lee cada inicio y conversa con el grupo qué podría seguir.',
+          'Cada estudiante completa las 4 frases para formar su final.',
+          'Apoyar con el banco de palabras en el caso de bloqueo.'
+        ],
+        ejemplo: '"De pronto, el gato dejó las botas en el río. Pero esta vez no quería ser sirviente. Al final, el rey lo dejó libre. Y todos comieron pasteles."',
+        materiales: 'Plantilla impresa (Anexo E1) · banco de palabras (Anexo E1b) · lápiz',
+        outcome: 'Texto de 4 líneas con coherencia básica entre frases.'
+      },
+      a: { count: 11,
+        pasos: [
+          'Recordar la estructura: inicio (1-2 líneas) → conflicto (3-4 líneas) → desenlace (2-3 líneas).',
+          'Escribir un final alternativo de 8 líneas que mantenga a los personajes pero cambie el desenlace.',
+          'Auto-revisar con la rúbrica CIAE simplificada (3 criterios: coherencia, ortografía, vocabulario).',
+          'Si el tiempo lo permite, leer el borrador a un compañero del grupo.'
+        ],
+        ejemplo: 'Estructura: "El gato planeó nuevo viaje (inicio) → encontró un dragón en el bosque (conflicto) → con su astucia logró que fueran amigos (desenlace)".',
+        materiales: 'Cuaderno · rúbrica CIAE simplificada impresa (Anexo R1) · lápiz',
+        outcome: 'Texto de 8 líneas con estructura clara y autoevaluación con la rúbrica.'
+      },
+      g: { count: 13,
+        pasos: [
+          'Planificar mentalmente: qué cambiará y por qué (1 min).',
+          'Escribir un final alternativo de 12 líneas que incluya: al menos 1 diálogo directo (con guion), 2 conectores variados (sin embargo, además, finalmente…), 1 descripción de un personaje.',
+          'Aplicar la rúbrica CIAE completa (4 criterios) en autoevaluación.',
+          'Intercambiar con un compañero para una revisión cruzada de 2 min.'
+        ],
+        ejemplo: 'Diálogo: —¿Y si en vez de mentirle al rey, le digo la verdad?— se preguntó el gato.',
+        materiales: 'Cuaderno · rúbrica CIAE completa (Anexo R2) · lápiz',
+        outcome: 'Texto de 12 líneas con diálogo, conectores y descripción + autoevaluación.'
+      }
+    },
+    closure: 'Lectura voluntaria de 1 final por grupo (3 min). La profesora destaca un elemento bien logrado de cada producción.'
+  },
+  {
+    num: 4, day: 'Jue', date: '23 abr', dateObj: new Date(2026, 3, 23),
+    title: 'Predicciones desde el título',
+    oa: 'OA 8', foco: 'Comprensión oral · inferencia', duration: '12 min',
+    setup: 'Sin texto a la vista. Solo el título proyectado en el pizarrón: "El secreto del faro abandonado". Cada grupo trabaja desde su nivel sin acceder al cuento.',
+    groups: {
+      r: { count: 6,
+        pasos: [
+          'Educadora pregunta: "¿Qué es un faro?" y conversan brevemente.',
+          'Pregunta dirigida: "¿Qué creen que pasará en el cuento?".',
+          'Cada estudiante dice una predicción oral.',
+          'La educadora anota cada predicción en la pizarra para validarlas después.'
+        ],
+        ejemplo: 'Predicción esperada: "Hay un fantasma" / "Alguien se perdió en el faro".',
+        materiales: 'Solo título proyectado · pizarra para anotar',
+        outcome: 'Cada estudiante aporta al menos 1 predicción oral coherente.'
+      },
+      a: { count: 11,
+        pasos: [
+          'Anotar individualmente 3 predicciones razonadas en el cuaderno.',
+          'Cada predicción debe completar la frase: "Yo creo que… porque…".',
+          'Compartir 1 predicción con el grupo y elegir las 2 más probables.',
+          'Un vocero por grupo presenta las 2 predicciones a la clase.'
+        ],
+        ejemplo: '"Yo creo que en el faro se esconde un tesoro porque dice abandonado, lo que sugiere algo olvidado."',
+        materiales: 'Cuaderno · lápiz',
+        outcome: '3 predicciones escritas con justificación + 2 elegidas grupalmente.'
+      },
+      g: { count: 13,
+        pasos: [
+          'Identificar primero las 3 palabras clave del título (faro, abandonado, secreto).',
+          'Para cada palabra, anotar 1 hipótesis que explique qué aporta al sentido del cuento.',
+          'Construir 2 predicciones razonadas que conecten al menos 2 palabras clave.',
+          'Discusión grupal: ¿cuál predicción es más probable y por qué?'
+        ],
+        ejemplo: '"Faro abandonado" sugiere lugar olvidado. "Secreto" sugiere algo oculto. Predicción: "Alguien dejó un mensaje escondido en el faro hace años".',
+        materiales: 'Cuaderno · lápiz',
+        outcome: '2 predicciones razonadas que conectan palabras clave + argumento grupal.'
+      }
+    },
+    closure: 'Cada grupo presenta 1 predicción. La profesora promete leer el cuento la próxima semana para validar. (2 min)'
+  },
+  {
+    num: 5, day: 'Vie', date: '24 abr', dateObj: new Date(2026, 3, 24),
+    title: 'Mini-bitácora semanal',
+    oa: 'OA 21', foco: 'Escritura · metacognición', duration: '15 min',
+    setup: 'Cada estudiante saca su bitácora personal. La profesora muestra en el pizarrón las 4 actividades trabajadas esta semana para refrescar memoria.',
+    groups: {
+      r: { count: 6,
+        pasos: [
+          'Repartir hoja de bitácora con 3 frases incompletas.',
+          'Educadora lee cada frase y conversa con el grupo qué pueden responder.',
+          'Cada estudiante completa las 3 frases por escrito.',
+          'Educadora apoya con preguntas cuando hay bloqueo.'
+        ],
+        ejemplo: '"Esta semana aprendí ___. Lo que más me gustó fue ___. Quiero mejorar en ___."',
+        materiales: 'Plantilla de bitácora con 3 frases (Anexo B1) · lápiz',
+        outcome: '3 frases completadas con sentido propio (no copia).'
+      },
+      a: { count: 11,
+        pasos: [
+          'Pegar en la bitácora la pregunta guía: "¿Qué aprendí esta semana?".',
+          'Escribir libremente 5-6 líneas mencionando al menos 2 de las 4 actividades de la semana.',
+          'Subrayar la actividad que más le sirvió.'
+        ],
+        ejemplo: '"Esta semana aprendí a buscar pistas en los textos para descubrir lo que no dicen. La actividad del lunes me sirvió mucho. También aprendí la palabra astuto y la usé en mi cuento del miércoles."',
+        materiales: 'Bitácora personal · lápiz',
+        outcome: 'Texto reflexivo de 5-6 líneas con mención específica de actividades.'
+      },
+      g: { count: 13,
+        pasos: [
+          'Escribir un texto de 8-10 líneas con autoevaluación honesta.',
+          'Debe incluir: 1 cosa que dominé, 1 cosa que me costó, 1 cosa que quiero trabajar la próxima semana, y por qué.',
+          'Reflexión final: "¿Qué hice yo para aprender mejor esta semana?".'
+        ],
+        ejemplo: '"Dominé reescribir cuentos porque ya conozco la rúbrica. Me costó hacer predicciones razonadas porque normalmente improviso. Quiero trabajar mejor las predicciones porque me ayuda a leer con más anticipación."',
+        materiales: 'Bitácora personal · lápiz',
+        outcome: 'Reflexión metacognitiva con los 4 elementos pedidos + análisis de proceso.'
+      }
+    },
+    closure: 'Recoger las bitácoras para revisión durante el fin de semana. La profesora elogia el esfuerzo grupal de la semana. (2 min)'
+  }
+];
+
+// Esta semana ya casi tiene todas, las próximas son resúmenes
+const W_NEXT = [
+  { num: 1, day: 'Lun', date: '27 abr', dateObj: new Date(2026, 3, 27), title: 'Lectura guiada · texto expositivo', oa: 'OA 4', foco: 'Comprensión literal', duration: '15 min' },
+  { num: 2, day: 'Mar', date: '28 abr', dateObj: new Date(2026, 3, 28), title: 'Ortografía acentual · agudas y graves', oa: 'OA 22', foco: 'Escritura', duration: '12 min' },
+  { num: 3, day: 'Mié', date: '29 abr', dateObj: new Date(2026, 3, 29), title: 'Texto expositivo breve sobre ecosistemas', oa: 'OA 19', foco: 'Escritura', duration: '20 min' },
+  { num: 4, day: 'Jue', date: '30 abr', dateObj: new Date(2026, 3, 30), title: 'Lectura de tabla y gráfico', oa: 'OA 5', foco: 'Comprensión multimodal', duration: '15 min' },
+  { num: 5, day: 'Vie', date: '01 may', dateObj: new Date(2026, 4, 1),  title: 'Reforzamiento por nivel', oa: 'OA 4 · 19', foco: 'Mixto', duration: '20 min' }
+];
+
+const W_PREV = [
+  { num: 1, day: 'Lun', date: '13 abr', dateObj: new Date(2026, 3, 13), title: 'Vocabulario en contexto', oa: 'OA 10', foco: 'Vocabulario', duration: '12 min' },
+  { num: 2, day: 'Mar', date: '14 abr', dateObj: new Date(2026, 3, 14), title: 'Aplicación evaluación diagnóstica', oa: 'Evaluación', foco: 'Diagnóstico', duration: '60 min' },
+  { num: 3, day: 'Mié', date: '15 abr', dateObj: new Date(2026, 3, 15), title: 'Lectura compartida · cuento corto', oa: 'OA 5', foco: 'Comprensión literal', duration: '15 min' },
+  { num: 4, day: 'Jue', date: '16 abr', dateObj: new Date(2026, 3, 16), title: 'Escritura libre · diario personal', oa: 'OA 18', foco: 'Escritura', duration: '15 min' },
+  { num: 5, day: 'Vie', date: '17 abr', dateObj: new Date(2026, 3, 17), title: 'Repaso semanal y comentarios', oa: 'OA 21', foco: 'Metacognición', duration: '10 min' }
+];
+
+const WEEKS = [
+  { id: 0, label: 'Semana del 13 al 17 abr', short: 'Sem 13-17 abr', focus: 'Diagnóstico inicial + repaso',                    sessions: W_PREV },
+  { id: 1, label: 'Semana del 20 al 24 abr', short: 'Sem 20-24 abr', focus: 'Inferencia, vocabulario y escritura',              sessions: W_CURRENT },
+  { id: 2, label: 'Semana del 27 abr al 1 may', short: 'Sem 27 abr - 1 may', focus: 'Comprensión literal + ortografía',         sessions: W_NEXT },
+  { id: 3, label: 'Semana del 4 al 8 may', short: 'Sem 4-8 may', focus: 'Producción escrita extendida', sessions: [
+    { num: 1, day: 'Lun', date: '04 may', dateObj: new Date(2026, 4, 4), title: 'Modelaje: planificar un cuento', oa: 'OA 18', foco: 'Escritura', duration: '15 min' },
+    { num: 2, day: 'Mar', date: '05 may', dateObj: new Date(2026, 4, 5), title: 'Borrador del cuento', oa: 'OA 18', foco: 'Escritura', duration: '20 min' },
+    { num: 3, day: 'Mié', date: '06 may', dateObj: new Date(2026, 4, 6), title: 'Revisión entre pares', oa: 'OA 21', foco: 'Escritura', duration: '15 min' },
+    { num: 4, day: 'Jue', date: '07 may', dateObj: new Date(2026, 4, 7), title: 'Reescritura y edición', oa: 'OA 21', foco: 'Escritura', duration: '20 min' },
+    { num: 5, day: 'Vie', date: '08 may', dateObj: new Date(2026, 4, 8), title: 'Mini-evaluación formativa', oa: 'Eval.', foco: 'Evaluación', duration: '20 min' }
+  ]}
+];
+
+const UNITS = [
+  { tag: 'Unidad 1', when: 'Marzo',         title: 'Diagnóstico y nivelación inicial',
+    desc: 'Establecer línea base. Reforzar decodificación. Vocabulario y estructuras sintácticas básicas.', sessions: 20, eval: 'Diagnóstica de 5 secciones', period: 'past' },
+  { tag: 'Unidad 2', when: 'Abril',         title: 'Comprensión inferencial y vocabulario',
+    desc: 'Estrategias de lectura con paradas. Vocabulario académico. Primera producción escrita estructurada.', sessions: 20, eval: 'Comprensión + producción breve', period: 'current' },
+  { tag: 'Unidad 3', when: 'Mayo',          title: 'Producción escrita con rúbrica',
+    desc: 'Escritura extendida con rúbrica CIAE-UChile. Portafolio individual. Revisión entre pares.', sessions: 20, eval: 'Rúbrica analítica CIAE', period: 'future' },
+  { tag: 'Unidad 4', when: 'Junio · Julio', title: 'Integración y pensamiento crítico',
+    desc: 'Análisis textual avanzado, debate, producción creativa final. Antología del curso como cierre.', sessions: 20, eval: 'Producto final + integradora', period: 'future' }
+];
+
+// ============= DATE-AWARE INIT =============
+function findCurrentWeekIdx() {
+  // La semana actual = la que contiene a TODAY
+  for (let i = 0; i < WEEKS.length; i++) {
+    const w = WEEKS[i];
+    const first = w.sessions[0].dateObj;
+    const last = w.sessions[w.sessions.length - 1].dateObj;
+    if (TODAY >= first && TODAY <= last) return i;
+  }
+  // Si TODAY no está en ninguna, devolver la próxima futura o la última
+  for (let i = 0; i < WEEKS.length; i++) {
+    if (WEEKS[i].sessions[0].dateObj > TODAY) return i;
+  }
+  return WEEKS.length - 1;
+}
+
+function sessionStatus(s) {
+  // Comparar solo la fecha (sin hora)
+  const sd = s.dateObj;
+  if (sd.toDateString() === TODAY.toDateString()) return 'today';
+  if (sd < TODAY) return 'done';
+  return 'upcoming';
+}
+
+function initDashboard() {
+  // Greeting con fecha actual + contexto + stats de uso
+  const wi = findCurrentWeekIdx();
+  const w = WEEKS[wi];
+  const todayStr = fmtDateLong(TODAY);
+  const todaySession = w.sessions.find(s => s.dateObj.toDateString() === TODAY.toDateString());
+
+  // Cuántas actividades de esta semana ya marcaste como completadas
+  const completedThisWeek = w.sessions.filter(s => isCompleted(wi, s.num)).length;
+
+  let meta = `Hoy es <b>${todayStr}</b>, ${w.label.toLowerCase()}.`;
+  if (todaySession) {
+    meta += ` Tu actividad de hoy: <b>${todaySession.title}</b> (${todaySession.duration}).`;
+  }
+  meta += ` <span style="color: var(--text-3);">Esta semana: ${completedThisWeek} de ${w.sessions.length} actividades completadas.</span>`;
+  document.getElementById('greetingMeta').innerHTML = meta;
+
+  // Próxima evaluación
+  const days = diffDays(TODAY, NEXT_EVAL);
+  document.getElementById('nextEvalDays').innerHTML = `${days}<span style="font-size:14px;color:var(--text-3);font-weight:500"> días</span>`;
+  document.getElementById('nextEvalMeta').textContent = `${fmtDate(NEXT_EVAL)} · meta +7 pts`;
+
+  // Pmod foots
+  document.getElementById('pmodSemanal').textContent = w.short;
+  document.getElementById('pmodMensual').textContent = 'Abril — Mayo';
+  document.getElementById('pmodSemestral').textContent = 'Marzo — Julio';
+
+  // Banner de actividades pendientes (días pasados sin marcar)
+  renderPendingBanner(wi, w);
+
+  // Eval comparison chart
+  renderEvalChart();
+}
+
+function renderPendingBanner(wi, w) {
+  // Pendientes = sesiones cuya fecha es <= TODAY pero no están completadas
+  const pending = w.sessions.filter(s => s.dateObj <= TODAY && !isCompleted(wi, s.num));
+  const banner = document.getElementById('pendingBanner');
+  if (!banner) return;
+  if (pending.length === 0) {
+    banner.style.display = 'none';
+    return;
+  }
+  banner.style.display = 'flex';
+  banner.innerHTML = `
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <div>Tienes <b>${pending.length} actividad${pending.length === 1 ? '' : 'es'}</b> de esta semana sin marcar como completada${pending.length === 1 ? '' : 's'}.</div>
+    <button class="pb-action" onclick="openPlan('semanal')">Revisar →</button>
+  `;
+}
+
+function renderEvalChart() {
+  const c = document.getElementById('evalChart');
+  if (!c) return;
+  c.innerHTML = `
+    <div class="eval-chart-label">Evolución del promedio del curso · evaluaciones diagnósticas</div>
+    <div class="eval-bars">
+      ${EVAL_HISTORY.map(ev => {
+        const isFuture = !ev.applied;
+        return `
+          <div class="eval-col">
+            <div class="eval-bar-wrap">
+              <div class="eval-bar ${isFuture ? 'future' : ''}" style="height: ${(ev.avg/100)*100}%">
+                <div class="eval-bar-val">${isFuture ? 'meta ' + ev.avg : ev.avg}</div>
+              </div>
+            </div>
+            <div class="eval-col-label">${ev.period} · ${ev.when}</div>
+          </div>`;
+      }).join('')}
+    </div>`;
+}
+
+// ============= PLAN STATE =============
+let currentWeek = 0;
+let currentDay = 0;
+let currentPlan = 'semanal';
+
+const PLAN_INFO = {
+  semanal:   { title: 'Plan semanal',   sub: '5 actividades · una por día de clase' },
+  mensual:   { title: 'Plan mensual',   sub: '20 actividades · 4 semanas' },
+  semestral: { title: 'Plan semestral', sub: '80 actividades · 4 unidades · marzo a julio' }
+};
+
+function openPlan(period) {
+  currentPlan = period;
+  if (period === 'semanal') currentWeek = findCurrentWeekIdx();
+  document.getElementById('planTitle').textContent = PLAN_INFO[period].title;
+  document.getElementById('planSub').textContent = PLAN_INFO[period].sub;
+  showView('plan');
+  if (period === 'semanal') renderWeekBlocks();
+  else if (period === 'mensual') renderMonth();
+  else renderSemester();
+  window.scrollTo(0, 0);
+}
+
+function closePlan() { showView('dash'); window.scrollTo(0, 0); }
+
+// ============= SEMANAL: bloques =============
+function renderWeekBlocks() {
+  const w = WEEKS[currentWeek];
+  const prev = currentWeek > 0;
+  const next = currentWeek < WEEKS.length - 1;
+  const isCurrent = findCurrentWeekIdx() === currentWeek;
+
+  document.getElementById('planActions').innerHTML = `
+    <div class="week-pager">
+      <button class="week-pager-btn" ${prev ? '' : 'disabled'} onclick="prevWeek()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <span><b style="color:var(--text)">${w.label}</b>${isCurrent ? '<span class="week-pager-current">Esta semana</span>' : ''}</span>
+      <button class="week-pager-btn" ${next ? '' : 'disabled'} onclick="nextWeek()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>`;
+
+  document.getElementById('planContent').innerHTML = `
+    <div style="font-size: 12.5px; color: var(--text-2); margin-bottom: 16px;">
+      Foco de la semana: <b style="color:var(--text)">${w.focus}</b> · Click en una actividad para ver su contenido didáctico por grupo.
+    </div>
+    <div class="blocks">
+      ${w.sessions.map((s, i) => {
+        const status = sessionStatus(s);
+        const done = isCompleted(currentWeek, s.num);
+        const baseCls = status === 'today' ? 'block block-today' : status === 'done' ? 'block block-done' : 'block';
+        const cls = done ? baseCls + ' block-completed' : baseCls;
+        const statusEl = done
+          ? `<div class="block-status block-status-done">✓ Completada</div>`
+          : status === 'today'
+          ? `<div class="block-status block-status-today">● Hoy</div>`
+          : status === 'done'
+          ? `<div class="block-status block-status-done">Pasada</div>`
+          : `<div class="block-status">Próxima</div>`;
+        const checkEl = done ? `
+          <div class="block-check">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>` : '';
+        return `
+          <button class="${cls}" onclick="openSession(${i})">
+            ${checkEl}
+            <div class="block-day">${s.day}</div>
+            <div class="block-date">${s.date.split(' ')[0]}</div>
+            ${statusEl}
+            <div class="block-topic">${s.title}</div>
+            <div class="block-tag">${s.foco} · ${s.duration}</div>
+            <div class="block-foot">
+              Abrir actividad
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </button>`;
+      }).join('')}
+    </div>`;
+}
+
+function prevWeek() { if (currentWeek > 0) { currentWeek--; renderWeekBlocks(); } }
+function nextWeek() { if (currentWeek < WEEKS.length - 1) { currentWeek++; renderWeekBlocks(); } }
+
+function openSession(idx) {
+  currentDay = idx;
+  const s = WEEKS[currentWeek].sessions[idx];
+  showView('detail');
+
+  const status = sessionStatus(s);
+  const statusPill = status === 'today' ? '<span class="today-pill">Hoy</span>' : status === 'done' ? '<span class="done-pill">Pasada</span>' : '';
+
+  document.getElementById('detailCrumbs').innerHTML = `${WEEKS[currentWeek].short} · ${s.day} ${s.date}${statusPill}`;
+  document.getElementById('detailTitle').textContent = s.title;
+  document.getElementById('detailTags').innerHTML = `
+    ${s.oa ? `<span class="tag tag-oa">${s.oa}</span>` : ''}
+    ${s.foco ? `<span class="tag">${s.foco}</span>` : ''}
+    <span class="tag tag-time">${s.duration} de la clase</span>
+  `;
+
+  // Action bar (arriba)
+  document.getElementById('detailActionBar').innerHTML = `
+    ${s.groups ? `
+    <button class="action-btn" onclick="openStage()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
+      Modo aula · proyector
+    </button>
+    <button class="action-btn" onclick="printActivity()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Descargar PDF
+    </button>
+    <button class="action-btn" onclick="openFeedback()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+      Reportar problema
+    </button>` : ''}
+  `;
+
+  document.getElementById('detailGrid').innerHTML = renderMarkButton(s) + renderSessionDetail(s) + renderNotesBlock(s);
+  window.scrollTo(0, 0);
+}
+
+function renderNotesBlock(s) {
+  if (!s.groups) return '';
+  const note = getNote(currentWeek, s.num);
+  return `
+    <div class="notes-block">
+      <div class="det-label">Notas del profesor sobre esta actividad</div>
+      <div style="font-size: 12.5px; color: var(--text-2); margin-top: 4px;">
+        Anota qué funcionó, qué adaptarías o qué observaste de algún estudiante. Solo tú las ves.
+      </div>
+      <textarea
+        class="notes-textarea"
+        id="notesField"
+        placeholder="Escribe aquí tus observaciones después de aplicar la actividad…"
+        oninput="onNoteChange(this.value)">${note}</textarea>
+      <div class="notes-saved" id="notesSaved">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Guardado
+      </div>
+    </div>`;
+}
+
+let _noteSaveTimer = null;
+function onNoteChange(value) {
+  const s = WEEKS[currentWeek].sessions[currentDay];
+  setNote(currentWeek, s.num, value);
+  // Mostrar "Guardado" tras 600ms de inactividad
+  clearTimeout(_noteSaveTimer);
+  _noteSaveTimer = setTimeout(() => {
+    const el = document.getElementById('notesSaved');
+    if (el) {
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 1500);
+    }
+  }, 600);
+}
+
+function renderMarkButton(s) {
+  const done = isCompleted(currentWeek, s.num);
+  return `
+    <button class="mark-btn ${done ? 'marked' : ''}" onclick="toggleSessionDone()">
+      <span class="check">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+      </span>
+      ${done ? 'Actividad completada · click para desmarcar' : 'Marcar actividad como completada'}
+    </button>`;
+}
+
+function toggleSessionDone() {
+  const s = WEEKS[currentWeek].sessions[currentDay];
+  toggleCompleted(currentWeek, s.num);
+  // Re-render solo el botón sin recargar todo el detalle
+  document.getElementById('detailGrid').innerHTML = renderMarkButton(s) + renderSessionDetail(s);
+}
+
+function backToBlocks() { showView('plan'); renderWeekBlocks(); }
+
+// ============= MODO AULA / PROYECTOR =============
+let _timerSeconds = 15 * 60;
+let _timerRemaining = 15 * 60;
+let _timerInterval = null;
+
+function openStage() {
+  const s = WEEKS[currentWeek].sessions[currentDay];
+  if (!s.groups) return;
+  // Setup timer según duración sugerida
+  const m = parseInt(s.duration) || 15;
+  _timerSeconds = m * 60;
+  _timerRemaining = _timerSeconds;
+  stopTimer();
+
+  const names = getGroupNames();
+
+  document.getElementById('stageBody').innerHTML = `
+    <div class="stage-content">
+      <div class="stage-meta">${s.day} ${s.date} · ${s.foco}</div>
+      <div class="stage-title">${s.title}</div>
+
+      <div class="stage-section">
+        <div class="stage-label">Preparación</div>
+        <div class="stage-text">${s.setup}</div>
+      </div>
+
+      <div class="stage-section">
+        <div class="stage-label">Actividad por grupo</div>
+        <div class="stage-rename-hint">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          Click sobre el nombre del grupo para renombrarlo. Los nombres se guardan automáticamente.
+        </div>
+        <div class="stage-groups">
+          <div class="stage-group stage-group-r">
+            <div class="stage-group-name">
+              <span class="editable-name" contenteditable="true" spellcheck="false" onblur="onGroupNameBlur('r', this)" onkeydown="onGroupNameKey(event, this)">${names.r}</span>
+              <span style="opacity:0.55; font-weight:500;"> · ${s.groups.r.count}</span>
+            </div>
+            <div class="stage-group-task">${(s.groups.r.pasos || []).join(' · ')}</div>
+          </div>
+          <div class="stage-group stage-group-a">
+            <div class="stage-group-name">
+              <span class="editable-name" contenteditable="true" spellcheck="false" onblur="onGroupNameBlur('a', this)" onkeydown="onGroupNameKey(event, this)">${names.a}</span>
+              <span style="opacity:0.55; font-weight:500;"> · ${s.groups.a.count}</span>
+            </div>
+            <div class="stage-group-task">${(s.groups.a.pasos || []).join(' · ')}</div>
+          </div>
+          <div class="stage-group stage-group-g">
+            <div class="stage-group-name">
+              <span class="editable-name" contenteditable="true" spellcheck="false" onblur="onGroupNameBlur('g', this)" onkeydown="onGroupNameKey(event, this)">${names.g}</span>
+              <span style="opacity:0.55; font-weight:500;"> · ${s.groups.g.count}</span>
+            </div>
+            <div class="stage-group-task">${(s.groups.g.pasos || []).join(' · ')}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-section">
+        <div class="stage-label">Cierre</div>
+        <div class="stage-text">${s.closure}</div>
+      </div>
+    </div>
+
+    <div class="stage-timer">
+      <div class="timer-label">Tiempo de actividad</div>
+      <div class="timer-display" id="timerDisp">${fmtTimer(_timerRemaining)}</div>
+      <div class="timer-controls">
+        <button class="timer-btn timer-btn-primary" id="timerStart" onclick="startTimer()">Iniciar</button>
+        <button class="timer-btn" onclick="resetTimer()">Reiniciar</button>
+      </div>
+      <div class="timer-presets">
+        <button class="timer-preset ${m===10?'active':''}" onclick="setTimer(10)">10 min</button>
+        <button class="timer-preset ${m===15?'active':''}" onclick="setTimer(15)">15 min</button>
+        <button class="timer-preset ${m===20?'active':''}" onclick="setTimer(20)">20 min</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('stage').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeStage() {
+  document.getElementById('stage').classList.remove('active');
+  document.body.style.overflow = '';
+  stopTimer();
+}
+
+function fmtTimer(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+function startTimer() {
+  if (_timerInterval) { stopTimer(); return; }
+  document.getElementById('timerStart').textContent = 'Pausar';
+  _timerInterval = setInterval(() => {
+    _timerRemaining--;
+    const disp = document.getElementById('timerDisp');
+    if (!disp) { stopTimer(); return; }
+    disp.textContent = fmtTimer(Math.max(0, _timerRemaining));
+    disp.classList.toggle('warn', _timerRemaining <= 60 && _timerRemaining > 10);
+    disp.classList.toggle('crit', _timerRemaining <= 10);
+    if (_timerRemaining <= 0) {
+      stopTimer();
+      disp.textContent = '00:00';
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (_timerInterval) { clearInterval(_timerInterval); _timerInterval = null; }
+  const btn = document.getElementById('timerStart');
+  if (btn) btn.textContent = 'Iniciar';
+}
+
+function resetTimer() {
+  stopTimer();
+  _timerRemaining = _timerSeconds;
+  const disp = document.getElementById('timerDisp');
+  if (disp) { disp.textContent = fmtTimer(_timerRemaining); disp.classList.remove('warn', 'crit'); }
+}
+
+function setTimer(min) {
+  stopTimer();
+  _timerSeconds = min * 60;
+  _timerRemaining = _timerSeconds;
+  document.querySelectorAll('.timer-preset').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  const disp = document.getElementById('timerDisp');
+  if (disp) { disp.textContent = fmtTimer(_timerRemaining); disp.classList.remove('warn', 'crit'); }
+}
+
+// Nombres de grupos editables en modo proyector
+function onGroupNameBlur(level, el) {
+  const value = el.textContent.trim();
+  if (!value) {
+    el.textContent = DEFAULT_GROUP_NAMES[level];
+    setGroupName(level, DEFAULT_GROUP_NAMES[level]);
+  } else {
+    setGroupName(level, value);
+  }
+}
+function onGroupNameKey(e, el) {
+  if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+  if (e.key === 'Escape') { el.textContent = getGroupNames()[el.parentNode.parentNode.classList.contains('stage-group-r') ? 'r' : el.parentNode.parentNode.classList.contains('stage-group-a') ? 'a' : 'g']; el.blur(); }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (document.getElementById('stage').classList.contains('active')) closeStage();
+    else if (document.getElementById('feedbackModal').classList.contains('active')) closeFeedback();
+    else if (document.getElementById('summaryModal').classList.contains('active')) closeSummary();
+  }
+});
+
+// ============= PRINT / DESCARGAR PDF =============
+function printActivity() { window.print(); }
+
+// ============= REPORTAR PROBLEMA =============
+function openFeedback() {
+  document.getElementById('feedbackText').value = '';
+  document.getElementById('feedbackModal').classList.add('active');
+}
+function closeFeedback() {
+  document.getElementById('feedbackModal').classList.remove('active');
+}
+function submitFeedback() {
+  const txt = document.getElementById('feedbackText').value.trim();
+  if (!txt) { alert('Escribe tu comentario antes de enviar.'); return; }
+  closeFeedback();
+  alert('Gracias. Tu comentario fue enviado al equipo Edutek.');
+}
+
+// ============= RESUMEN APODERADOS =============
+function openSummary() {
+  const w = WEEKS[currentWeek] || WEEKS[findCurrentWeekIdx()];
+  const completed = w.sessions.filter(s => isCompleted(currentWeek || findCurrentWeekIdx(), s.num));
+  document.getElementById('summaryBody').innerHTML = `
+    <div style="font-size: 14px; line-height: 1.7;">
+      <p style="margin-bottom: 12px;"><b>Estimados apoderados de 4° Básico B,</b></p>
+      <p style="margin-bottom: 12px;">Esta semana (${w.label.toLowerCase()}) trabajamos en el área de <b>${w.focus}</b> dentro de la asignatura de Lenguaje. Acá un resumen de las actividades realizadas:</p>
+      <ul style="padding-left: 20px; margin-bottom: 14px;">
+        ${w.sessions.map(s => `<li style="margin-bottom: 6px;"><b>${s.day} ${s.date}:</b> ${s.title}</li>`).join('')}
+      </ul>
+      <p style="margin-bottom: 12px;"><b>Para reforzar en casa:</b></p>
+      <ul style="padding-left: 20px; margin-bottom: 14px; color: var(--text-2);">
+        <li style="margin-bottom: 4px;">Pídale a su hijo/a que le cuente con sus palabras una de las actividades de la semana.</li>
+        <li style="margin-bottom: 4px;">Lean juntos un texto breve (cuento, noticia) y conversen sobre lo leído.</li>
+        <li style="margin-bottom: 4px;">Conversen sobre la "palabra del día" si la trajo a casa.</li>
+      </ul>
+      <p style="margin-bottom: 6px; color: var(--text-2);">La próxima evaluación diagnóstica se aplicará el <b style="color: var(--text);">15 de julio</b>. Trabajamos en conjunto para que cada estudiante mejore.</p>
+      <p style="margin-top: 18px; font-size: 13px; color: var(--text-3);">Saludos cordiales,<br>Profesora Paola Muñoz</p>
+    </div>`;
+  document.getElementById('summaryModal').classList.add('active');
+}
+function closeSummary() {
+  document.getElementById('summaryModal').classList.remove('active');
+}
+
+function renderSessionDetail(s) {
+  if (!s.groups) {
+    return `<div class="det-block">
+      <div class="det-label">Actividad pendiente</div>
+      <div class="det-text">El detalle didáctico con las variantes por grupo se desplegará al inicio de la semana correspondiente.</div>
+    </div>`;
+  }
+
+  const renderGroupCol = (lvl, lvlClass, label, group) => {
+    // Compatibilidad: si tiene 'task' (formato viejo), mostrarlo como un solo paso
+    const pasos = group.pasos || (group.task ? [group.task] : []);
+    return `
+    <div class="group-col group-col-${lvl}">
+      <div class="group-name group-name-${lvl}">${label}</div>
+      <div class="group-count">${group.count} estudiantes</div>
+
+      <div class="group-section">
+        <div class="group-section-label">Paso a paso</div>
+        <ol class="step-list">
+          ${pasos.map(p => `<li>${p}</li>`).join('')}
+        </ol>
+      </div>
+
+      ${group.ejemplo ? `
+      <div class="group-section">
+        <div class="group-section-label">Ejemplo concreto</div>
+        <div class="ejemplo-box">${group.ejemplo}</div>
+      </div>` : ''}
+
+      <div class="group-section">
+        <div class="group-section-label">Materiales</div>
+        <div class="group-section-text">${group.materiales || group.materials || '—'}</div>
+      </div>
+
+      <div class="group-section">
+        <div class="group-section-label">Resultado esperado</div>
+        <div class="group-section-text">${group.outcome}</div>
+      </div>
+
+      <div class="roster">
+        <div class="roster-label">Estudiantes del grupo</div>
+        <div class="roster-names">
+          ${(GROUP_ROSTER[lvl] || []).map(n => `<span class="roster-pill">${n.split(' ')[0]} ${n.split(' ')[1] ? n.split(' ')[1][0] + '.' : ''}</span>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  };
+
+  return `
+    <div class="det-block">
+      <div class="det-label">Preparación · 2 minutos</div>
+      <div class="det-text">${s.setup}</div>
+    </div>
+
+    <div class="det-block">
+      <div class="det-label">Actividad por grupo · ${s.duration}</div>
+      <div class="group-grid">
+        ${renderGroupCol('r', 'r', 'Insuficiente', s.groups.r)}
+        ${renderGroupCol('a', 'a', 'Elemental', s.groups.a)}
+        ${renderGroupCol('g', 'g', 'Adecuado', s.groups.g)}
+      </div>
+    </div>
+
+    <div class="det-block">
+      <div class="det-label">Cierre · 2-3 minutos</div>
+      <div class="det-text">${s.closure}</div>
+    </div>`;
+}
+
+// ============= MENSUAL =============
+function renderMonth() {
+  document.getElementById('planActions').innerHTML = '';
+  const currentIdx = findCurrentWeekIdx();
+  document.getElementById('planContent').innerHTML = `
+    <div style="font-size: 12.5px; color: var(--text-2); margin-bottom: 22px;">
+      ${WEEKS.length} semanas · ${WEEKS.reduce((acc, w) => acc + w.sessions.length, 0)} actividades · click en una semana para abrir su plan completo.
+    </div>
+    ${WEEKS.map((w, i) => `
+      <div class="month-week">
+        <div class="month-week-head">
+          <div>
+            <div class="mw-title ${i === currentIdx ? 'mw-title-current' : ''}">${w.label}${i === currentIdx ? ' · Esta semana' : ''}</div>
+            <div class="mw-meta">Foco: ${w.focus}</div>
+          </div>
+          <button class="mw-action" onclick="goToWeek(${i})">Abrir →</button>
+        </div>
+        <div class="mini-sessions">
+          ${w.sessions.map(s => {
+            const status = sessionStatus(s);
+            const done = isCompleted(i, s.num);
+            const checkSym = done ? '<span style="color: var(--green); margin-left: 4px;">✓</span>' : '';
+            return `
+            <div class="mini-session ${status === 'today' ? 'mini-session-today' : ''}" onclick="goToWeek(${i})">
+              <div class="mini-session-head">${s.day} · ${s.date.split(' ')[0]}${status === 'today' ? ' · HOY' : ''}${checkSym}</div>
+              <div class="mini-session-topic">${s.title}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    `).join('')}`;
+}
+
+function goToWeek(i) { currentWeek = i; openPlan('semanal'); }
+
+// ============= SEMESTRAL =============
+function renderSemester() {
+  document.getElementById('planActions').innerHTML = '';
+  document.getElementById('planContent').innerHTML = `
+    <div style="font-size: 12.5px; color: var(--text-2); margin-bottom: 22px;">
+      4 unidades didácticas · 80 actividades en total · click en una unidad para ver su detalle mensual.
+    </div>
+    <div class="unit-list">
+      ${UNITS.map(u => `
+        <div class="unit ${u.period === 'current' ? 'unit-current' : ''}">
+          <div class="unit-tag">${u.tag} · ${u.when}${u.period === 'current' ? ' · En curso' : ''}</div>
+          <div class="unit-title">${u.title}</div>
+          <div class="unit-desc">${u.desc}</div>
+          <div class="unit-foot">
+            <span><b>${u.sessions}</b> actividades</span>
+            <span>Eval: <b>${u.eval}</b></span>
+            <button class="mw-action" onclick="openPlan('mensual')">Abrir mes →</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
+}
+</script>
+
+</body>
+</html>
