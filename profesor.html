@@ -103,7 +103,6 @@
 
   .main { max-width: 1000px; margin: 0 auto; padding: 56px 32px 80px; }
 
-  /* Header */
   .greeting h2 {
     font-size: 28px; font-weight: 700;
     letter-spacing: -0.03em; margin-bottom: 6px;
@@ -271,7 +270,7 @@
   }
   .move-student:hover { background: var(--accent-soft); color: var(--accent); }
 
-  /* Section analysis (5 habilidades) */
+  /* Section analysis */
   .sec-analysis-grid { display: grid; gap: 12px; }
   .sec-analysis {
     padding: 22px 26px;
@@ -324,8 +323,6 @@
   .sec-trend-up { background: var(--green-soft); color: var(--green); }
   .sec-trend-down { background: var(--red-soft); color: var(--red); }
   .sec-trend-flat { background: var(--bg); color: var(--text-3); }
-
-  /* Mini distribution within a section */
   .sec-mini-dist {
     display: flex; height: 5px;
     border-radius: 3px; overflow: hidden;
@@ -339,6 +336,100 @@
     font-size: 11.5px; color: var(--text-2);
   }
   .sec-mini-counts span { display: inline-flex; align-items: center; gap: 5px; }
+
+  /* Fluidez section */
+  .fluency-card {
+    padding: 24px 26px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .fluency-source {
+    font-size: 12px;
+    color: var(--text-3);
+    margin-bottom: 18px;
+    padding: 10px 12px;
+    background: var(--bg);
+    border-radius: 6px;
+    border-left: 2px solid var(--text-3);
+  }
+  .fluency-source b { color: var(--text-2); font-weight: 600; }
+  .fluency-narrative {
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--text);
+    margin-bottom: 22px;
+  }
+  .fluency-narrative b { font-weight: 600; }
+  .fluency-narrative .pos { color: var(--green); font-weight: 600; }
+  .fluency-narrative .neg { color: var(--red); font-weight: 600; }
+
+  .fluency-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+  }
+  .fluency-col-title {
+    font-size: 11.5px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--text-3); margin-bottom: 14px;
+  }
+  .flu-row {
+    display: grid;
+    grid-template-columns: 1fr 30px 50px;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 12.5px;
+  }
+  .flu-row-label { color: var(--text); }
+  .flu-row-label small { display: block; color: var(--text-3); font-size: 11px; margin-top: 2px; }
+  .flu-row-bar-wrap {
+    grid-column: 1 / -1;
+    height: 6px; background: #F0F0F0;
+    border-radius: 3px; overflow: hidden;
+    margin-top: 4px;
+  }
+  .flu-row-bar { height: 100%; border-radius: 3px; }
+  .flu-row-count {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .flu-row-pct {
+    text-align: right;
+    color: var(--text-3);
+    font-size: 11.5px;
+    font-variant-numeric: tabular-nums;
+  }
+  .flu-row.expected-vlow .flu-row-label { color: var(--red); font-weight: 600; }
+  .flu-row.expected-low .flu-row-label { color: var(--amber); font-weight: 600; }
+
+  .fluency-summary-strip {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+  }
+  .fss-item {
+    display: flex; flex-direction: column;
+  }
+  .fss-label {
+    font-size: 11px; color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.05em;
+    font-weight: 600; margin-bottom: 6px;
+  }
+  .fss-value {
+    font-size: 22px; font-weight: 700;
+    letter-spacing: -0.025em; line-height: 1.1;
+  }
+  .fss-value small { font-size: 12px; color: var(--text-3); font-weight: 500; }
+  .fss-meta { font-size: 11.5px; color: var(--text-2); margin-top: 4px; }
 
   /* Students table */
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -384,6 +475,20 @@
     font-weight: 700; font-size: 14px; text-align: right;
   }
   .row-arrow { color: var(--text-3); }
+  .quality-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 11px; font-weight: 500;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text-2);
+  }
+  .quality-pill.q-fluid { background: var(--green-soft); color: var(--green); border-color: transparent; }
+  .quality-pill.q-shortunits { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+  .quality-pill.q-wordbyword { background: var(--amber-soft); color: var(--amber); border-color: transparent; }
+  .quality-pill.q-syllabic { background: var(--red-soft); color: var(--red); border-color: transparent; }
+  .quality-pill.q-nonreader { background: var(--red); color: #fff; border-color: transparent; }
 
   /* Student detail */
   .student-view { display: none; }
@@ -419,7 +524,6 @@
   }
   .student-meta-big { color: var(--text-2); font-size: 14px; }
 
-  /* Trayectoria */
   .traj-row {
     display: grid;
     grid-template-columns: 110px 1fr 60px;
@@ -455,7 +559,6 @@
     text-align: right;
   }
 
-  /* Student section bars (with course avg) */
   .stu-sec-row {
     padding: 14px 0;
     border-bottom: 1px solid var(--border);
@@ -467,9 +570,7 @@
   }
   .stu-sec-name { font-size: 13.5px; font-weight: 600; }
   .stu-sec-name small { font-weight: 400; color: var(--text-3); margin-left: 6px; font-size: 11.5px; }
-  .stu-sec-score-cell {
-    display: flex; align-items: baseline; gap: 8px;
-  }
+  .stu-sec-score-cell { display: flex; align-items: baseline; gap: 8px; }
   .stu-sec-score-num {
     font-size: 16px; font-weight: 700;
     font-variant-numeric: tabular-nums;
@@ -516,6 +617,62 @@
   .sb-neg .sb-label { color: var(--red); }
   .sb-text { font-size: 13.5px; color: var(--text); line-height: 1.5; }
 
+  /* Student fluency card */
+  .stu-fluency {
+    padding: 18px 20px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .stu-flu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .stu-flu-block-label {
+    font-size: 10.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--text-3); margin-bottom: 8px;
+  }
+  .stu-flu-quality {
+    font-size: 17px; font-weight: 700;
+    letter-spacing: -0.015em;
+    margin-bottom: 4px;
+  }
+  .stu-flu-pcpm {
+    font-size: 22px; font-weight: 700;
+    letter-spacing: -0.02em; line-height: 1;
+  }
+  .stu-flu-pcpm small {
+    font-size: 12px; color: var(--text-3); font-weight: 500;
+  }
+  .stu-flu-meta {
+    font-size: 11.5px; color: var(--text-2); margin-top: 5px;
+  }
+  .stu-flu-status {
+    margin-top: 14px;
+    padding: 10px 12px;
+    border-radius: 7px;
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+  .stu-flu-status.ok { background: var(--green-soft); color: var(--green); }
+  .stu-flu-status.warn { background: var(--amber-soft); color: var(--amber); }
+  .stu-flu-status.bad { background: var(--red-soft); color: var(--red); }
+  .stu-flu-status b { font-weight: 600; }
+  .stu-flu-stats {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    font-size: 11.5px;
+    color: var(--text-2);
+  }
+  .stu-flu-stats span { display: block; }
+  .stu-flu-stats b { color: var(--text); font-weight: 600; display: block; font-size: 13px; }
+
   .student-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 14px; }
 
   /* Beta */
@@ -555,6 +712,13 @@
     .sec-letter { width: 48px; height: 48px; font-size: 22px; border-radius: 10px; }
     .sec-metrics { grid-column: 1 / -1; text-align: left; padding-top: 8px; border-top: 1px solid var(--border); display: flex; align-items: baseline; gap: 16px; }
     .sec-metrics > div { display: inline-block; }
+    .fluency-grid { grid-template-columns: 1fr; gap: 26px; }
+    .fluency-summary-strip { grid-template-columns: 1fr; gap: 14px; }
+    .stu-flu-grid { grid-template-columns: 1fr; gap: 14px; }
+    .stu-flu-stats { grid-template-columns: 1fr; gap: 6px; }
+    /* Tabla scrolleable */
+    .card[data-scroll] { overflow-x: auto; padding: 0; }
+    table { min-width: 720px; }
   }
   @media (max-width: 520px) {
     .main { padding: 28px 18px 48px; }
@@ -612,7 +776,7 @@
         <p>Reporte de la <b>segunda evaluación diagnóstica del semestre</b> · Aplicada el 14 de abril 2026 · Procesada por el equipo Edutek · Próximo informe: 15 de julio.</p>
       </div>
 
-      <!-- Resumen diagnóstico narrativo -->
+      <!-- Resumen diagnóstico -->
       <div class="diag">
         <div class="diag-label">Resumen diagnóstico</div>
         <div class="diag-text" id="diagText"></div>
@@ -641,7 +805,6 @@
         </div>
       </div>
 
-      <!-- Estado del curso (distribución + evolución) -->
       <section class="section" style="margin-top: 40px;">
         <div class="section-head">
           <div class="section-title">Estado del curso</div>
@@ -657,7 +820,6 @@
             <div class="dist-leg-item"><span class="dot dot-a"></span> Elemental <b>11</b></div>
             <div class="dist-leg-item"><span class="dot dot-r"></span> Insuficiente <b>6</b></div>
           </div>
-
           <div class="eval-chart">
             <div class="eval-chart-label">Evolución del promedio · 3 evaluaciones del semestre</div>
             <div class="eval-bars" id="evalBars"></div>
@@ -665,7 +827,6 @@
         </div>
       </section>
 
-      <!-- Movimientos -->
       <section class="section">
         <div class="section-head">
           <div class="section-title">Movimientos desde la evaluación anterior</div>
@@ -673,7 +834,6 @@
         <div class="moves" id="movesGrid"></div>
       </section>
 
-      <!-- Análisis por habilidad -->
       <section class="section">
         <div class="section-head">
           <div class="section-title">Análisis por habilidad</div>
@@ -681,19 +841,50 @@
         <div class="sec-analysis-grid" id="secGrid"></div>
       </section>
 
-      <!-- Estudiantes -->
+      <!-- FLUIDEZ LECTORA (nuevo) -->
+      <section class="section">
+        <div class="section-head">
+          <div class="section-title">Fluidez lectora · evaluación oral</div>
+        </div>
+        <div class="fluency-card">
+          <div class="fluency-source">
+            <b>Texto utilizado:</b> "Paseo a la montaña" (115 palabras) ·
+            <b>Parámetros:</b> Fundación Educacional Arauco · 4° básico, mitad de año ·
+            <b>Métrica:</b> Palabras correctas por minuto (PCPM) y nivel de calidad lectora.
+          </div>
+
+          <div class="fluency-narrative" id="fluNarrative"></div>
+
+          <div class="fluency-grid">
+            <div>
+              <div class="fluency-col-title">Calidad de lectura</div>
+              <div id="fluQuality"></div>
+            </div>
+            <div>
+              <div class="fluency-col-title">Velocidad de lectura</div>
+              <div id="fluSpeed"></div>
+            </div>
+          </div>
+
+          <div class="fluency-summary-strip" id="fluSummary"></div>
+        </div>
+      </section>
+
+      <!-- ESTUDIANTES -->
       <section class="section">
         <div class="section-head">
           <div class="section-title">Estudiantes · 30 en total</div>
         </div>
-        <div class="card" style="padding: 0; overflow: hidden;">
+        <div class="card" data-scroll style="padding: 0; overflow: hidden;">
           <table>
             <thead>
               <tr>
                 <th>Estudiante</th>
-                <th>Nivel actual</th>
+                <th>Nivel</th>
                 <th>Movimiento</th>
                 <th>Puntaje</th>
+                <th>Fluidez</th>
+                <th>PCPM</th>
                 <th></th>
               </tr>
             </thead>
@@ -704,7 +895,7 @@
 
       <div class="beta">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-2); flex-shrink: 0;"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-        <div><b>Análisis de habla</b><span class="beta-tag">Beta</span> En la próxima entrega: incorporamos evaluación oral por audio para medir fluidez lectora.</div>
+        <div><b>Análisis de habla automatizado</b><span class="beta-tag">Beta</span> Próximamente, las grabaciones de lectura serán procesadas automáticamente para detectar errores y medir PCPM sin intervención del evaluador.</div>
       </div>
     </div>
 
@@ -721,37 +912,41 @@
 </div>
 
 <script>
+// ============= DATA =============
 const STUDENTS = [
-  { name: 'Antonia Reyes',   E1: { lvl: 'r', score: 35 }, E2: { lvl: 'r', score: 38 }, sections: { A: 52, B: 38, C: 44, D: 28, E: 62 } },
-  { name: 'Mateo Soto',      E1: { lvl: 'r', score: 38 }, E2: { lvl: 'r', score: 42 }, sections: { A: 58, B: 44, C: 48, D: 32, E: 66 } },
-  { name: 'Camila Ortega',   E1: { lvl: 'a', score: 51 }, E2: { lvl: 'r', score: 44 }, sections: { A: 60, B: 42, C: 46, D: 34, E: 68 } },
-  { name: 'Thomas Pizarro',  E1: { lvl: 'r', score: 41 }, E2: { lvl: 'r', score: 45 }, sections: { A: 55, B: 46, C: 50, D: 38, E: 70 } },
-  { name: 'Florencia Soto',  E1: { lvl: 'a', score: 53 }, E2: { lvl: 'r', score: 46 }, sections: { A: 58, B: 48, C: 52, D: 36, E: 72 } },
-  { name: 'Lucas Navarro',   E1: { lvl: 'r', score: 44 }, E2: { lvl: 'r', score: 48 }, sections: { A: 62, B: 50, C: 54, D: 40, E: 68 } },
-  { name: 'Benjamín Álvarez', E1: { lvl: 'r', score: 47 }, E2: { lvl: 'a', score: 58 }, sections: { A: 71, B: 58, C: 60, D: 51, E: 72 } },
-  { name: 'Catalina Pérez',   E1: { lvl: 'r', score: 49 }, E2: { lvl: 'a', score: 60 }, sections: { A: 72, B: 64, C: 62, D: 54, E: 74 } },
-  { name: 'Diego Muñoz',      E1: { lvl: 'a', score: 55 }, E2: { lvl: 'a', score: 62 }, sections: { A: 78, B: 66, C: 64, D: 58, E: 76 } },
-  { name: 'Emilia Gómez',     E1: { lvl: 'a', score: 58 }, E2: { lvl: 'a', score: 64 }, sections: { A: 80, B: 72, C: 66, D: 62, E: 78 } },
-  { name: 'Joaquín Vergara',  E1: { lvl: 'a', score: 60 }, E2: { lvl: 'a', score: 65 }, sections: { A: 82, B: 69, C: 68, D: 61, E: 80 } },
-  { name: 'Isidora Rojas',    E1: { lvl: 'r', score: 48 }, E2: { lvl: 'a', score: 66 }, sections: { A: 80, B: 70, C: 68, D: 60, E: 82 } },
-  { name: 'Matías Hernández', E1: { lvl: 'a', score: 62 }, E2: { lvl: 'a', score: 67 }, sections: { A: 78, B: 72, C: 70, D: 62, E: 84 } },
-  { name: 'Fernanda Castro',  E1: { lvl: 'g', score: 76 }, E2: { lvl: 'a', score: 68 }, sections: { A: 82, B: 68, C: 72, D: 60, E: 82 } },
-  { name: 'Agustina Vera',    E1: { lvl: 'r', score: 49 }, E2: { lvl: 'a', score: 70 }, sections: { A: 85, B: 72, C: 73, D: 63, E: 85 } },
-  { name: 'Simón Aravena',    E1: { lvl: 'a', score: 65 }, E2: { lvl: 'a', score: 71 }, sections: { A: 84, B: 73, C: 72, D: 65, E: 86 } },
-  { name: 'Javiera Leiva',    E1: { lvl: 'g', score: 78 }, E2: { lvl: 'a', score: 72 }, sections: { A: 85, B: 74, C: 74, D: 66, E: 87 } },
-  { name: 'María Paz Contreras', E1: { lvl: 'a', score: 68 }, E2: { lvl: 'g', score: 76 }, sections: { A: 88, B: 81, C: 79, D: 68, E: 88 } },
-  { name: 'Rosa Mellado',     E1: { lvl: 'g', score: 74 }, E2: { lvl: 'g', score: 78 }, sections: { A: 88, B: 83, C: 80, D: 72, E: 90 } },
-  { name: 'Valentina Ríos',   E1: { lvl: 'g', score: 76 }, E2: { lvl: 'g', score: 79 }, sections: { A: 89, B: 84, C: 82, D: 71, E: 89 } },
-  { name: 'Sofía Castillo',   E1: { lvl: 'g', score: 79 }, E2: { lvl: 'g', score: 81 }, sections: { A: 90, B: 88, C: 82, D: 78, E: 92 } },
-  { name: 'Tomás Fuentes',    E1: { lvl: 'a', score: 71 }, E2: { lvl: 'g', score: 82 }, sections: { A: 92, B: 86, C: 84, D: 74, E: 92 } },
-  { name: 'Ignacia Herrera',  E1: { lvl: 'g', score: 80 }, E2: { lvl: 'g', score: 83 }, sections: { A: 91, B: 85, C: 85, D: 76, E: 94 } },
-  { name: 'Martín Sepúlveda', E1: { lvl: 'g', score: 82 }, E2: { lvl: 'g', score: 84 }, sections: { A: 93, B: 87, C: 84, D: 78, E: 93 } },
-  { name: 'Amanda Bustos',    E1: { lvl: 'g', score: 83 }, E2: { lvl: 'g', score: 85 }, sections: { A: 94, B: 88, C: 86, D: 79, E: 95 } },
-  { name: 'Gabriel Tapia',    E1: { lvl: 'a', score: 73 }, E2: { lvl: 'g', score: 86 }, sections: { A: 93, B: 89, C: 87, D: 80, E: 94 } },
-  { name: 'Laura Contreras',  E1: { lvl: 'g', score: 86 }, E2: { lvl: 'g', score: 87 }, sections: { A: 95, B: 90, C: 86, D: 82, E: 95 } },
-  { name: 'Vicente Soto',     E1: { lvl: 'g', score: 86 }, E2: { lvl: 'g', score: 88 }, sections: { A: 95, B: 91, C: 88, D: 83, E: 96 } },
-  { name: 'Constanza Lagos',  E1: { lvl: 'g', score: 87 }, E2: { lvl: 'g', score: 89 }, sections: { A: 96, B: 92, C: 89, D: 84, E: 95 } },
-  { name: 'Franco Álvarez',   E1: { lvl: 'g', score: 88 }, E2: { lvl: 'g', score: 90 }, sections: { A: 96, B: 93, C: 90, D: 85, E: 97 } }
+  // INSUFICIENTE (6) - perfiles bajos en fluidez
+  { name: 'Antonia Reyes',   E1: { lvl: 'r', score: 35 }, E2: { lvl: 'r', score: 38 }, sections: { A: 52, B: 38, C: 44, D: 28, E: 62 }, flu: { quality: 'syllabic',   pcpm: 35,  errors: 12, seconds: 175 } },
+  { name: 'Mateo Soto',      E1: { lvl: 'r', score: 38 }, E2: { lvl: 'r', score: 42 }, sections: { A: 58, B: 44, C: 48, D: 32, E: 66 }, flu: { quality: 'syllabic',   pcpm: 40,  errors: 10, seconds: 165 } },
+  { name: 'Camila Ortega',   E1: { lvl: 'a', score: 51 }, E2: { lvl: 'r', score: 44 }, sections: { A: 60, B: 42, C: 46, D: 34, E: 68 }, flu: { quality: 'wordbyword', pcpm: 55,  errors: 8,  seconds: 120 } },
+  { name: 'Thomas Pizarro',  E1: { lvl: 'r', score: 41 }, E2: { lvl: 'r', score: 45 }, sections: { A: 55, B: 46, C: 50, D: 38, E: 70 }, flu: { quality: 'wordbyword', pcpm: 60,  errors: 7,  seconds: 110 } },
+  { name: 'Florencia Soto',  E1: { lvl: 'a', score: 53 }, E2: { lvl: 'r', score: 46 }, sections: { A: 58, B: 48, C: 52, D: 36, E: 72 }, flu: { quality: 'wordbyword', pcpm: 62,  errors: 6,  seconds: 108 } },
+  { name: 'Lucas Navarro',   E1: { lvl: 'r', score: 44 }, E2: { lvl: 'r', score: 48 }, sections: { A: 62, B: 50, C: 54, D: 40, E: 68 }, flu: { quality: 'wordbyword', pcpm: 65,  errors: 6,  seconds: 105 } },
+  // ELEMENTAL (11)
+  { name: 'Benjamín Álvarez', E1: { lvl: 'r', score: 47 }, E2: { lvl: 'a', score: 58 }, sections: { A: 71, B: 58, C: 60, D: 51, E: 72 }, flu: { quality: 'wordbyword', pcpm: 78,  errors: 5,  seconds: 86 } },
+  { name: 'Catalina Pérez',   E1: { lvl: 'r', score: 49 }, E2: { lvl: 'a', score: 60 }, sections: { A: 72, B: 64, C: 62, D: 54, E: 74 }, flu: { quality: 'wordbyword', pcpm: 80,  errors: 4,  seconds: 84 } },
+  { name: 'Diego Muñoz',      E1: { lvl: 'a', score: 55 }, E2: { lvl: 'a', score: 62 }, sections: { A: 78, B: 66, C: 64, D: 58, E: 76 }, flu: { quality: 'shortunits', pcpm: 85,  errors: 4,  seconds: 80 } },
+  { name: 'Emilia Gómez',     E1: { lvl: 'a', score: 58 }, E2: { lvl: 'a', score: 64 }, sections: { A: 80, B: 72, C: 66, D: 62, E: 78 }, flu: { quality: 'shortunits', pcpm: 90,  errors: 3,  seconds: 75 } },
+  { name: 'Joaquín Vergara',  E1: { lvl: 'a', score: 60 }, E2: { lvl: 'a', score: 65 }, sections: { A: 82, B: 69, C: 68, D: 61, E: 80 }, flu: { quality: 'shortunits', pcpm: 92,  errors: 3,  seconds: 73 } },
+  { name: 'Isidora Rojas',    E1: { lvl: 'r', score: 48 }, E2: { lvl: 'a', score: 66 }, sections: { A: 80, B: 70, C: 68, D: 60, E: 82 }, flu: { quality: 'shortunits', pcpm: 95,  errors: 3,  seconds: 71 } },
+  { name: 'Matías Hernández', E1: { lvl: 'a', score: 62 }, E2: { lvl: 'a', score: 67 }, sections: { A: 78, B: 72, C: 70, D: 62, E: 84 }, flu: { quality: 'shortunits', pcpm: 98,  errors: 3,  seconds: 69 } },
+  { name: 'Fernanda Castro',  E1: { lvl: 'g', score: 76 }, E2: { lvl: 'a', score: 68 }, sections: { A: 82, B: 68, C: 72, D: 60, E: 82 }, flu: { quality: 'shortunits', pcpm: 100, errors: 2,  seconds: 68 } },
+  { name: 'Agustina Vera',    E1: { lvl: 'r', score: 49 }, E2: { lvl: 'a', score: 70 }, sections: { A: 85, B: 72, C: 73, D: 63, E: 85 }, flu: { quality: 'shortunits', pcpm: 105, errors: 2,  seconds: 65 } },
+  { name: 'Simón Aravena',    E1: { lvl: 'a', score: 65 }, E2: { lvl: 'a', score: 71 }, sections: { A: 84, B: 73, C: 72, D: 65, E: 86 }, flu: { quality: 'shortunits', pcpm: 108, errors: 2,  seconds: 63 } },
+  { name: 'Javiera Leiva',    E1: { lvl: 'g', score: 78 }, E2: { lvl: 'a', score: 72 }, sections: { A: 85, B: 74, C: 74, D: 66, E: 87 }, flu: { quality: 'shortunits', pcpm: 110, errors: 2,  seconds: 62 } },
+  // ADECUADO (13) - todos en fluida
+  { name: 'María Paz Contreras', E1: { lvl: 'a', score: 68 }, E2: { lvl: 'g', score: 76 }, sections: { A: 88, B: 81, C: 79, D: 68, E: 88 }, flu: { quality: 'fluid', pcpm: 118, errors: 1, seconds: 58 } },
+  { name: 'Rosa Mellado',     E1: { lvl: 'g', score: 74 }, E2: { lvl: 'g', score: 78 }, sections: { A: 88, B: 83, C: 80, D: 72, E: 90 }, flu: { quality: 'fluid', pcpm: 122, errors: 1, seconds: 56 } },
+  { name: 'Valentina Ríos',   E1: { lvl: 'g', score: 76 }, E2: { lvl: 'g', score: 79 }, sections: { A: 89, B: 84, C: 82, D: 71, E: 89 }, flu: { quality: 'fluid', pcpm: 125, errors: 1, seconds: 55 } },
+  { name: 'Sofía Castillo',   E1: { lvl: 'g', score: 79 }, E2: { lvl: 'g', score: 81 }, sections: { A: 90, B: 88, C: 82, D: 78, E: 92 }, flu: { quality: 'fluid', pcpm: 128, errors: 1, seconds: 54 } },
+  { name: 'Tomás Fuentes',    E1: { lvl: 'a', score: 71 }, E2: { lvl: 'g', score: 82 }, sections: { A: 92, B: 86, C: 84, D: 74, E: 92 }, flu: { quality: 'fluid', pcpm: 130, errors: 1, seconds: 53 } },
+  { name: 'Ignacia Herrera',  E1: { lvl: 'g', score: 80 }, E2: { lvl: 'g', score: 83 }, sections: { A: 91, B: 85, C: 85, D: 76, E: 94 }, flu: { quality: 'fluid', pcpm: 132, errors: 0, seconds: 52 } },
+  { name: 'Martín Sepúlveda', E1: { lvl: 'g', score: 82 }, E2: { lvl: 'g', score: 84 }, sections: { A: 93, B: 87, C: 84, D: 78, E: 93 }, flu: { quality: 'fluid', pcpm: 135, errors: 0, seconds: 51 } },
+  { name: 'Amanda Bustos',    E1: { lvl: 'g', score: 83 }, E2: { lvl: 'g', score: 85 }, sections: { A: 94, B: 88, C: 86, D: 79, E: 95 }, flu: { quality: 'fluid', pcpm: 138, errors: 0, seconds: 50 } },
+  { name: 'Gabriel Tapia',    E1: { lvl: 'a', score: 73 }, E2: { lvl: 'g', score: 86 }, sections: { A: 93, B: 89, C: 87, D: 80, E: 94 }, flu: { quality: 'fluid', pcpm: 140, errors: 0, seconds: 49 } },
+  { name: 'Laura Contreras',  E1: { lvl: 'g', score: 86 }, E2: { lvl: 'g', score: 87 }, sections: { A: 95, B: 90, C: 86, D: 82, E: 95 }, flu: { quality: 'fluid', pcpm: 142, errors: 0, seconds: 49 } },
+  { name: 'Vicente Soto',     E1: { lvl: 'g', score: 86 }, E2: { lvl: 'g', score: 88 }, sections: { A: 95, B: 91, C: 88, D: 83, E: 96 }, flu: { quality: 'fluid', pcpm: 145, errors: 0, seconds: 48 } },
+  { name: 'Constanza Lagos',  E1: { lvl: 'g', score: 87 }, E2: { lvl: 'g', score: 89 }, sections: { A: 96, B: 92, C: 89, D: 84, E: 95 }, flu: { quality: 'fluid', pcpm: 148, errors: 0, seconds: 47 } },
+  { name: 'Franco Álvarez',   E1: { lvl: 'g', score: 88 }, E2: { lvl: 'g', score: 90 }, sections: { A: 96, B: 93, C: 90, D: 85, E: 97 }, flu: { quality: 'fluid', pcpm: 150, errors: 0, seconds: 46 } }
 ];
 
 const SECTIONS = [
@@ -771,6 +966,32 @@ const EVAL_HISTORY = [
 const LEVEL_LABEL = { r: 'Insuficiente', a: 'Elemental', g: 'Adecuado' };
 const LEVEL_RANK = { r: 1, a: 2, g: 3 };
 
+// ============= FLUIDEZ — Rúbrica Fundación Educacional Arauco =============
+// Niveles de calidad (de mayor a menor calidad para mostrar el "techo" arriba)
+const QUALITY_LEVELS = [
+  { id: 'fluid',      label: 'Lectura fluida',         desc: 'Lee continuo con inflexión adecuada.',  expected: 'within',   color: 'var(--green)' },
+  { id: 'shortunits', label: 'Unidades cortas',        desc: 'Forma pequeñas unidades de sentido.',    expected: 'within',   color: 'var(--accent)' },
+  { id: 'wordbyword', label: 'Palabra a palabra',      desc: 'Lee palabra por palabra sin unidades.',  expected: 'below',    color: 'var(--amber)' },
+  { id: 'syllabic',   label: 'Lectura silábica',       desc: 'Lee sílaba a sílaba.',                   expected: 'verybelow', color: 'var(--red)' },
+  { id: 'nonreader',  label: 'No lector',              desc: 'No reconoce letras o solo aisladas.',    expected: 'verybelow', color: '#7F1D1D' }
+];
+
+// Velocidad — 4° básico, mitad de año (Arauco)
+// ≤72 muy baja · 73-90 baja · 91-137 media · ≥138 alta
+const SPEED_LEVELS = [
+  { id: 'high', label: 'Alta',      range: '≥138 PCPM',     min: 138,                  expected: 'within',   color: 'var(--green)' },
+  { id: 'mid',  label: 'Media',     range: '91-137 PCPM',   min: 91,  max: 137,        expected: 'within',   color: 'var(--accent)' },
+  { id: 'low',  label: 'Baja',      range: '73-90 PCPM',    min: 73,  max: 90,         expected: 'below',    color: 'var(--amber)' },
+  { id: 'vlow', label: 'Muy baja',  range: '≤72 PCPM',                max: 72,         expected: 'verybelow', color: 'var(--red)' }
+];
+
+function speedCategory(pcpm) {
+  if (pcpm >= 138) return 'high';
+  if (pcpm >= 91)  return 'mid';
+  if (pcpm >= 73)  return 'low';
+  return 'vlow';
+}
+
 // ============= LOGIN / VIEW =============
 function enterApp() {
   document.getElementById('loginScreen').style.display = 'none';
@@ -780,6 +1001,7 @@ function enterApp() {
     renderEvalChart();
     renderMovements();
     renderSectionAnalysis();
+    renderFluency();
     renderStudents();
   }, 20);
 }
@@ -810,28 +1032,30 @@ function renderDiagnosticSummary() {
   const moveUp = STUDENTS.filter(s => getMovement(s) === 'up').length;
   const moveDown = STUDENTS.filter(s => getMovement(s) === 'down').length;
 
-  // Sección más fuerte y débil
+  const fluencyWithin = STUDENTS.filter(s => {
+    const q = QUALITY_LEVELS.find(x => x.id === s.flu.quality);
+    return q && q.expected === 'within';
+  }).length;
+
   const bestSec = SECTIONS.reduce((a, b) => a.avgE2 > b.avgE2 ? a : b);
   const worstSec = SECTIONS.reduce((a, b) => a.avgE2 < b.avgE2 ? a : b);
 
-  const text = `
+  document.getElementById('diagText').innerHTML = `
     En la <b>segunda evaluación del semestre</b>, tu curso obtuvo un promedio de <b>67 / 100</b>,
     <span class="pos">+4 puntos</span> respecto a enero.
     De los ${total} estudiantes, <b>${adec} están en nivel Adecuado</b>, ${elem} en Elemental y ${insuf} en Insuficiente.
-    Desde la evaluación anterior, <span class="pos">${moveUp} estudiante${moveUp === 1 ? '' : 's'} subió de nivel</span>
-    y <span class="neg">${moveDown} bajó de nivel</span>.
-    La habilidad más fuerte del curso es <b>${bestSec.label} (${bestSec.avgE2}/100)</b>
-    y la más débil es <b>${worstSec.label} (${worstSec.avgE2}/100)</b>,
-    que sigue siendo el área que requiere atención focalizada.
+    Desde la evaluación anterior, <span class="pos">${moveUp} subió de nivel</span>
+    y <span class="neg">${moveDown} bajó</span>.
+    La habilidad escrita más fuerte es <b>${bestSec.label} (${bestSec.avgE2})</b> y la más débil es
+    <b>${worstSec.label} (${worstSec.avgE2})</b>.
+    En <b>fluidez lectora</b>, <span class="pos">${fluencyWithin} de ${total} estudiantes</span>
+    están dentro de lo esperado para 4° básico (mitad de año).
   `;
-
-  document.getElementById('diagText').innerHTML = text;
 }
 
 // ============= EVAL CHART =============
 function renderEvalChart() {
-  const c = document.getElementById('evalBars');
-  c.innerHTML = EVAL_HISTORY.map(ev => {
+  document.getElementById('evalBars').innerHTML = EVAL_HISTORY.map(ev => {
     const isFuture = !ev.applied;
     return `
       <div class="eval-col">
@@ -849,30 +1073,22 @@ function renderEvalChart() {
 function renderMovements() {
   const grouped = { up: [], flat: [], down: [] };
   STUDENTS.forEach(s => grouped[getMovement(s)].push(s));
-
   const renderChips = (arr) => arr.map(s =>
     `<span class="move-student" onclick="openStudent('${s.name.replace(/'/g, "\\'")}')">${s.name.split(' ').slice(0, 2).join(' ')}</span>`
   ).join('');
-
   document.getElementById('movesGrid').innerHTML = `
     <div class="move-card move-up">
-      <div class="move-head">
-        <div class="move-name">↑ Subieron de nivel</div>
-      </div>
+      <div class="move-head"><div class="move-name">↑ Subieron de nivel</div></div>
       <div class="move-count">${grouped.up.length}</div>
       <div class="move-students">${renderChips(grouped.up) || '<span style="color: var(--text-3);">—</span>'}</div>
     </div>
     <div class="move-card move-flat">
-      <div class="move-head">
-        <div class="move-name">→ Se mantuvieron</div>
-      </div>
+      <div class="move-head"><div class="move-name">→ Se mantuvieron</div></div>
       <div class="move-count">${grouped.flat.length}</div>
       <div class="move-students">${renderChips(grouped.flat) || '<span style="color: var(--text-3);">—</span>'}</div>
     </div>
     <div class="move-card move-down">
-      <div class="move-head">
-        <div class="move-name">↓ Bajaron de nivel</div>
-      </div>
+      <div class="move-head"><div class="move-name">↓ Bajaron de nivel</div></div>
       <div class="move-count">${grouped.down.length}</div>
       <div class="move-students">${renderChips(grouped.down) || '<span style="color: var(--text-3);">—</span>'}</div>
     </div>
@@ -881,50 +1097,33 @@ function renderMovements() {
 
 // ============= ANÁLISIS POR HABILIDAD =============
 function getSectionDistribution(secId) {
-  // Cuántos estudiantes están en Adec/Elem/Insuf en ESA sección
   let r = 0, a = 0, g = 0;
   STUDENTS.forEach(s => {
     const v = s.sections[secId];
-    if (v >= 75) g++;
-    else if (v >= 50) a++;
-    else r++;
+    if (v >= 75) g++; else if (v >= 50) a++; else r++;
   });
   return { r, a, g };
 }
-
 function buildSectionNarrative(sec, dist) {
   const total = STUDENTS.length;
   const diff = sec.avgE2 - sec.avgE1;
   const pctInsuf = Math.round((dist.r / total) * 100);
   const pctAdec = Math.round((dist.g / total) * 100);
-
   let text = '';
-
-  // Calidad general
-  if (sec.avgE2 >= 75) {
-    text += `<b>Fortaleza del curso.</b> El ${pctAdec}% de los estudiantes domina esta habilidad. `;
-  } else if (sec.avgE2 >= 60) {
+  if (sec.avgE2 >= 75) text += `<b>Fortaleza del curso.</b> El ${pctAdec}% de los estudiantes domina esta habilidad. `;
+  else if (sec.avgE2 >= 60) {
     text += `Nivel <b>elemental</b> en el curso. `;
     if (pctAdec > 35) text += `Aunque ${pctAdec}% ya alcanza nivel adecuado, `;
     if (pctInsuf > 0) text += `${dist.r} estudiante${dist.r === 1 ? '' : 's'} aún está en insuficiente. `;
   } else {
-    text += `<b>Área débil del curso.</b> Solo ${pctAdec}% alcanza nivel adecuado y ${pctInsuf}% está en insuficiente. `;
+    text += `<b>Área débil del curso.</b> Solo ${pctAdec}% alcanza adecuado y ${pctInsuf}% está en insuficiente. `;
   }
-
-  // Tendencia
-  if (diff > 4) {
-    text += `Mejora notable de <b>+${diff} puntos</b> respecto a enero.`;
-  } else if (diff > 0) {
-    text += `Mejora leve de +${diff} puntos respecto a enero.`;
-  } else if (diff === 0) {
-    text += `Sin cambios desde enero.`;
-  } else {
-    text += `Retrocedió ${Math.abs(diff)} puntos respecto a enero, requiere atención.`;
-  }
-
+  if (diff > 4) text += `Mejora notable de <b>+${diff} puntos</b> respecto a enero.`;
+  else if (diff > 0) text += `Mejora leve de +${diff} puntos respecto a enero.`;
+  else if (diff === 0) text += `Sin cambios desde enero.`;
+  else text += `Retrocedió ${Math.abs(diff)} puntos respecto a enero, requiere atención.`;
   return text;
 }
-
 function renderSectionAnalysis() {
   document.getElementById('secGrid').innerHTML = SECTIONS.map(sec => {
     const dist = getSectionDistribution(sec.id);
@@ -933,15 +1132,13 @@ function renderSectionAnalysis() {
     const trendCls = diff > 0 ? 'sec-trend-up' : diff < 0 ? 'sec-trend-down' : 'sec-trend-flat';
     const trendSym = diff > 0 ? '↑' : diff < 0 ? '↓' : '→';
     const letterCls = sec.avgE2 >= 75 ? 'sec-letter-good' : sec.avgE2 >= 60 ? 'sec-letter-mid' : 'sec-letter-bad';
-    const narrative = buildSectionNarrative(sec, dist);
-
     return `
       <div class="sec-analysis">
         <div class="sec-letter ${letterCls}">${sec.id}</div>
         <div class="sec-info">
           <div class="sec-title">${sec.label}</div>
           <div class="sec-subtitle">${sec.desc}</div>
-          <div class="sec-narrative">${narrative}</div>
+          <div class="sec-narrative">${buildSectionNarrative(sec, dist)}</div>
           <div class="sec-mini-dist">
             <div class="dist-seg" style="width: ${(dist.g/total)*100}%; background: var(--green);"></div>
             <div class="dist-seg" style="width: ${(dist.a/total)*100}%; background: var(--amber);"></div>
@@ -962,6 +1159,102 @@ function renderSectionAnalysis() {
   }).join('');
 }
 
+// ============= FLUIDEZ =============
+function renderFluency() {
+  const total = STUDENTS.length;
+
+  // Distribución por calidad
+  const qualityCounts = {};
+  QUALITY_LEVELS.forEach(q => qualityCounts[q.id] = 0);
+  STUDENTS.forEach(s => qualityCounts[s.flu.quality] = (qualityCounts[s.flu.quality] || 0) + 1);
+
+  // Distribución por velocidad
+  const speedCounts = { high: 0, mid: 0, low: 0, vlow: 0 };
+  STUDENTS.forEach(s => speedCounts[speedCategory(s.flu.pcpm)]++);
+
+  // Status: dentro / bajo / muy bajo lo esperado
+  const within = STUDENTS.filter(s => {
+    const q = QUALITY_LEVELS.find(x => x.id === s.flu.quality);
+    return q && q.expected === 'within';
+  }).length;
+  const below = STUDENTS.filter(s => {
+    const q = QUALITY_LEVELS.find(x => x.id === s.flu.quality);
+    return q && q.expected === 'below';
+  }).length;
+  const veryBelow = STUDENTS.filter(s => {
+    const q = QUALITY_LEVELS.find(x => x.id === s.flu.quality);
+    return q && q.expected === 'verybelow';
+  }).length;
+
+  const avgPcpm = Math.round(STUDENTS.reduce((sum, s) => sum + s.flu.pcpm, 0) / total);
+
+  // Narrativa
+  document.getElementById('fluNarrative').innerHTML = `
+    <span class="pos">${within} de ${total} estudiantes</span> están <b>dentro de lo esperado</b>
+    para 4° básico a mitad de año.
+    ${below > 0 ? `<span class="neg">${below}</span> están <b>bajo lo esperado</b> (lectura palabra a palabra).` : ''}
+    ${veryBelow > 0 ? ` <span class="neg">${veryBelow}</span> están <b>muy bajo lo esperado</b> (lectura silábica), requieren refuerzo prioritario.` : ''}
+    El <b>promedio del curso es ${avgPcpm} PCPM</b> (palabras correctas por minuto), categoría
+    <b>${SPEED_LEVELS.find(s => speedCategory(avgPcpm) === s.id).label}</b>.
+  `;
+
+  // Calidad
+  const qMaxCount = Math.max(...Object.values(qualityCounts));
+  document.getElementById('fluQuality').innerHTML = QUALITY_LEVELS.map(q => {
+    const count = qualityCounts[q.id];
+    const pct = Math.round((count / total) * 100);
+    const expectedCls = q.expected === 'verybelow' ? 'expected-vlow' : q.expected === 'below' ? 'expected-low' : '';
+    const barWidth = qMaxCount > 0 ? (count / qMaxCount) * 100 : 0;
+    return `
+      <div class="flu-row ${expectedCls}">
+        <div class="flu-row-label">${q.label}<small>${q.desc}</small></div>
+        <div class="flu-row-count">${count}</div>
+        <div class="flu-row-pct">${pct}%</div>
+        <div class="flu-row-bar-wrap">
+          <div class="flu-row-bar" style="width: ${barWidth}%; background: ${q.color};"></div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Velocidad
+  const sMaxCount = Math.max(...Object.values(speedCounts));
+  document.getElementById('fluSpeed').innerHTML = SPEED_LEVELS.map(sp => {
+    const count = speedCounts[sp.id];
+    const pct = Math.round((count / total) * 100);
+    const expectedCls = sp.expected === 'verybelow' ? 'expected-vlow' : sp.expected === 'below' ? 'expected-low' : '';
+    const barWidth = sMaxCount > 0 ? (count / sMaxCount) * 100 : 0;
+    return `
+      <div class="flu-row ${expectedCls}">
+        <div class="flu-row-label">${sp.label}<small>${sp.range}</small></div>
+        <div class="flu-row-count">${count}</div>
+        <div class="flu-row-pct">${pct}%</div>
+        <div class="flu-row-bar-wrap">
+          <div class="flu-row-bar" style="width: ${barWidth}%; background: ${sp.color};"></div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Resumen strip
+  const pctWithin = Math.round((within / total) * 100);
+  document.getElementById('fluSummary').innerHTML = `
+    <div class="fss-item">
+      <div class="fss-label">Dentro de lo esperado</div>
+      <div class="fss-value" style="color: var(--green);">${within}<small> / ${total}</small></div>
+      <div class="fss-meta">${pctWithin}% del curso · 4° básico mitad de año</div>
+    </div>
+    <div class="fss-item">
+      <div class="fss-label">Requieren refuerzo</div>
+      <div class="fss-value" style="color: var(--amber);">${below + veryBelow}<small> / ${total}</small></div>
+      <div class="fss-meta">${below} bajo · ${veryBelow} muy bajo lo esperado</div>
+    </div>
+    <div class="fss-item">
+      <div class="fss-label">PCPM promedio</div>
+      <div class="fss-value">${avgPcpm}<small> pcpm</small></div>
+      <div class="fss-meta">Texto: Paseo a la montaña · 115 palabras</div>
+    </div>
+  `;
+}
+
 // ============= TABLA ESTUDIANTES =============
 function renderStudents() {
   const sorted = [...STUDENTS].sort((a, b) => a.E2.score - b.E2.score);
@@ -970,12 +1263,15 @@ function renderStudents() {
     const moveSym = move === 'up' ? '↑' : move === 'down' ? '↓' : '→';
     const moveCls = move === 'up' ? 'move-pill-up' : move === 'down' ? 'move-pill-down' : 'move-pill-flat';
     const moveTxt = move === 'up' ? 'Subió' : move === 'down' ? 'Bajó' : 'Mantuvo';
+    const q = QUALITY_LEVELS.find(x => x.id === s.flu.quality);
     return `
       <tr onclick="openStudent('${s.name.replace(/'/g, "\\'")}')">
         <td><span class="stu-name">${s.name}</span></td>
         <td><span class="level level-${s.E2.lvl}">${LEVEL_LABEL[s.E2.lvl]}</span></td>
         <td><span class="move-pill ${moveCls}">${moveSym} ${moveTxt}</span></td>
         <td><span class="stu-score">${s.E2.score}</span></td>
+        <td><span class="quality-pill q-${s.flu.quality}">${q.label}</span></td>
+        <td><span class="stu-score">${s.flu.pcpm}</span></td>
         <td><svg class="row-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></td>
       </tr>`;
   }).join('');
@@ -986,23 +1282,17 @@ function buildStudentNarrative(s) {
   const move = getMovement(s);
   const change = s.E2.score - s.E1.score;
   const courseAvg = 67;
-
-  // Sección más fuerte y débil
   const sortedSecs = SECTIONS.map(sec => ({ ...sec, score: s.sections[sec.id] }));
   const best = sortedSecs.reduce((a, b) => a.score > b.score ? a : b);
   const worst = sortedSecs.reduce((a, b) => a.score < b.score ? a : b);
-
-  // Diff vs course avg
   const vsAvg = s.E2.score - courseAvg;
   const vsAvgTxt = vsAvg >= 5 ? `<b>${vsAvg} puntos sobre</b> el promedio del curso`
     : vsAvg <= -5 ? `<b>${Math.abs(vsAvg)} puntos bajo</b> el promedio del curso`
     : `cerca del promedio del curso`;
-
   let moveTxt;
   if (move === 'up') moveTxt = `<span class="pos">subió de nivel</span> desde la evaluación de enero`;
   else if (move === 'down') moveTxt = `<span class="neg">bajó de nivel</span> desde la evaluación de enero`;
   else moveTxt = `se mantuvo en el mismo nivel desde enero`;
-
   return `
     Está en nivel <b>${LEVEL_LABEL[s.E2.lvl]}</b> (puntaje ${s.E2.score}/100), ${vsAvgTxt}.
     En esta evaluación ${moveTxt}, ${change >= 0 ? 'con un avance de ' : 'con un retroceso de '}${change >= 0 ? '+' : ''}${change} puntos.
@@ -1015,7 +1305,6 @@ function openStudent(name) {
   const s = STUDENTS.find(x => x.name === name);
   if (!s) return;
   showView('student');
-
   const initials = name.split(' ').slice(0, 2).map(n => n[0]).join('');
 
   // Trayectoria
@@ -1025,11 +1314,8 @@ function openStudent(name) {
     { label: 'Eval 2', when: 'Abril (actual)', score: s.E2.score, applied: true },
     { label: 'Eval 3', when: 'Julio (próxima)', score: e3Estimate, applied: false }
   ];
-
   const trajRows = trajectory.map(t => {
-    const color = t.applied
-      ? (t.score >= 75 ? 'var(--green)' : t.score >= 50 ? 'var(--amber)' : 'var(--red)')
-      : 'var(--text-3)';
+    const color = t.applied ? (t.score >= 75 ? 'var(--green)' : t.score >= 50 ? 'var(--amber)' : 'var(--red)') : 'var(--text-3)';
     return `
       <div class="traj-row" style="${t.applied ? '' : 'opacity: 0.55;'}">
         <div class="traj-label"><b>${t.label}</b>${t.when}</div>
@@ -1042,7 +1328,7 @@ function openStudent(name) {
       </div>`;
   }).join('');
 
-  // Secciones con comparación al promedio del curso
+  // Secciones con comparación al curso
   const stuSecsHtml = SECTIONS.map(sec => {
     const v = s.sections[sec.id];
     const avg = sec.avgE2;
@@ -1060,9 +1346,7 @@ function openStudent(name) {
           </div>
         </div>
         <div class="stu-sec-bars">
-          <div class="stu-sec-bar-track">
-            <div class="stu-sec-bar-fill" style="width: ${v}%; background: ${color};"></div>
-          </div>
+          <div class="stu-sec-bar-track"><div class="stu-sec-bar-fill" style="width: ${v}%; background: ${color};"></div></div>
           <div class="stu-sec-avg-marker" style="left: ${avg}%;"></div>
         </div>
         <div style="position: relative; height: 14px; margin-top: 2px;">
@@ -1071,11 +1355,30 @@ function openStudent(name) {
       </div>`;
   }).join('');
 
+  // Fluidez del estudiante
+  const q = QUALITY_LEVELS.find(x => x.id === s.flu.quality);
+  const speedId = speedCategory(s.flu.pcpm);
+  const speed = SPEED_LEVELS.find(x => x.id === speedId);
+
+  // Status combinado: si calidad o velocidad están bajo lo esperado
+  const qStatus = q.expected;
+  const sStatus = speed.expected;
+  let overallStatus, statusText;
+  if (qStatus === 'verybelow' || sStatus === 'verybelow') {
+    overallStatus = 'bad';
+    statusText = `<b>Muy bajo lo esperado</b> para 4° básico a mitad de año. Requiere refuerzo prioritario en lectura oral.`;
+  } else if (qStatus === 'below' || sStatus === 'below') {
+    overallStatus = 'warn';
+    statusText = `<b>Bajo lo esperado.</b> Su lectura es <b>${q.label.toLowerCase()}</b> a ${s.flu.pcpm} PCPM. Necesita ejercicios de fluidez para llegar al nivel de unidades cortas.`;
+  } else {
+    overallStatus = 'ok';
+    statusText = `<b>Dentro de lo esperado</b> para 4° básico a mitad de año. ${q.label} a ${s.flu.pcpm} PCPM (categoría ${speed.label}).`;
+  }
+
   // Fortalezas / debilidades
   const sortedSecs = SECTIONS.map(sec => ({ ...sec, score: s.sections[sec.id] })).sort((a, b) => b.score - a.score);
   const top = sortedSecs[0];
   const bottom = sortedSecs[sortedSecs.length - 1];
-
   const lvlLabel = LEVEL_LABEL[s.E2.lvl];
 
   document.getElementById('studentContent').innerHTML = `
@@ -1087,7 +1390,6 @@ function openStudent(name) {
       </div>
     </div>
 
-    <!-- Resumen narrativo -->
     <div class="diag" style="margin-top: 0; margin-bottom: 28px;">
       <div class="diag-label">Diagnóstico individual</div>
       <div class="diag-text">${buildStudentNarrative(s)}</div>
@@ -1096,32 +1398,49 @@ function openStudent(name) {
     <div class="student-grid">
       <div>
         <section class="section">
-          <div class="section-head">
-            <div class="section-title">Trayectoria del semestre</div>
-          </div>
+          <div class="section-head"><div class="section-title">Trayectoria del semestre</div></div>
           <div class="card">
-            <div style="font-size: 12.5px; color: var(--text-2); margin-bottom: 16px;">
-              Evolución del puntaje a través de las evaluaciones diagnósticas. La eval 3 es proyección.
-            </div>
+            <div style="font-size: 12.5px; color: var(--text-2); margin-bottom: 16px;">Evolución a través de las evaluaciones diagnósticas. Eval 3 es proyección.</div>
             ${trajRows}
           </div>
         </section>
 
         <section class="section">
-          <div class="section-head">
-            <div class="section-title">Desempeño por habilidad · vs. promedio del curso</div>
-          </div>
-          <div class="card">
-            ${stuSecsHtml}
+          <div class="section-head"><div class="section-title">Desempeño por habilidad · vs. promedio del curso</div></div>
+          <div class="card">${stuSecsHtml}</div>
+        </section>
+
+        <!-- Fluidez del estudiante -->
+        <section class="section">
+          <div class="section-head"><div class="section-title">Fluidez lectora</div></div>
+          <div class="stu-fluency">
+            <div class="stu-flu-grid">
+              <div>
+                <div class="stu-flu-block-label">Calidad de lectura</div>
+                <div class="stu-flu-quality" style="color: ${q.color};">${q.label}</div>
+                <div class="stu-flu-meta">${q.desc}</div>
+              </div>
+              <div>
+                <div class="stu-flu-block-label">Velocidad</div>
+                <div class="stu-flu-pcpm">${s.flu.pcpm} <small>PCPM</small></div>
+                <div class="stu-flu-meta">Categoría: <b style="color: ${speed.color};">${speed.label}</b> (${speed.range})</div>
+              </div>
+            </div>
+
+            <div class="stu-flu-status ${overallStatus}">${statusText}</div>
+
+            <div class="stu-flu-stats">
+              <div><span>Tiempo</span><b>${s.flu.seconds} s</b></div>
+              <div><span>Errores</span><b>${s.flu.errors}</b></div>
+              <div><span>Texto leído</span><b>Paseo a la montaña · 115 palabras</b></div>
+            </div>
           </div>
         </section>
       </div>
 
       <div>
         <section class="section">
-          <div class="section-head">
-            <div class="section-title">Fortaleza y área a fortalecer</div>
-          </div>
+          <div class="section-head"><div class="section-title">Fortaleza y área a fortalecer</div></div>
           <div class="strength-box sb-pos">
             <div class="sb-label">Fortaleza</div>
             <div class="sb-text"><b>${top.label}</b> (${top.score}/100). ${top.score >= 85 ? 'Domina muy bien esta habilidad.' : top.score >= 75 ? 'Buen desempeño.' : 'Es su mejor área aunque puede seguir mejorando.'}</div>
@@ -1133,13 +1452,9 @@ function openStudent(name) {
         </section>
 
         <section class="section">
-          <div class="section-head">
-            <div class="section-title">Cambio del semestre</div>
-          </div>
+          <div class="section-head"><div class="section-title">Cambio del semestre</div></div>
           <div class="card" style="font-size: 13.5px; line-height: 1.6;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px;">
-              <span style="color: var(--text-3); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Eval 1 → Eval 2</span>
-            </div>
+            <div style="color: var(--text-3); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-bottom: 10px;">Eval 1 → Eval 2</div>
             <div style="font-size: 26px; font-weight: 700; letter-spacing: -0.025em; line-height: 1;">
               ${s.E1.score} → ${s.E2.score}
               <span style="font-size: 16px; color: ${s.E2.score - s.E1.score > 0 ? 'var(--green)' : s.E2.score - s.E1.score < 0 ? 'var(--red)' : 'var(--text-3)'}; font-weight: 600; margin-left: 6px;">
