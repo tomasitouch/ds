@@ -103,18 +103,43 @@
 
   .main { max-width: 1000px; margin: 0 auto; padding: 56px 32px 80px; }
 
+  /* Header */
   .greeting h2 {
-    font-size: 26px; font-weight: 700;
-    letter-spacing: -0.03em; margin-bottom: 4px;
+    font-size: 28px; font-weight: 700;
+    letter-spacing: -0.03em; margin-bottom: 6px;
   }
-  .greeting p { color: var(--text-2); font-size: 14px; }
+  .greeting p { color: var(--text-2); font-size: 14.5px; line-height: 1.6; }
   .greeting p b { color: var(--text); font-weight: 600; }
+
+  /* Diagnostic summary */
+  .diag {
+    margin-top: 32px;
+    padding: 26px 30px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    border-left: 4px solid var(--accent);
+  }
+  .diag-label {
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--accent); margin-bottom: 10px;
+  }
+  .diag-text {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--text);
+    letter-spacing: -0.005em;
+  }
+  .diag-text b { font-weight: 600; }
+  .diag-text .pos { color: var(--green); font-weight: 600; }
+  .diag-text .neg { color: var(--red); font-weight: 600; }
 
   /* Stats */
   .stats {
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
     margin: 36px 0 0;
-    padding: 22px 0;
+    padding: 24px 0;
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
   }
@@ -125,7 +150,7 @@
     margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em;
   }
   .stat-value {
-    font-size: 24px; font-weight: 700;
+    font-size: 26px; font-weight: 700;
     letter-spacing: -0.025em; line-height: 1;
   }
   .stat-meta { font-size: 11.5px; color: var(--text-2); margin-top: 5px; }
@@ -133,64 +158,54 @@
   .stat-value-down { color: var(--red); }
 
   /* Sections */
-  .section { margin-bottom: 44px; }
+  .section { margin-bottom: 52px; }
   .section-head {
     display: flex; justify-content: space-between; align-items: baseline;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
   .section-title {
     font-size: 11.5px; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.06em;
+    text-transform: uppercase; letter-spacing: 0.07em;
     color: var(--text-3);
   }
   .card {
     background: var(--panel);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 22px 24px;
+    border-radius: 12px;
+    padding: 24px 26px;
   }
 
   /* Distribution */
   .dist {
-    display: flex; height: 10px;
-    border-radius: 5px; overflow: hidden;
-    background: #F0F0F0; margin-bottom: 12px;
+    display: flex; height: 12px;
+    border-radius: 6px; overflow: hidden;
+    background: #F0F0F0; margin-bottom: 14px;
   }
   .dist-seg { height: 100%; }
-  .dist-leg { display: flex; gap: 22px; font-size: 12.5px; color: var(--text-2); flex-wrap: wrap; }
+  .dist-leg { display: flex; gap: 22px; font-size: 13px; color: var(--text-2); flex-wrap: wrap; }
   .dist-leg-item { display: flex; align-items: center; gap: 7px; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; }
   .dot-g { background: var(--green); }
   .dot-a { background: var(--amber); }
   .dot-r { background: var(--red); }
   .dist-leg-item b { color: var(--text); font-weight: 600; }
 
-  .insight {
-    margin-top: 16px; padding-top: 16px;
-    border-top: 1px solid var(--border);
-    font-size: 13px; color: var(--text-2); line-height: 1.6;
-  }
-  .insight b { color: var(--text); font-weight: 600; }
-
   /* Eval chart */
-  .eval-chart {
-    margin-top: 18px; padding-top: 18px;
-    border-top: 1px solid var(--border);
-  }
+  .eval-chart { margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--border); }
   .eval-chart-label {
     font-size: 11.5px; color: var(--text-3);
     text-transform: uppercase; letter-spacing: 0.05em;
-    font-weight: 600; margin-bottom: 12px;
+    font-weight: 600; margin-bottom: 14px;
   }
   .eval-bars {
     display: flex; align-items: flex-end;
-    gap: 16px; height: 90px; padding: 0 10px;
+    gap: 16px; height: 100px; padding: 0 10px;
   }
   .eval-col { flex: 1; display: flex; flex-direction: column; align-items: center; }
   .eval-bar-wrap {
     width: 100%; flex: 1;
     display: flex; flex-direction: column; justify-content: flex-end;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
   .eval-bar {
     width: 100%; background: var(--accent-soft);
@@ -205,53 +220,48 @@
     border-bottom: 2px dashed var(--text-3);
   }
   .eval-bar-val {
-    position: absolute; top: -18px; left: 50%;
+    position: absolute; top: -22px; left: 50%;
     transform: translateX(-50%);
-    font-size: 12px; font-weight: 700;
+    font-size: 13px; font-weight: 700;
     color: var(--text);
   }
   .eval-bar.future .eval-bar-val { color: var(--text-3); }
   .eval-col-label {
-    font-size: 10.5px; color: var(--text-3);
+    font-size: 11px; color: var(--text-3);
     font-weight: 500; text-align: center;
   }
 
   /* Movements */
-  .moves {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
-  }
+  .moves { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   .move-card {
-    padding: 18px 20px;
+    padding: 22px 22px 18px;
     background: var(--panel);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     border-top: 3px solid;
   }
   .move-up { border-top-color: var(--green); }
   .move-flat { border-top-color: var(--text-3); }
   .move-down { border-top-color: var(--red); }
-  .move-head {
-    display: flex; justify-content: space-between; align-items: baseline;
-    margin-bottom: 10px;
-  }
+  .move-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
   .move-name {
-    font-size: 13px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.05em;
+    font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
   }
   .move-up .move-name { color: var(--green); }
   .move-flat .move-name { color: var(--text-2); }
   .move-down .move-name { color: var(--red); }
   .move-count {
-    font-size: 28px; font-weight: 700; letter-spacing: -0.03em; line-height: 1;
-    margin-bottom: 8px;
+    font-size: 32px; font-weight: 700; letter-spacing: -0.03em; line-height: 1;
+    margin-bottom: 14px;
   }
   .move-students {
-    font-size: 12px; line-height: 1.7; color: var(--text);
-    border-top: 1px solid var(--border); padding-top: 10px; margin-top: 4px;
+    font-size: 12px; line-height: 1.7;
+    border-top: 1px solid var(--border); padding-top: 12px;
   }
   .move-student {
     display: inline-block;
-    padding: 2px 7px;
+    padding: 2px 8px;
     background: var(--bg);
     border-radius: 4px;
     margin: 2px 3px 2px 0;
@@ -260,70 +270,92 @@
     transition: background 0.12s;
   }
   .move-student:hover { background: var(--accent-soft); color: var(--accent); }
-  .move-from-to {
-    font-size: 10.5px;
-    color: var(--text-3);
-    margin-top: 6px;
-  }
 
-  /* Section breakdown */
-  .sec-grid { display: grid; gap: 0; }
-  .sec-row {
+  /* Section analysis (5 habilidades) */
+  .sec-analysis-grid { display: grid; gap: 12px; }
+  .sec-analysis {
+    padding: 22px 26px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
     display: grid;
-    grid-template-columns: 200px 1fr 80px 70px;
-    gap: 14px;
+    grid-template-columns: 80px 1fr auto;
+    gap: 22px;
     align-items: center;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--border);
   }
-  .sec-row:last-child { border-bottom: none; }
-  .sec-name { font-size: 13.5px; font-weight: 600; }
-  .sec-name small {
-    display: block;
-    font-size: 11.5px; color: var(--text-3);
-    font-weight: 400; margin-top: 2px;
+  .sec-letter {
+    width: 60px; height: 60px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 700;
+    letter-spacing: -0.02em;
   }
-  .sec-bar-wrap {
-    height: 8px; background: #F0F0F0;
-    border-radius: 4px; overflow: hidden;
+  .sec-letter-good { background: var(--green-soft); color: var(--green); }
+  .sec-letter-mid { background: var(--amber-soft); color: var(--amber); }
+  .sec-letter-bad { background: var(--red-soft); color: var(--red); }
+  .sec-info { min-width: 0; }
+  .sec-title {
+    font-size: 14.5px; font-weight: 700;
+    letter-spacing: -0.015em; margin-bottom: 3px;
   }
-  .sec-bar { height: 100%; transition: width 0.3s; }
-  .sec-score {
-    font-size: 14px; font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    text-align: right;
+  .sec-subtitle {
+    font-size: 12.5px; color: var(--text-3);
+    margin-bottom: 10px;
+  }
+  .sec-narrative {
+    font-size: 13.5px; line-height: 1.55;
+    color: var(--text-2);
+  }
+  .sec-narrative b { color: var(--text); font-weight: 600; }
+  .sec-metrics { text-align: right; }
+  .sec-score-big {
+    font-size: 24px; font-weight: 700;
+    letter-spacing: -0.025em; line-height: 1;
+  }
+  .sec-score-meta {
+    font-size: 11.5px; color: var(--text-3); margin-top: 4px;
   }
   .sec-trend {
+    margin-top: 8px; display: inline-block;
     font-size: 11.5px; font-weight: 600;
-    text-align: right;
-    padding: 2px 8px;
+    padding: 2px 9px;
     border-radius: 11px;
   }
   .sec-trend-up { background: var(--green-soft); color: var(--green); }
   .sec-trend-down { background: var(--red-soft); color: var(--red); }
   .sec-trend-flat { background: var(--bg); color: var(--text-3); }
 
+  /* Mini distribution within a section */
+  .sec-mini-dist {
+    display: flex; height: 5px;
+    border-radius: 3px; overflow: hidden;
+    background: #F0F0F0;
+    margin-top: 10px; max-width: 320px;
+  }
+  .sec-mini-dist .dist-seg { height: 100%; }
+  .sec-mini-counts {
+    display: flex; gap: 14px;
+    margin-top: 6px;
+    font-size: 11.5px; color: var(--text-2);
+  }
+  .sec-mini-counts span { display: inline-flex; align-items: center; gap: 5px; }
+
   /* Students table */
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   th {
-    text-align: left;
-    font-weight: 500;
+    text-align: left; font-weight: 500;
     color: var(--text-3);
-    padding: 10px 10px;
+    padding: 11px 12px;
     font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    text-transform: uppercase; letter-spacing: 0.05em;
     border-bottom: 1px solid var(--border);
     background: var(--bg);
   }
-  th:first-child { padding-left: 22px; }
-  th:last-child { padding-right: 22px; text-align: right; }
-  td {
-    padding: 12px 10px;
-    border-bottom: 1px solid var(--border);
-  }
-  td:first-child { padding-left: 22px; }
-  td:last-child { padding-right: 22px; text-align: right; }
+  th:first-child { padding-left: 24px; }
+  th:last-child { padding-right: 24px; text-align: right; }
+  td { padding: 13px 12px; border-bottom: 1px solid var(--border); }
+  td:first-child { padding-left: 24px; }
+  td:last-child { padding-right: 24px; text-align: right; }
   tbody tr { transition: background 0.1s; cursor: pointer; }
   tbody tr:hover { background: var(--bg); }
   tbody tr:last-child td { border-bottom: none; }
@@ -334,7 +366,6 @@
     padding: 2.5px 9px;
     font-size: 11px; font-weight: 600;
     border-radius: 11px;
-    text-align: center;
   }
   .level-r { background: var(--red-soft); color: var(--red); }
   .level-a { background: var(--amber-soft); color: var(--amber); }
@@ -350,7 +381,7 @@
   .move-pill-flat { background: var(--bg); color: var(--text-3); }
   .stu-score {
     font-variant-numeric: tabular-nums;
-    font-weight: 700; font-size: 13.5px; text-align: right;
+    font-weight: 700; font-size: 14px; text-align: right;
   }
   .row-arrow { color: var(--text-3); }
 
@@ -369,32 +400,29 @@
     transition: all 0.12s;
   }
   .detail-back:hover { color: var(--text); border-color: var(--text); }
-
   .student-header {
     display: flex; gap: 18px; align-items: center;
     margin-bottom: 28px;
   }
   .student-avatar {
-    width: 56px; height: 56px;
+    width: 60px; height: 60px;
     border-radius: 50%;
     background: linear-gradient(135deg, #8B5CF6, #3B82F6);
     color: #fff;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 18px;
+    font-weight: 700; font-size: 20px;
     flex-shrink: 0;
   }
   .student-name-big {
-    font-size: 22px; font-weight: 700;
+    font-size: 24px; font-weight: 700;
     letter-spacing: -0.025em; margin-bottom: 4px;
   }
-  .student-meta-big { color: var(--text-2); font-size: 13.5px; }
+  .student-meta-big { color: var(--text-2); font-size: 14px; }
 
-  .student-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 14px; }
-
-  .trajectory { padding: 6px 0; }
+  /* Trayectoria */
   .traj-row {
     display: grid;
-    grid-template-columns: 100px 1fr 60px;
+    grid-template-columns: 110px 1fr 60px;
     gap: 14px; align-items: center;
     padding: 14px 0;
     border-bottom: 1px solid var(--border);
@@ -427,6 +455,69 @@
     text-align: right;
   }
 
+  /* Student section bars (with course avg) */
+  .stu-sec-row {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .stu-sec-row:last-child { border-bottom: none; }
+  .stu-sec-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .stu-sec-name { font-size: 13.5px; font-weight: 600; }
+  .stu-sec-name small { font-weight: 400; color: var(--text-3); margin-left: 6px; font-size: 11.5px; }
+  .stu-sec-score-cell {
+    display: flex; align-items: baseline; gap: 8px;
+  }
+  .stu-sec-score-num {
+    font-size: 16px; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .stu-sec-vs {
+    font-size: 11px; padding: 1px 7px;
+    border-radius: 10px; font-weight: 600;
+  }
+  .stu-sec-vs-up { background: var(--green-soft); color: var(--green); }
+  .stu-sec-vs-down { background: var(--red-soft); color: var(--red); }
+  .stu-sec-vs-flat { background: var(--bg); color: var(--text-3); }
+  .stu-sec-bars { position: relative; }
+  .stu-sec-bar-track {
+    height: 8px; background: #F0F0F0;
+    border-radius: 4px; overflow: hidden; position: relative;
+  }
+  .stu-sec-bar-fill { height: 100%; border-radius: 4px; }
+  .stu-sec-avg-marker {
+    position: absolute; top: -2px; bottom: -2px;
+    width: 2px; background: var(--text);
+  }
+  .stu-sec-avg-label {
+    position: absolute; top: 14px;
+    transform: translateX(-50%);
+    font-size: 10px; color: var(--text-3);
+    white-space: nowrap;
+  }
+
+  /* Strengths / weaknesses */
+  .strength-box {
+    padding: 14px 16px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  .strength-box:last-child { margin-bottom: 0; }
+  .sb-pos { background: var(--green-soft); border-left: 3px solid var(--green); }
+  .sb-neg { background: var(--red-soft); border-left: 3px solid var(--red); }
+  .sb-label {
+    font-size: 10.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    margin-bottom: 4px;
+  }
+  .sb-pos .sb-label { color: var(--green); }
+  .sb-neg .sb-label { color: var(--red); }
+  .sb-text { font-size: 13.5px; color: var(--text); line-height: 1.5; }
+
+  .student-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 14px; }
+
   /* Beta */
   .beta {
     margin-top: 56px;
@@ -452,20 +543,24 @@
     .topbar-user .role { display: none; }
     .main { padding: 36px 22px 64px; }
     .greeting h2 { font-size: 22px; }
+    .diag { padding: 22px 24px; }
+    .diag-text { font-size: 14.5px; }
     .stats { grid-template-columns: repeat(2, 1fr); padding: 18px 0; }
     .stat { padding: 8px 18px; }
     .stat:nth-child(2) { border-right: none; }
     .stat:nth-child(3), .stat:nth-child(4) { border-top: 1px solid var(--border); padding-top: 18px; }
     .moves { grid-template-columns: 1fr; }
     .student-grid { grid-template-columns: 1fr; }
-    .sec-row { grid-template-columns: 130px 1fr 50px 60px; gap: 10px; }
+    .sec-analysis { grid-template-columns: 56px 1fr; gap: 14px; }
+    .sec-letter { width: 48px; height: 48px; font-size: 22px; border-radius: 10px; }
+    .sec-metrics { grid-column: 1 / -1; text-align: left; padding-top: 8px; border-top: 1px solid var(--border); display: flex; align-items: baseline; gap: 16px; }
+    .sec-metrics > div { display: inline-block; }
   }
   @media (max-width: 520px) {
     .main { padding: 28px 18px 48px; }
     .stats { grid-template-columns: 1fr; }
     .stat { border-right: none; border-bottom: 1px solid var(--border); padding: 14px 0; }
     .stat:last-child { border-bottom: none; }
-    .sec-row { grid-template-columns: 1fr; gap: 6px; }
   }
 </style>
 </head>
@@ -511,9 +606,16 @@
 
     <!-- DASHBOARD -->
     <div id="dashView">
+
       <div class="greeting">
-        <h2>Reporte del curso · Abril 2026</h2>
-        <p>Resultados de la <b>segunda evaluación diagnóstica del semestre</b> aplicada el 14 de abril, procesados por el equipo Edutek. Próximo informe: <b>15 de julio</b>.</p>
+        <h2>4° Básico B</h2>
+        <p>Reporte de la <b>segunda evaluación diagnóstica del semestre</b> · Aplicada el 14 de abril 2026 · Procesada por el equipo Edutek · Próximo informe: 15 de julio.</p>
+      </div>
+
+      <!-- Resumen diagnóstico narrativo -->
+      <div class="diag">
+        <div class="diag-label">Resumen diagnóstico</div>
+        <div class="diag-text" id="diagText"></div>
       </div>
 
       <div class="stats">
@@ -539,8 +641,8 @@
         </div>
       </div>
 
-      <!-- Estado del curso -->
-      <section class="section" style="margin-top: 36px;">
+      <!-- Estado del curso (distribución + evolución) -->
+      <section class="section" style="margin-top: 40px;">
         <div class="section-head">
           <div class="section-title">Estado del curso</div>
         </div>
@@ -555,18 +657,15 @@
             <div class="dist-leg-item"><span class="dot dot-a"></span> Elemental <b>11</b></div>
             <div class="dist-leg-item"><span class="dot dot-r"></span> Insuficiente <b>6</b></div>
           </div>
-          <div class="insight">
-            La sección más débil sigue siendo <b>D · Escritura (58/100)</b>. La más fuerte es <b>E · Reconocimiento de letras (78/100)</b>. El curso subió 4 puntos de promedio respecto a la evaluación de enero.
-          </div>
 
           <div class="eval-chart">
-            <div class="eval-chart-label">Evolución del curso · 3 evaluaciones del semestre</div>
+            <div class="eval-chart-label">Evolución del promedio · 3 evaluaciones del semestre</div>
             <div class="eval-bars" id="evalBars"></div>
           </div>
         </div>
       </section>
 
-      <!-- Movimientos entre evaluaciones -->
+      <!-- Movimientos -->
       <section class="section">
         <div class="section-head">
           <div class="section-title">Movimientos desde la evaluación anterior</div>
@@ -574,17 +673,15 @@
         <div class="moves" id="movesGrid"></div>
       </section>
 
-      <!-- Desempeño por sección -->
+      <!-- Análisis por habilidad -->
       <section class="section">
         <div class="section-head">
-          <div class="section-title">Desempeño por sección · Promedio del curso</div>
+          <div class="section-title">Análisis por habilidad</div>
         </div>
-        <div class="card">
-          <div class="sec-grid" id="secGrid"></div>
-        </div>
+        <div class="sec-analysis-grid" id="secGrid"></div>
       </section>
 
-      <!-- Tabla estudiantes -->
+      <!-- Estudiantes -->
       <section class="section">
         <div class="section-head">
           <div class="section-title">Estudiantes · 30 en total</div>
@@ -595,7 +692,6 @@
               <tr>
                 <th>Estudiante</th>
                 <th>Nivel actual</th>
-                <th>Nivel anterior</th>
                 <th>Movimiento</th>
                 <th>Puntaje</th>
                 <th></th>
@@ -616,7 +712,7 @@
     <div class="student-view" id="studentView">
       <button class="detail-back" onclick="closeStudent()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-        Volver
+        Volver al curso
       </button>
       <div id="studentContent"></div>
     </div>
@@ -659,11 +755,11 @@ const STUDENTS = [
 ];
 
 const SECTIONS = [
-  { id: 'A', label: 'Lectura de palabras y oraciones', desc: 'Decodificación de palabras simples y compuestas, fluidez de lectura básica.', avgE1: 68, avgE2: 72 },
-  { id: 'B', label: 'Comprensión lectora',             desc: 'Comprensión literal e inferencial de textos breves, vocabulario en contexto.', avgE1: 60, avgE2: 65 },
-  { id: 'C', label: 'Comprensión oral',                desc: 'Escucha activa de textos orales y respuesta a preguntas literales e inferenciales.', avgE1: 65, avgE2: 70 },
-  { id: 'D', label: 'Escritura',                       desc: 'Producción escrita de textos breves con coherencia, cohesión y ortografía adecuada.', avgE1: 53, avgE2: 58 },
-  { id: 'E', label: 'Reconocimiento de letras',        desc: 'Identificación del sonido y nombre de cada letra del alfabeto.', avgE1: 75, avgE2: 78 }
+  { id: 'A', label: 'Lectura de palabras y oraciones', desc: 'Decodificación de palabras y fluidez de lectura básica.', avgE1: 68, avgE2: 72 },
+  { id: 'B', label: 'Comprensión lectora',             desc: 'Comprensión literal e inferencial de textos breves.',     avgE1: 60, avgE2: 65 },
+  { id: 'C', label: 'Comprensión oral',                desc: 'Escucha activa y comprensión de textos orales.',          avgE1: 65, avgE2: 70 },
+  { id: 'D', label: 'Escritura',                       desc: 'Producción escrita con coherencia, cohesión y ortografía.', avgE1: 53, avgE2: 58 },
+  { id: 'E', label: 'Reconocimiento de letras',        desc: 'Identificación del sonido y nombre de cada letra.',       avgE1: 75, avgE2: 78 }
 ];
 
 const EVAL_HISTORY = [
@@ -675,13 +771,15 @@ const EVAL_HISTORY = [
 const LEVEL_LABEL = { r: 'Insuficiente', a: 'Elemental', g: 'Adecuado' };
 const LEVEL_RANK = { r: 1, a: 2, g: 3 };
 
+// ============= LOGIN / VIEW =============
 function enterApp() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('app').classList.add('active');
   setTimeout(() => {
+    renderDiagnosticSummary();
     renderEvalChart();
     renderMovements();
-    renderSections();
+    renderSectionAnalysis();
     renderStudents();
   }, 20);
 }
@@ -696,6 +794,41 @@ function showView(view) {
   document.getElementById('studentView').classList.toggle('active', view === 'student');
 }
 
+function getMovement(s) {
+  const r1 = LEVEL_RANK[s.E1.lvl], r2 = LEVEL_RANK[s.E2.lvl];
+  if (r2 > r1) return 'up';
+  if (r2 < r1) return 'down';
+  return 'flat';
+}
+
+// ============= RESUMEN DIAGNÓSTICO =============
+function renderDiagnosticSummary() {
+  const total = STUDENTS.length;
+  const adec = STUDENTS.filter(s => s.E2.lvl === 'g').length;
+  const elem = STUDENTS.filter(s => s.E2.lvl === 'a').length;
+  const insuf = STUDENTS.filter(s => s.E2.lvl === 'r').length;
+  const moveUp = STUDENTS.filter(s => getMovement(s) === 'up').length;
+  const moveDown = STUDENTS.filter(s => getMovement(s) === 'down').length;
+
+  // Sección más fuerte y débil
+  const bestSec = SECTIONS.reduce((a, b) => a.avgE2 > b.avgE2 ? a : b);
+  const worstSec = SECTIONS.reduce((a, b) => a.avgE2 < b.avgE2 ? a : b);
+
+  const text = `
+    En la <b>segunda evaluación del semestre</b>, tu curso obtuvo un promedio de <b>67 / 100</b>,
+    <span class="pos">+4 puntos</span> respecto a enero.
+    De los ${total} estudiantes, <b>${adec} están en nivel Adecuado</b>, ${elem} en Elemental y ${insuf} en Insuficiente.
+    Desde la evaluación anterior, <span class="pos">${moveUp} estudiante${moveUp === 1 ? '' : 's'} subió de nivel</span>
+    y <span class="neg">${moveDown} bajó de nivel</span>.
+    La habilidad más fuerte del curso es <b>${bestSec.label} (${bestSec.avgE2}/100)</b>
+    y la más débil es <b>${worstSec.label} (${worstSec.avgE2}/100)</b>,
+    que sigue siendo el área que requiere atención focalizada.
+  `;
+
+  document.getElementById('diagText').innerHTML = text;
+}
+
+// ============= EVAL CHART =============
 function renderEvalChart() {
   const c = document.getElementById('evalBars');
   c.innerHTML = EVAL_HISTORY.map(ev => {
@@ -712,13 +845,7 @@ function renderEvalChart() {
   }).join('');
 }
 
-function getMovement(s) {
-  const r1 = LEVEL_RANK[s.E1.lvl], r2 = LEVEL_RANK[s.E2.lvl];
-  if (r2 > r1) return 'up';
-  if (r2 < r1) return 'down';
-  return 'flat';
-}
-
+// ============= MOVIMIENTOS =============
 function renderMovements() {
   const grouped = { up: [], flat: [], down: [] };
   STUDENTS.forEach(s => grouped[getMovement(s)].push(s));
@@ -731,46 +858,111 @@ function renderMovements() {
     <div class="move-card move-up">
       <div class="move-head">
         <div class="move-name">↑ Subieron de nivel</div>
-        <div class="move-count">${grouped.up.length}</div>
       </div>
+      <div class="move-count">${grouped.up.length}</div>
       <div class="move-students">${renderChips(grouped.up) || '<span style="color: var(--text-3);">—</span>'}</div>
-      <div class="move-from-to">${grouped.up.length} estudiante${grouped.up.length === 1 ? '' : 's'} mejoró de nivel respecto a enero</div>
     </div>
     <div class="move-card move-flat">
       <div class="move-head">
         <div class="move-name">→ Se mantuvieron</div>
-        <div class="move-count">${grouped.flat.length}</div>
       </div>
+      <div class="move-count">${grouped.flat.length}</div>
       <div class="move-students">${renderChips(grouped.flat) || '<span style="color: var(--text-3);">—</span>'}</div>
-      <div class="move-from-to">${grouped.flat.length} estudiantes en el mismo nivel que la evaluación anterior</div>
     </div>
     <div class="move-card move-down">
       <div class="move-head">
         <div class="move-name">↓ Bajaron de nivel</div>
-        <div class="move-count">${grouped.down.length}</div>
       </div>
+      <div class="move-count">${grouped.down.length}</div>
       <div class="move-students">${renderChips(grouped.down) || '<span style="color: var(--text-3);">—</span>'}</div>
-      <div class="move-from-to">${grouped.down.length} estudiante${grouped.down.length === 1 ? '' : 's'} retrocedió de nivel</div>
     </div>
   `;
 }
 
-function renderSections() {
-  document.getElementById('secGrid').innerHTML = SECTIONS.map(s => {
-    const diff = s.avgE2 - s.avgE1;
+// ============= ANÁLISIS POR HABILIDAD =============
+function getSectionDistribution(secId) {
+  // Cuántos estudiantes están en Adec/Elem/Insuf en ESA sección
+  let r = 0, a = 0, g = 0;
+  STUDENTS.forEach(s => {
+    const v = s.sections[secId];
+    if (v >= 75) g++;
+    else if (v >= 50) a++;
+    else r++;
+  });
+  return { r, a, g };
+}
+
+function buildSectionNarrative(sec, dist) {
+  const total = STUDENTS.length;
+  const diff = sec.avgE2 - sec.avgE1;
+  const pctInsuf = Math.round((dist.r / total) * 100);
+  const pctAdec = Math.round((dist.g / total) * 100);
+
+  let text = '';
+
+  // Calidad general
+  if (sec.avgE2 >= 75) {
+    text += `<b>Fortaleza del curso.</b> El ${pctAdec}% de los estudiantes domina esta habilidad. `;
+  } else if (sec.avgE2 >= 60) {
+    text += `Nivel <b>elemental</b> en el curso. `;
+    if (pctAdec > 35) text += `Aunque ${pctAdec}% ya alcanza nivel adecuado, `;
+    if (pctInsuf > 0) text += `${dist.r} estudiante${dist.r === 1 ? '' : 's'} aún está en insuficiente. `;
+  } else {
+    text += `<b>Área débil del curso.</b> Solo ${pctAdec}% alcanza nivel adecuado y ${pctInsuf}% está en insuficiente. `;
+  }
+
+  // Tendencia
+  if (diff > 4) {
+    text += `Mejora notable de <b>+${diff} puntos</b> respecto a enero.`;
+  } else if (diff > 0) {
+    text += `Mejora leve de +${diff} puntos respecto a enero.`;
+  } else if (diff === 0) {
+    text += `Sin cambios desde enero.`;
+  } else {
+    text += `Retrocedió ${Math.abs(diff)} puntos respecto a enero, requiere atención.`;
+  }
+
+  return text;
+}
+
+function renderSectionAnalysis() {
+  document.getElementById('secGrid').innerHTML = SECTIONS.map(sec => {
+    const dist = getSectionDistribution(sec.id);
+    const total = STUDENTS.length;
+    const diff = sec.avgE2 - sec.avgE1;
     const trendCls = diff > 0 ? 'sec-trend-up' : diff < 0 ? 'sec-trend-down' : 'sec-trend-flat';
     const trendSym = diff > 0 ? '↑' : diff < 0 ? '↓' : '→';
-    const color = s.avgE2 >= 75 ? 'var(--green)' : s.avgE2 >= 50 ? 'var(--amber)' : 'var(--red)';
+    const letterCls = sec.avgE2 >= 75 ? 'sec-letter-good' : sec.avgE2 >= 60 ? 'sec-letter-mid' : 'sec-letter-bad';
+    const narrative = buildSectionNarrative(sec, dist);
+
     return `
-      <div class="sec-row">
-        <div class="sec-name">Sección ${s.id} · ${s.label}<small>${s.desc}</small></div>
-        <div class="sec-bar-wrap"><div class="sec-bar" style="width: ${s.avgE2}%; background: ${color};"></div></div>
-        <div class="sec-score">${s.avgE2}</div>
-        <div class="sec-trend ${trendCls}">${trendSym} ${diff > 0 ? '+' : ''}${diff}</div>
+      <div class="sec-analysis">
+        <div class="sec-letter ${letterCls}">${sec.id}</div>
+        <div class="sec-info">
+          <div class="sec-title">${sec.label}</div>
+          <div class="sec-subtitle">${sec.desc}</div>
+          <div class="sec-narrative">${narrative}</div>
+          <div class="sec-mini-dist">
+            <div class="dist-seg" style="width: ${(dist.g/total)*100}%; background: var(--green);"></div>
+            <div class="dist-seg" style="width: ${(dist.a/total)*100}%; background: var(--amber);"></div>
+            <div class="dist-seg" style="width: ${(dist.r/total)*100}%; background: var(--red);"></div>
+          </div>
+          <div class="sec-mini-counts">
+            <span><span class="dot dot-g"></span> ${dist.g} adec</span>
+            <span><span class="dot dot-a"></span> ${dist.a} elem</span>
+            <span><span class="dot dot-r"></span> ${dist.r} insuf</span>
+          </div>
+        </div>
+        <div class="sec-metrics">
+          <div class="sec-score-big">${sec.avgE2}</div>
+          <div class="sec-score-meta">/100</div>
+          <div class="sec-trend ${trendCls}">${trendSym} ${diff > 0 ? '+' : ''}${diff} pts</div>
+        </div>
       </div>`;
   }).join('');
 }
 
+// ============= TABLA ESTUDIANTES =============
 function renderStudents() {
   const sorted = [...STUDENTS].sort((a, b) => a.E2.score - b.E2.score);
   document.getElementById('stuBody').innerHTML = sorted.map(s => {
@@ -782,12 +974,41 @@ function renderStudents() {
       <tr onclick="openStudent('${s.name.replace(/'/g, "\\'")}')">
         <td><span class="stu-name">${s.name}</span></td>
         <td><span class="level level-${s.E2.lvl}">${LEVEL_LABEL[s.E2.lvl]}</span></td>
-        <td><span class="level level-${s.E1.lvl}" style="opacity: 0.7;">${LEVEL_LABEL[s.E1.lvl]}</span></td>
         <td><span class="move-pill ${moveCls}">${moveSym} ${moveTxt}</span></td>
         <td><span class="stu-score">${s.E2.score}</span></td>
         <td><svg class="row-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></td>
       </tr>`;
   }).join('');
+}
+
+// ============= STUDENT DETAIL =============
+function buildStudentNarrative(s) {
+  const move = getMovement(s);
+  const change = s.E2.score - s.E1.score;
+  const courseAvg = 67;
+
+  // Sección más fuerte y débil
+  const sortedSecs = SECTIONS.map(sec => ({ ...sec, score: s.sections[sec.id] }));
+  const best = sortedSecs.reduce((a, b) => a.score > b.score ? a : b);
+  const worst = sortedSecs.reduce((a, b) => a.score < b.score ? a : b);
+
+  // Diff vs course avg
+  const vsAvg = s.E2.score - courseAvg;
+  const vsAvgTxt = vsAvg >= 5 ? `<b>${vsAvg} puntos sobre</b> el promedio del curso`
+    : vsAvg <= -5 ? `<b>${Math.abs(vsAvg)} puntos bajo</b> el promedio del curso`
+    : `cerca del promedio del curso`;
+
+  let moveTxt;
+  if (move === 'up') moveTxt = `<span class="pos">subió de nivel</span> desde la evaluación de enero`;
+  else if (move === 'down') moveTxt = `<span class="neg">bajó de nivel</span> desde la evaluación de enero`;
+  else moveTxt = `se mantuvo en el mismo nivel desde enero`;
+
+  return `
+    Está en nivel <b>${LEVEL_LABEL[s.E2.lvl]}</b> (puntaje ${s.E2.score}/100), ${vsAvgTxt}.
+    En esta evaluación ${moveTxt}, ${change >= 0 ? 'con un avance de ' : 'con un retroceso de '}${change >= 0 ? '+' : ''}${change} puntos.
+    Su <b>fortaleza</b> es ${best.label.toLowerCase()} (${best.score}/100)
+    y su <b>área a fortalecer</b> es ${worst.label.toLowerCase()} (${worst.score}/100).
+  `;
 }
 
 function openStudent(name) {
@@ -796,12 +1017,8 @@ function openStudent(name) {
   showView('student');
 
   const initials = name.split(' ').slice(0, 2).map(n => n[0]).join('');
-  const lvlLabel = LEVEL_LABEL[s.E2.lvl];
-  const move = getMovement(s);
-  const moveTxt = move === 'up' ? 'Subió de nivel desde la evaluación anterior'
-    : move === 'down' ? 'Bajó de nivel desde la evaluación anterior'
-    : 'Se mantuvo en el mismo nivel desde la evaluación anterior';
 
+  // Trayectoria
   const e3Estimate = Math.max(0, Math.min(100, Math.round(s.E2.score + (s.E2.score - s.E1.score) * 0.7)));
   const trajectory = [
     { label: 'Eval 1', when: 'Enero', score: s.E1.score, applied: true },
@@ -825,30 +1042,55 @@ function openStudent(name) {
       </div>`;
   }).join('');
 
-  const secScoresHtml = SECTIONS.map(sec => {
+  // Secciones con comparación al promedio del curso
+  const stuSecsHtml = SECTIONS.map(sec => {
     const v = s.sections[sec.id];
+    const avg = sec.avgE2;
+    const diff = v - avg;
     const color = v >= 75 ? 'var(--green)' : v >= 50 ? 'var(--amber)' : 'var(--red)';
+    const vsCls = diff >= 5 ? 'stu-sec-vs-up' : diff <= -5 ? 'stu-sec-vs-down' : 'stu-sec-vs-flat';
+    const vsTxt = diff > 0 ? `+${diff} vs curso` : diff < 0 ? `${diff} vs curso` : `igual al curso`;
     return `
-      <div class="sec-row" style="grid-template-columns: 130px 1fr 50px;">
-        <div class="sec-name" style="font-size: 12.5px;">${sec.id} · ${sec.label.split(' ').slice(0, 2).join(' ')}<small>Sección ${sec.id}</small></div>
-        <div class="sec-bar-wrap"><div class="sec-bar" style="width: ${v}%; background: ${color};"></div></div>
-        <div class="sec-score">${v}</div>
+      <div class="stu-sec-row">
+        <div class="stu-sec-head">
+          <div class="stu-sec-name">${sec.id} · ${sec.label}<small>${sec.desc}</small></div>
+          <div class="stu-sec-score-cell">
+            <span class="stu-sec-score-num">${v}</span>
+            <span class="stu-sec-vs ${vsCls}">${vsTxt}</span>
+          </div>
+        </div>
+        <div class="stu-sec-bars">
+          <div class="stu-sec-bar-track">
+            <div class="stu-sec-bar-fill" style="width: ${v}%; background: ${color};"></div>
+          </div>
+          <div class="stu-sec-avg-marker" style="left: ${avg}%;"></div>
+        </div>
+        <div style="position: relative; height: 14px; margin-top: 2px;">
+          <div class="stu-sec-avg-label" style="left: ${avg}%;">▲ promedio curso ${avg}</div>
+        </div>
       </div>`;
   }).join('');
 
-  const bestSec = SECTIONS.reduce((a, b) => s.sections[a.id] > s.sections[b.id] ? a : b);
-  const worstSec = SECTIONS.reduce((a, b) => s.sections[a.id] < s.sections[b.id] ? a : b);
-  const change = s.E2.score - s.E1.score;
-  const changeColor = change > 0 ? 'var(--green)' : change < 0 ? 'var(--red)' : 'var(--text-3)';
+  // Fortalezas / debilidades
+  const sortedSecs = SECTIONS.map(sec => ({ ...sec, score: s.sections[sec.id] })).sort((a, b) => b.score - a.score);
+  const top = sortedSecs[0];
+  const bottom = sortedSecs[sortedSecs.length - 1];
+
+  const lvlLabel = LEVEL_LABEL[s.E2.lvl];
 
   document.getElementById('studentContent').innerHTML = `
     <div class="student-header">
       <div class="student-avatar">${initials}</div>
       <div>
         <div class="student-name-big">${name}</div>
-        <div class="student-meta-big">4° Básico B · Nivel actual <span class="level level-${s.E2.lvl}" style="font-size: 11px;">${lvlLabel}</span> · Puntaje: <b>${s.E2.score}/100</b></div>
-        <div style="font-size: 12.5px; color: var(--text-3); margin-top: 4px;">${moveTxt}</div>
+        <div class="student-meta-big">4° Básico B · Nivel actual <span class="level level-${s.E2.lvl}" style="font-size: 11px; vertical-align: middle;">${lvlLabel}</span></div>
       </div>
+    </div>
+
+    <!-- Resumen narrativo -->
+    <div class="diag" style="margin-top: 0; margin-bottom: 28px;">
+      <div class="diag-label">Diagnóstico individual</div>
+      <div class="diag-text">${buildStudentNarrative(s)}</div>
     </div>
 
     <div class="student-grid">
@@ -858,19 +1100,19 @@ function openStudent(name) {
             <div class="section-title">Trayectoria del semestre</div>
           </div>
           <div class="card">
-            <div style="font-size: 12.5px; color: var(--text-2); margin-bottom: 14px;">
-              Evolución del puntaje a través de las evaluaciones diagnósticas trimestrales. La eval 3 es proyección.
+            <div style="font-size: 12.5px; color: var(--text-2); margin-bottom: 16px;">
+              Evolución del puntaje a través de las evaluaciones diagnósticas. La eval 3 es proyección.
             </div>
-            <div class="trajectory">${trajRows}</div>
+            ${trajRows}
           </div>
         </section>
 
         <section class="section">
           <div class="section-head">
-            <div class="section-title">Desempeño por sección · Eval 2 (abril)</div>
+            <div class="section-title">Desempeño por habilidad · vs. promedio del curso</div>
           </div>
           <div class="card">
-            <div class="sec-grid">${secScoresHtml}</div>
+            ${stuSecsHtml}
           </div>
         </section>
       </div>
@@ -878,18 +1120,36 @@ function openStudent(name) {
       <div>
         <section class="section">
           <div class="section-head">
-            <div class="section-title">Resumen</div>
+            <div class="section-title">Fortaleza y área a fortalecer</div>
           </div>
-          <div class="card" style="font-size: 13px; line-height: 1.6;">
-            <p style="margin-bottom: 12px;"><b style="color: var(--text);">Cambio respecto a Eval 1:</b><br>
-              ${s.E1.score} → ${s.E2.score} <span style="color: ${changeColor}; font-weight: 600;">(${change > 0 ? '+' : ''}${change} pts)</span>
-            </p>
-            <p style="margin-bottom: 12px;"><b style="color: var(--text);">Sección más fuerte:</b><br>
-              ${bestSec.id} · ${bestSec.label} (${s.sections[bestSec.id]}/100)
-            </p>
-            <p><b style="color: var(--text);">Sección más débil:</b><br>
-              ${worstSec.id} · ${worstSec.label} (${s.sections[worstSec.id]}/100)
-            </p>
+          <div class="strength-box sb-pos">
+            <div class="sb-label">Fortaleza</div>
+            <div class="sb-text"><b>${top.label}</b> (${top.score}/100). ${top.score >= 85 ? 'Domina muy bien esta habilidad.' : top.score >= 75 ? 'Buen desempeño.' : 'Es su mejor área aunque puede seguir mejorando.'}</div>
+          </div>
+          <div class="strength-box sb-neg">
+            <div class="sb-label">Área a fortalecer</div>
+            <div class="sb-text"><b>${bottom.label}</b> (${bottom.score}/100). ${bottom.score < 50 ? 'Requiere apoyo focalizado.' : bottom.score < 65 ? 'Necesita refuerzo.' : 'Es su área más débil aunque está en un nivel manejable.'}</div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <div class="section-title">Cambio del semestre</div>
+          </div>
+          <div class="card" style="font-size: 13.5px; line-height: 1.6;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px;">
+              <span style="color: var(--text-3); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Eval 1 → Eval 2</span>
+            </div>
+            <div style="font-size: 26px; font-weight: 700; letter-spacing: -0.025em; line-height: 1;">
+              ${s.E1.score} → ${s.E2.score}
+              <span style="font-size: 16px; color: ${s.E2.score - s.E1.score > 0 ? 'var(--green)' : s.E2.score - s.E1.score < 0 ? 'var(--red)' : 'var(--text-3)'}; font-weight: 600; margin-left: 6px;">
+                (${s.E2.score - s.E1.score > 0 ? '+' : ''}${s.E2.score - s.E1.score} pts)
+              </span>
+            </div>
+            <div style="font-size: 12.5px; color: var(--text-2); margin-top: 10px;">
+              Nivel anterior: <b style="color: var(--text);">${LEVEL_LABEL[s.E1.lvl]}</b><br>
+              Nivel actual: <b style="color: var(--text);">${LEVEL_LABEL[s.E2.lvl]}</b>
+            </div>
           </div>
         </section>
       </div>
