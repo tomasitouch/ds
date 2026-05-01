@@ -216,15 +216,18 @@
     background: var(--bg);
     border: 1px solid var(--border-mid);
     border-bottom: 2px solid var(--text-3);
-    opacity: 0.65;
   }
   .eval-bar-val {
     position: absolute; top: -22px; left: 50%;
     transform: translateX(-50%);
     font-size: 13px; font-weight: 700;
     color: var(--text);
+    white-space: nowrap;
   }
-  .eval-bar.future .eval-bar-val { color: var(--text-3); }
+  .eval-bar.future .eval-bar-val {
+    color: var(--text-3);
+    font-weight: 600;
+  }
   .eval-col-label {
     font-size: 11px; color: var(--text-3);
     font-weight: 500; text-align: center;
