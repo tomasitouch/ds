@@ -505,17 +505,7 @@
   }
   .detail-back:hover { color: var(--text); border-color: var(--text); }
   .student-header {
-    display: flex; gap: 18px; align-items: center;
     margin-bottom: 28px;
-  }
-  .student-avatar {
-    width: 60px; height: 60px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #8B5CF6, #3B82F6);
-    color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 20px;
-    flex-shrink: 0;
   }
   .student-name-big {
     font-size: 24px; font-weight: 700;
@@ -1318,7 +1308,6 @@ function openStudent(name) {
   const s = STUDENTS.find(x => x.name === name);
   if (!s) return;
   showView('student');
-  const initials = name.split(' ').slice(0, 2).map(n => n[0]).join('');
 
   // Trayectoria
   const e3Estimate = Math.max(0, Math.min(100, Math.round(s.E2.score + (s.E2.score - s.E1.score) * 0.7)));
@@ -1396,7 +1385,6 @@ function openStudent(name) {
 
   document.getElementById('studentContent').innerHTML = `
     <div class="student-header">
-      <div class="student-avatar">${initials}</div>
       <div>
         <div class="student-name-big">${name}</div>
         <div class="student-meta-big">4° Básico B · Nivel actual <span class="level level-${s.E2.lvl}" style="font-size: 11px; vertical-align: middle;">${lvlLabel}</span></div>
