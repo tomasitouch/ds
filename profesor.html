@@ -117,12 +117,11 @@
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 12px;
-    border-left: 4px solid var(--accent);
   }
   .diag-label {
     font-size: 11px; font-weight: 600;
     text-transform: uppercase; letter-spacing: 0.07em;
-    color: var(--accent); margin-bottom: 10px;
+    color: var(--text-3); margin-bottom: 10px;
   }
   .diag-text {
     font-size: 16px;
@@ -214,9 +213,10 @@
     min-height: 10px;
   }
   .eval-bar.future {
-    background: repeating-linear-gradient(45deg, var(--bg) 0 4px, transparent 4px 8px);
-    border: 1px dashed var(--border-mid);
-    border-bottom: 2px dashed var(--text-3);
+    background: var(--bg);
+    border: 1px solid var(--border-mid);
+    border-bottom: 2px solid var(--text-3);
+    opacity: 0.65;
   }
   .eval-bar-val {
     position: absolute; top: -22px; left: 50%;
@@ -351,7 +351,6 @@
     padding: 10px 12px;
     background: var(--bg);
     border-radius: 6px;
-    border-left: 2px solid var(--text-3);
   }
   .fluency-source b { color: var(--text-2); font-weight: 600; }
   .fluency-narrative {
@@ -606,8 +605,8 @@
     margin-bottom: 10px;
   }
   .strength-box:last-child { margin-bottom: 0; }
-  .sb-pos { background: var(--green-soft); border-left: 3px solid var(--green); }
-  .sb-neg { background: var(--red-soft); border-left: 3px solid var(--red); }
+  .sb-pos { background: var(--green-soft); }
+  .sb-neg { background: var(--red-soft); }
   .sb-label {
     font-size: 10.5px; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.06em;
@@ -716,9 +715,58 @@
     .fluency-summary-strip { grid-template-columns: 1fr; gap: 14px; }
     .stu-flu-grid { grid-template-columns: 1fr; gap: 14px; }
     .stu-flu-stats { grid-template-columns: 1fr; gap: 6px; }
-    /* Tabla scrolleable */
-    .card[data-scroll] { overflow-x: auto; padding: 0; }
-    table { min-width: 720px; }
+
+    /* Tabla → cards en mobile */
+    .card[data-scroll] {
+      padding: 0; border: none; background: transparent;
+    }
+    table, thead, tbody, tr, td { display: block; width: 100%; }
+    table thead { display: none; }
+    table { min-width: 0; }
+    tbody tr {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      position: relative;
+    }
+    tbody tr:hover { background: var(--bg); }
+    tbody td {
+      padding: 4px 0 !important;
+      border: none !important;
+      text-align: left !important;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    tbody td:first-child {
+      padding-left: 0 !important;
+      padding-bottom: 8px !important;
+      margin-bottom: 8px;
+      border-bottom: 1px solid var(--border) !important;
+      display: block;
+    }
+    tbody td[data-label]:not(:first-child)::before {
+      content: attr(data-label);
+      font-size: 11px;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+    tbody td.row-arrow-cell { display: none; }
+    .stu-name { font-size: 15px; }
+    tbody tr::after {
+      content: '›';
+      position: absolute;
+      top: 14px; right: 16px;
+      font-size: 22px;
+      color: var(--text-3);
+      line-height: 0.6;
+    }
   }
   @media (max-width: 520px) {
     .main { padding: 28px 18px 48px; }
@@ -730,29 +778,8 @@
 </head>
 <body>
 
-<!-- LOGIN -->
-<div class="login" id="loginScreen">
-  <form class="login-card" onsubmit="event.preventDefault(); enterApp();">
-    <div class="brand-row">
-      <div class="brand-mark">E</div>
-      <div class="brand-name">Edutek</div>
-    </div>
-    <h1>Reporte de tu curso</h1>
-    <div class="login-sub">Resultados de la evaluación diagnóstica del trimestre.</div>
-    <div class="field">
-      <label for="email">Correo institucional</label>
-      <input class="input" type="email" id="email" value="paola.munoz@loscondores.cl" required>
-    </div>
-    <div class="field">
-      <label for="password">Contraseña</label>
-      <input class="input" type="password" id="password" value="••••••••••" required>
-    </div>
-    <button class="btn btn-primary btn-block" type="submit">Ingresar</button>
-  </form>
-</div>
-
-<!-- APP -->
-<div class="app" id="app">
+<!-- APP (sin login: el link del correo abre directo el reporte) -->
+<div class="app active" id="app">
   <header class="topbar">
     <div class="brand-row" style="margin: 0;">
       <div class="brand-mark">E</div>
@@ -762,7 +789,7 @@
       <span class="name">Paola Muñoz</span>
       <span class="sep">·</span>
       <span class="role">4° Básico B · Esc. Los Cóndores</span>
-      <button class="btn-ghost btn" onclick="logout()">Salir</button>
+      <a href="index.html" class="btn-ghost btn" style="text-decoration: none;">Inicio</a>
     </div>
   </header>
 
@@ -893,10 +920,6 @@
         </div>
       </section>
 
-      <div class="beta">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-2); flex-shrink: 0;"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-        <div><b>Análisis de habla automatizado</b><span class="beta-tag">Beta</span> Próximamente, las grabaciones de lectura serán procesadas automáticamente para detectar errores y medir PCPM sin intervención del evaluador.</div>
-      </div>
     </div>
 
     <!-- STUDENT VIEW -->
@@ -992,29 +1015,19 @@ function speedCategory(pcpm) {
   return 'vlow';
 }
 
-// ============= LOGIN / VIEW =============
-function enterApp() {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('app').classList.add('active');
-  setTimeout(() => {
-    renderDiagnosticSummary();
-    renderEvalChart();
-    renderMovements();
-    renderSectionAnalysis();
-    renderFluency();
-    renderStudents();
-  }, 20);
-}
-function logout() {
-  document.getElementById('app').classList.remove('active');
-  document.getElementById('loginScreen').style.display = 'flex';
-  showView('dash');
-  window.scrollTo(0, 0);
-}
+// ============= INIT =============
 function showView(view) {
   document.getElementById('dashView').style.display = view === 'dash' ? 'block' : 'none';
   document.getElementById('studentView').classList.toggle('active', view === 'student');
 }
+document.addEventListener('DOMContentLoaded', () => {
+  renderDiagnosticSummary();
+  renderEvalChart();
+  renderMovements();
+  renderSectionAnalysis();
+  renderFluency();
+  renderStudents();
+});
 
 function getMovement(s) {
   const r1 = LEVEL_RANK[s.E1.lvl], r2 = LEVEL_RANK[s.E2.lvl];
@@ -1266,13 +1279,13 @@ function renderStudents() {
     const q = QUALITY_LEVELS.find(x => x.id === s.flu.quality);
     return `
       <tr onclick="openStudent('${s.name.replace(/'/g, "\\'")}')">
-        <td><span class="stu-name">${s.name}</span></td>
-        <td><span class="level level-${s.E2.lvl}">${LEVEL_LABEL[s.E2.lvl]}</span></td>
-        <td><span class="move-pill ${moveCls}">${moveSym} ${moveTxt}</span></td>
-        <td><span class="stu-score">${s.E2.score}</span></td>
-        <td><span class="quality-pill q-${s.flu.quality}">${q.label}</span></td>
-        <td><span class="stu-score">${s.flu.pcpm}</span></td>
-        <td><svg class="row-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></td>
+        <td data-label="Estudiante"><span class="stu-name">${s.name}</span></td>
+        <td data-label="Nivel"><span class="level level-${s.E2.lvl}">${LEVEL_LABEL[s.E2.lvl]}</span></td>
+        <td data-label="Movimiento"><span class="move-pill ${moveCls}">${moveSym} ${moveTxt}</span></td>
+        <td data-label="Puntaje"><span class="stu-score">${s.E2.score}</span></td>
+        <td data-label="Fluidez"><span class="quality-pill q-${s.flu.quality}">${q.label}</span></td>
+        <td data-label="PCPM"><span class="stu-score">${s.flu.pcpm}</span></td>
+        <td class="row-arrow-cell"><svg class="row-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></td>
       </tr>`;
   }).join('');
 }
