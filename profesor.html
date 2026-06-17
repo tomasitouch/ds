@@ -3,21 +3,22 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Edutek · Reporte del curso</title>
+<title>Phonos · Reporte del curso</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #FAFAFA;
+    --bg: #FAF8FE;
     --panel: #FFFFFF;
-    --border: #EBEBEB;
-    --border-mid: #DCDCDC;
-    --text: #0A0A0A;
-    --text-2: #525252;
-    --text-3: #8A8A8A;
-    --accent: #2563EB;
-    --accent-soft: #EFF4FE;
+    --border: #ECE8F4;
+    --border-mid: #D7D2E4;
+    --text: #1A0E2E;
+    --text-2: #4B4259;
+    --text-3: #8A82A0;
+    --accent: #7C3AED;
+    --accent-soft: #F3E8FF;
+    --brand-tint: #F7F2FE;
     --green: #047857;
     --green-soft: #ECFDF5;
     --amber: #B45309;
@@ -53,6 +54,7 @@
     font-weight: 700; font-size: 13px;
   }
   .brand-name { font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
+  .brand-logo { height: 58px; width: auto; display: block; }
   .login h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.025em; margin-bottom: 4px; }
   .login-sub { color: var(--text-2); font-size: 13.5px; margin-bottom: 26px; }
   .field { margin-bottom: 14px; }
@@ -69,7 +71,7 @@
   }
   .input:focus {
     outline: none; border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
   }
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 7px;
@@ -91,10 +93,17 @@
   .app.active { display: block; }
   .topbar {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 32px;
+    padding: 12px 32px;
     border-bottom: 1px solid var(--border);
     background: var(--panel);
     position: sticky; top: 0; z-index: 10;
+    box-shadow: 0 1px 0 var(--brand-tint);
+  }
+  .topbar::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #7C3AED 0%, #A78BFA 50%, #FBBF24 100%);
   }
   .topbar-user { display: flex; align-items: center; gap: 12px; font-size: 13px; }
   .topbar-user .name { color: var(--text); font-weight: 500; }
@@ -106,6 +115,15 @@
   .greeting h2 {
     font-size: 28px; font-weight: 700;
     letter-spacing: -0.03em; margin-bottom: 6px;
+    color: var(--text);
+  }
+  .greeting h2::before {
+    content: '';
+    display: inline-block; vertical-align: 8px;
+    width: 4px; height: 24px;
+    background: #7C3AED;
+    border-radius: 2px;
+    margin-right: 12px;
   }
   .greeting p { color: var(--text-2); font-size: 14.5px; line-height: 1.6; }
   .greeting p b { color: var(--text); font-weight: 600; }
@@ -114,9 +132,10 @@
   .diag {
     margin-top: 32px;
     padding: 26px 30px;
-    background: var(--panel);
+    background: var(--brand-tint);
     border: 1px solid var(--border);
     border-radius: 12px;
+    position: relative;
   }
   .diag-label {
     font-size: 11px; font-weight: 600;
@@ -148,8 +167,9 @@
     margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em;
   }
   .stat-value {
-    font-size: 26px; font-weight: 700;
+    font-size: 28px; font-weight: 700;
     letter-spacing: -0.025em; line-height: 1;
+    color: var(--text);
   }
   .stat-meta { font-size: 11.5px; color: var(--text-2); margin-top: 5px; }
   .stat-value-up { color: var(--green); }
@@ -162,9 +182,9 @@
     margin-bottom: 16px;
   }
   .section-title {
-    font-size: 11.5px; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.07em;
-    color: var(--text-3);
+    font-size: 11.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.09em;
+    color: #6D28D9;
   }
   .card {
     background: var(--panel);
@@ -767,6 +787,334 @@
     .stat { border-right: none; border-bottom: 1px solid var(--border); padding: 14px 0; }
     .stat:last-child { border-bottom: none; }
   }
+
+  /* ===== ACCIONES DEL TOPBAR ===== */
+  .topbar-actions { display: flex; align-items: center; gap: 6px; margin-left: 16px; }
+  .topbar-actions .btn { padding: 7px 12px; font-size: 12.5px; gap: 6px; }
+  .topbar-actions .btn svg { width: 14px; height: 14px; }
+  @media (max-width: 720px) {
+    .topbar-actions .btn-label { display: none; }
+    .topbar-actions .btn { padding: 7px 9px; }
+  }
+
+  /* ===== FILTRO ESTUDIANTES ===== */
+  .stu-toolbar {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .stu-search {
+    flex: 1; max-width: 320px;
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px;
+    background: var(--panel);
+    border: 1px solid var(--border-mid);
+    border-radius: 8px;
+    transition: border-color 0.12s, box-shadow 0.12s;
+  }
+  .stu-search:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.10);
+  }
+  .stu-search input {
+    border: none; outline: none; background: transparent;
+    width: 100%; font-size: 13px; color: var(--text);
+  }
+  .stu-search input::placeholder { color: var(--text-3); }
+  .stu-search svg { width: 14px; height: 14px; color: var(--text-3); flex-shrink: 0; }
+  .stu-filter-meta {
+    font-size: 12px; color: var(--text-3);
+  }
+  .stu-filter-meta b { color: var(--text-2); font-weight: 600; }
+
+  /* ===== COMPARACIÓN NACIONAL EN STATS ===== */
+  .stat-nat {
+    font-size: 11px; color: var(--text-3);
+    margin-top: 6px; line-height: 1.4;
+    border-top: 1px dashed var(--border);
+    padding-top: 5px;
+  }
+  .stat-nat b { color: var(--text-2); font-weight: 600; }
+  .stat-nat .nat-pos { color: var(--green); font-weight: 600; }
+  .stat-nat .nat-neg { color: var(--red); font-weight: 600; }
+
+  /* ===== PILLS DE TIPO EN ANÁLISIS SECCIONES ===== */
+  .sec-type-pill {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    font-size: 10.5px; font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    vertical-align: 2px;
+  }
+  .sec-type-text { background: var(--accent-soft); color: var(--accent); }
+  .sec-type-audio { background: var(--amber-soft); color: var(--amber); }
+
+  /* ===== MODO PRESENTACIÓN ===== */
+
+  /* ===== IMPRESIÓN / PDF ===== */
+  @media print {
+    @page { size: A4; margin: 14mm 12mm; }
+    body { background: #fff !important; color: #000 !important; font-size: 11px; }
+    .topbar { position: static !important; padding: 0 0 12px; border-bottom: 1px solid #000; }
+    .topbar-actions, .dark-hide-print, button { display: none !important; }
+    .main { padding: 12px 0 !important; max-width: 100% !important; }
+    .card, .move-card, .sec-analysis, .diag { break-inside: avoid; box-shadow: none; }
+    .section { margin-bottom: 18px; }
+    .stu-toolbar { display: none; }
+    a { text-decoration: none; color: inherit; }
+  }
+
+
+  /* ===== ANÁLISIS PROFUNDO ESTUDIANTE: ESCRITURA Y VOZ ===== */
+  .deep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  @media (max-width: 880px) { .deep-grid { grid-template-columns: 1fr; } }
+
+  .ai-card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px 26px; margin-bottom: 12px;
+  }
+  .ai-card-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .ai-card-title { font-size: 14px; font-weight: 700; letter-spacing: -0.01em; }
+  .ai-card-source {
+    font-size: 10.5px; color: var(--accent); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 3px 9px; background: var(--accent-soft); border-radius: 4px;
+  }
+  .ai-paragraph {
+    font-size: 14px; line-height: 1.75;
+    color: var(--text); padding: 18px 20px;
+    background: var(--brand-tint);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 14px;
+  }
+  .ai-paragraph i { color: var(--text-2); font-style: italic; font-size: 12.5px; }
+  .ai-paragraph b { font-weight: 700; color: #6D28D9; }
+
+  /* Manuscrito (foto) */
+  .manuscript-card {
+    background: #FBF9F5;
+    border: 1px solid var(--border-mid);
+    border-radius: 10px;
+    padding: 22px 26px;
+    font-family: 'Caveat', 'Patrick Hand', 'Bradley Hand', cursive;
+    font-size: 18px;
+    line-height: 1.65;
+    color: #2C2C2A;
+    min-height: 180px;
+    position: relative;
+    box-shadow: 0 1px 0 var(--border-mid);
+  }
+  .manuscript-card::before {
+    content: 'Foto del manuscrito capturado';
+    position: absolute; top: 10px; right: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px; color: var(--text-3);
+    background: rgba(255,255,255,0.85);
+    padding: 2px 6px; border-radius: 3px;
+    letter-spacing: 0.03em;
+  }
+  .manuscript-card p { margin: 0 0 8px; }
+  .manuscript-card .ortho-err {
+    background: rgba(185, 28, 28, 0.13);
+    border-bottom: 1px wavy var(--red);
+    padding: 0 2px;
+  }
+
+  /* Dimensiones de rúbrica */
+  .rubric-dims { display: grid; gap: 8px; margin-top: 8px; }
+  .rubric-dim {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--bg);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .rubric-dim-name { font-size: 12.5px; font-weight: 600; color: var(--text); }
+  .rubric-dim-bar {
+    width: 100px; height: 5px;
+    background: var(--border); border-radius: 3px;
+    overflow: hidden;
+  }
+  .rubric-dim-bar-fill { height: 100%; background: var(--accent); }
+  .rubric-dim-bar-fill.dim-good { background: var(--green); }
+  .rubric-dim-bar-fill.dim-mid { background: var(--amber); }
+  .rubric-dim-bar-fill.dim-bad { background: var(--red); }
+  .rubric-dim-level {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    min-width: 80px; text-align: right;
+  }
+  .rubric-dim-level.dim-good { color: var(--green); }
+  .rubric-dim-level.dim-mid { color: var(--amber); }
+  .rubric-dim-level.dim-bad { color: var(--red); }
+
+  /* Voz expandida: parámetros prosódicos */
+  .voice-params {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+    margin-top: 14px;
+  }
+  .voice-param {
+    padding: 10px 12px;
+    background: var(--bg);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .voice-param-label {
+    font-size: 10.5px; color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    font-weight: 600; margin-bottom: 3px;
+  }
+  .voice-param-value {
+    font-size: 13px; color: var(--text); font-weight: 600;
+  }
+  .voice-param-value.vp-good { color: var(--green); }
+  .voice-param-value.vp-mid { color: var(--amber); }
+  .voice-param-value.vp-bad { color: var(--red); }
+
+  /* Tipificación de errores */
+  .error-types {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+    margin-top: 12px;
+  }
+  .error-type {
+    padding: 10px 8px;
+    background: var(--bg);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .error-type-num {
+    font-size: 20px; font-weight: 700;
+    letter-spacing: -0.02em; line-height: 1;
+    color: var(--text);
+  }
+  .error-type-label {
+    font-size: 10.5px; color: var(--text-3);
+    margin-top: 4px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.03em;
+  }
+
+  body.dark .ai-card, body.dark .rubric-dim, body.dark .voice-param, body.dark .error-type {
+    background: #1A1825; border-color: rgba(255,255,255,0.08);
+  }
+  body.dark .ai-paragraph {
+    background: rgba(124, 58, 237, 0.15);
+    color: #fff;
+  }
+  body.dark .manuscript-card { background: #2A2735; color: #f5f5f5; border-color: rgba(255,255,255,0.1); }
+  body.dark .ai-card-source, body.dark .rubric-dim-name, body.dark .voice-param-value, body.dark .error-type-num {
+    color: #fff;
+  }
+
+
+  /* ===== MODO OSCURO ===== */
+  body.dark {
+    --bg: #0F0E14;
+    --panel: #1A1825;
+    --border: rgba(255,255,255,0.08);
+    --border-mid: rgba(255,255,255,0.15);
+    --text: #F5F3FA;
+    --text-2: rgba(255,255,255,0.75);
+    --text-3: rgba(255,255,255,0.5);
+    --accent: #A78BFA;
+    --accent-soft: rgba(167, 139, 250, 0.18);
+    --brand-tint: rgba(167, 139, 250, 0.10);
+    --green: #34D399;
+    --green-soft: rgba(52, 211, 153, 0.16);
+    --amber: #FBBF24;
+    --amber-soft: rgba(251, 191, 36, 0.18);
+    --red: #F87171;
+    --red-soft: rgba(248, 113, 113, 0.18);
+  }
+  body.dark .section-title { color: #C4B5FD; }
+  body.dark .ai-paragraph b { color: #C4B5FD; }
+  body.dark .greeting h2::before { background: #A78BFA; }
+  body.dark .manuscript-card { background: #2A2735; color: #f5f5f5; border-color: rgba(255,255,255,0.1); }
+  body.dark .manuscript-card::before { background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.6); }
+  body.dark .ai-paragraph { background: rgba(167, 139, 250, 0.10); border-color: rgba(167, 139, 250, 0.25); }
+  body.dark .ai-card-source { background: rgba(167, 139, 250, 0.18); color: #C4B5FD; }
+  body.dark .diag { background: rgba(167, 139, 250, 0.08); }
+  body.dark .btn { background: rgba(255,255,255,0.04); color: #F5F3FA; border-color: rgba(255,255,255,0.12); }
+  body.dark .btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
+  body.dark .topbar { background: var(--panel); border-bottom-color: var(--border); box-shadow: none; }
+  body.dark .topbar::before { background: linear-gradient(90deg, #7C3AED 0%, #A78BFA 50%, #FBBF24 100%); opacity: 0.85; }
+  body.dark .topbar-user .name { color: var(--text); }
+  body.dark .topbar-user .sep, body.dark .topbar-user .role { color: var(--text-2); }
+  body.dark .stu-search { background: rgba(255,255,255,0.04); border-color: var(--border-mid); }
+  body.dark .stu-search input { color: var(--text); }
+  body.dark .stat-nat { color: var(--text-3); border-top-color: var(--border); }
+  body.dark .stat-nat b { color: var(--text-2); }
+  body.dark .stat-nat .nat-pos { color: #34D399; }
+  body.dark .stat-nat .nat-neg { color: #F87171; }
+  body.dark .rubric-dim, body.dark .voice-param, body.dark .error-type { background: rgba(255,255,255,0.03); border-color: var(--border); }
+  body.dark .rubric-dim-bar { background: rgba(255,255,255,0.08); }
+  body.dark table thead { background: rgba(255,255,255,0.03); }
+  body.dark table tbody tr:hover { background: rgba(167, 139, 250, 0.08); }
+  body.dark .move-student { background: rgba(255,255,255,0.06); color: var(--text-2); }
+  body.dark .move-student:hover { background: var(--accent-soft); color: var(--accent); }
+  body.dark .sec-letter-good { background: rgba(52, 211, 153, 0.18); color: #6EE7B7; }
+  body.dark .sec-letter-mid  { background: rgba(251, 191, 36, 0.18); color: #FCD34D; }
+  body.dark .sec-letter-bad  { background: rgba(248, 113, 113, 0.18); color: #FCA5A5; }
+  body.dark .dist { background: rgba(255,255,255,0.06); }
+  body.dark .eval-bar { background: var(--accent-soft); border-bottom-color: var(--accent); }
+  body.dark .eval-bar.future { background: rgba(255,255,255,0.04); border-color: var(--border-mid); border-bottom-color: var(--text-3); }
+  body.dark .strength-box.sb-pos { background: rgba(52, 211, 153, 0.10); }
+  body.dark .strength-box.sb-neg { background: rgba(248, 113, 113, 0.10); }
+
+  /* Botón de tema (sol/luna) */
+  .theme-toggle .icon-moon { display: inline-block; }
+  .theme-toggle .icon-sun { display: none; }
+  body.dark .theme-toggle .icon-moon { display: none; }
+  body.dark .theme-toggle .icon-sun { display: inline-block; }
+
+
+  /* ===== FIX RESPONSIVE: vista individual del estudiante ===== */
+  html, body { overflow-x: hidden; max-width: 100vw; }
+  .student-view { width: 100%; box-sizing: border-box; min-width: 0; }
+  .ai-card, .ai-paragraph, .manuscript-card, .rubric-dim {
+    box-sizing: border-box; max-width: 100%; word-wrap: break-word; overflow-wrap: break-word;
+  }
+  @media (max-width: 880px) {
+    .ai-card { padding: 18px 16px; }
+    .manuscript-card { padding: 18px 18px; font-size: 17px; line-height: 1.6; }
+    .manuscript-card::before { font-size: 9.5px; top: 8px; right: 10px; }
+    .ai-paragraph { padding: 14px 16px; font-size: 13.5px; }
+    .voice-params { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .voice-param { padding: 9px 10px; }
+    .voice-param-value { font-size: 12.5px; }
+    .error-types { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .error-type-num { font-size: 18px; }
+    .rubric-dim {
+      grid-template-columns: 1fr;
+      gap: 8px; padding: 12px 14px;
+    }
+    .rubric-dim-bar { width: 100%; }
+    .rubric-dim-level { text-align: left; min-width: 0; }
+    .student-name-big { font-size: 22px; }
+    .traj-row { grid-template-columns: 80px 1fr 50px; gap: 10px; }
+  }
+  @media (max-width: 520px) {
+    .ai-card { padding: 16px 14px; }
+    .manuscript-card { padding: 16px 16px; font-size: 16px; }
+    .ai-paragraph { padding: 12px 14px; }
+    .voice-param-label, .error-type-label { font-size: 9.5px; letter-spacing: 0.03em; }
+    .error-type { padding: 8px 6px; }
+    .topbar { padding: 10px 16px; }
+    .brand-logo { height: 44px; }
+    .main { padding: 24px 14px 40px; }
+    .traj-row { grid-template-columns: 70px 1fr 44px; gap: 8px; }
+    .student-name-big { font-size: 20px; }
+  }
+
 </style>
 </head>
 <body>
@@ -775,14 +1123,27 @@
 <div class="app active" id="app">
   <header class="topbar">
     <div class="brand-row" style="margin: 0;">
-      <div class="brand-mark">E</div>
-      <div class="brand-name">Edutek</div>
+      <img src="phonos-logo.png" alt="Phonos" class="brand-logo" />
     </div>
     <div class="topbar-user">
       <span class="name">Paola Muñoz</span>
       <span class="sep">·</span>
       <span class="role">4° Básico B · Esc. Los Cóndores</span>
-      <a href="index.html" class="btn-ghost btn" style="text-decoration: none;">Inicio</a>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn theme-toggle" onclick="toggleDarkMode()" title="Cambiar tema (D)">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <span class="btn-label" id="themeLabel">Oscuro</span>
+      </button>
+      <button class="btn" onclick="window.print()" title="Exportar a PDF">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        <span class="btn-label">PDF</span>
+      </button>
+      <a href="index.html" class="btn" style="text-decoration: none;" title="Volver al inicio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span class="btn-label">Inicio</span>
+      </a>
     </div>
   </header>
 
@@ -793,7 +1154,7 @@
 
       <div class="greeting">
         <h2>4° Básico B</h2>
-        <p>Reporte de la <b>segunda evaluación diagnóstica del semestre</b> · Aplicada el 14 de abril 2026 · Procesada por el equipo Edutek · Próximo informe: 15 de julio.</p>
+        <p>Reporte de la <b>segunda evaluación diagnóstica del semestre</b> · Aplicada el 14 de abril 2026 · Procesada por el equipo Phonos · Próximo informe: 15 de julio.</p>
       </div>
 
       <!-- Resumen diagnóstico -->
@@ -807,16 +1168,19 @@
           <div class="stat-label">Promedio del curso</div>
           <div class="stat-value">67<span style="font-size:14px;color:var(--text-3);font-weight:500"> / 100</span></div>
           <div class="stat-meta stat-value-up">+4 pts vs. evaluación anterior</div>
+          <div class="stat-nat">Promedio nacional 4° básico: <b>62</b> · <span class="nat-pos">+5 sobre la media</span></div>
         </div>
         <div class="stat">
           <div class="stat-label">Nivel adecuado</div>
           <div class="stat-value">13<span style="font-size:14px;color:var(--text-3);font-weight:500"> / 30</span></div>
           <div class="stat-meta">43% del curso</div>
+          <div class="stat-nat">Referencia nacional adecuado: <b>~36%</b> (SIMCE 2024)</div>
         </div>
         <div class="stat">
           <div class="stat-label">Subieron de nivel</div>
           <div class="stat-value stat-value-up">7</div>
           <div class="stat-meta">desde la evaluación 1</div>
+          <div class="stat-nat">Movilidad promedio chilena: <b>~18%</b> en 4° básico</div>
         </div>
         <div class="stat">
           <div class="stat-label">Bajaron de nivel</div>
@@ -893,7 +1257,14 @@
       <!-- ESTUDIANTES -->
       <section class="section">
         <div class="section-head">
-          <div class="section-title">Estudiantes · 30 en total</div>
+          <div class="section-title">Estudiantes · <span id="stuTotal">30</span> en total</div>
+        </div>
+        <div class="stu-toolbar">
+          <div class="stu-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="stuSearch" placeholder="Buscar estudiante…" oninput="filterStudents()" autocomplete="off" />
+          </div>
+          <div class="stu-filter-meta" id="stuFilterMeta"></div>
         </div>
         <div class="card" data-scroll style="padding: 0; overflow: hidden;">
           <table>
@@ -967,8 +1338,8 @@ const STUDENTS = [
 
 const SECTIONS = [
   { id: 'A', label: 'Lectura de palabras y oraciones', desc: 'Decodificación de palabras y fluidez de lectura básica.', avgE1: 68, avgE2: 72 },
-  { id: 'B', label: 'Comprensión lectora',             desc: 'Comprensión literal e inferencial de textos breves.',     avgE1: 60, avgE2: 65 },
-  { id: 'C', label: 'Comprensión oral',                desc: 'Escucha activa y comprensión de textos orales.',          avgE1: 65, avgE2: 70 },
+  { id: 'B', label: 'Comprensión lectora', type: 'text', desc: 'Comprensión literal e inferencial de textos breves leídos por el estudiante.', avgE1: 60, avgE2: 65 },
+  { id: 'C', label: 'Comprensión oral', type: 'audio', desc: 'Comprensión de textos escuchados, sin lectura propia.', avgE1: 65, avgE2: 70 },
   { id: 'D', label: 'Escritura',                       desc: 'Producción escrita con coherencia, cohesión y ortografía.', avgE1: 53, avgE2: 58 },
   { id: 'E', label: 'Reconocimiento de letras',        desc: 'Identificación del sonido y nombre de cada letra.',       avgE1: 75, avgE2: 78 }
 ];
@@ -981,6 +1352,133 @@ const EVAL_HISTORY = [
 
 const LEVEL_LABEL = { r: 'Insuficiente', a: 'Elemental', g: 'Adecuado' };
 const LEVEL_RANK = { r: 1, a: 2, g: 3 };
+
+// ============= ANÁLISIS DE ESCRITURA: rúbrica Soledad Concha (Facultad Letras UC) =============
+const WRITING_DIMS = [
+  { id: 'coherencia', label: 'Coherencia',     desc: 'Organización lógica de ideas' },
+  { id: 'cohesion',   label: 'Cohesión',       desc: 'Conectores y fluidez del texto' },
+  { id: 'vocabulario',label: 'Vocabulario',    desc: 'Variedad y precisión léxica' },
+  { id: 'ortografia', label: 'Ortografía',     desc: 'Correctitud ortográfica y acentuación' },
+  { id: 'adecuacion', label: 'Adecuación',     desc: 'Ajuste al género y al destinatario' }
+];
+
+function getWritingAnalysis(student) {
+  // Genera puntajes y nivel por dimensión basado en sección D + variación realista
+  const base = student.sections.D;
+  // semilla determinística según nombre para que siempre dé igual
+  let seed = 0;
+  for (let i = 0; i < student.name.length; i++) seed = (seed * 31 + student.name.charCodeAt(i)) & 0xffffffff;
+  const rnd = (i) => {
+    const x = Math.sin(seed + i * 9973) * 10000;
+    return x - Math.floor(x);
+  };
+  const dims = WRITING_DIMS.map((d, i) => {
+    const variance = (rnd(i) - 0.5) * 18;
+    const score = Math.max(0, Math.min(100, Math.round(base + variance)));
+    const level = score >= 75 ? 'good' : score >= 55 ? 'mid' : 'bad';
+    const levelLabel = level === 'good' ? 'Logrado' : level === 'mid' ? 'En desarrollo' : 'Por lograr';
+    return { ...d, score, level, levelLabel };
+  });
+  return { dims, sample: getManuscriptSample(student), aiText: buildWritingAiText(student, dims) };
+}
+
+function getManuscriptSample(student) {
+  // Texto manuscrito simulado según nivel D del estudiante
+  const d = student.sections.D;
+  if (d < 40) {
+    return '<p>Mi familia fueron a la playa el dia <span class="ortho-err">savado</span>. Yo me <span class="ortho-err">vañe</span> en el mar y mi hermano <span class="ortho-err">izo</span> un castillo. <span class="ortho-err">despues</span> comimos.</p>';
+  }
+  if (d < 60) {
+    return '<p>El sábado fui a la playa con mi familia. El mar estaba <span class="ortho-err">azul</span> y muy frio. Yo me bañe con mi hermana y <span class="ortho-err">despues</span> jugamos en la arena. Mi mama trajo sandwiches.</p>';
+  }
+  if (d < 75) {
+    return '<p>El sábado pasado fui a la playa con mi familia. El mar estaba muy frío pero entramos igual. Mi hermana y yo construimos un castillo grande con torres. Después almorzamos sándwiches en la arena. Fue un día muy entretenido.</p>';
+  }
+  return '<p>El sábado pasado fui a la playa de Algarrobo con toda mi familia. El mar estaba helado pero igual nos atrevimos a entrar y nadar un rato. Después mi hermana y yo construimos un castillo enorme con torres altas y un foso. Mi mamá había preparado sándwiches y los comimos en la arena mientras mirábamos las olas. Fue un día perfecto y quiero volver pronto.</p>';
+}
+
+function buildWritingAiText(student, dims) {
+  const avg = dims.reduce((a, d) => a + d.score, 0) / dims.length;
+  const weakest = [...dims].sort((a, b) => a.score - b.score)[0];
+  const strongest = [...dims].sort((a, b) => b.score - a.score)[0];
+  let txt = '';
+  if (avg >= 75) {
+    txt = `<b>${student.name.split(' ')[0]}</b> produce un texto narrativo bien organizado, con secuencia temporal clara y coherencia global sólida. La <b>${strongest.label.toLowerCase()}</b> es su mayor fortaleza (${strongest.score}/100): ${strongest.id === 'coherencia' ? 'estructura el relato con inicio, desarrollo y cierre' : strongest.id === 'cohesion' ? 'utiliza conectores variados que sostienen la progresión temática' : strongest.id === 'vocabulario' ? 'incorpora vocabulario preciso y diverso' : strongest.id === 'ortografia' ? 'domina la ortografía literal y la acentuación' : 'ajusta tono y registro al género solicitado'}. Su área a fortalecer es la <b>${weakest.label.toLowerCase()}</b> (${weakest.score}/100), donde se observan ${weakest.id === 'ortografia' ? 'errores ocasionales en acentuación' : weakest.id === 'cohesion' ? 'oraciones algo yuxtapuestas sin conectores' : 'imprecisiones puntuales'}. <i>Nivel general: logrado.</i>`;
+  } else if (avg >= 55) {
+    txt = `El texto de <b>${student.name.split(' ')[0]}</b> muestra una estructura narrativa básica reconocible, pero todavía con desafíos en su elaboración. La <b>${strongest.label.toLowerCase()}</b> (${strongest.score}/100) sostiene la lectura, mientras que la <b>${weakest.label.toLowerCase()}</b> (${weakest.score}/100) limita la calidad global: ${weakest.id === 'ortografia' ? 'aparecen errores ortográficos consistentes (omisión de h, confusión b/v, falta de tildes)' : weakest.id === 'cohesion' ? 'el texto avanza por yuxtaposición sin conectores que articulen las acciones' : weakest.id === 'coherencia' ? 'algunos episodios quedan sueltos del eje narrativo' : weakest.id === 'vocabulario' ? 'el repertorio léxico es repetitivo y poco preciso' : 'el registro no se ajusta plenamente al género'}. Convendría trabajar específicamente esta dimensión. <i>Nivel general: en desarrollo.</i>`;
+  } else {
+    txt = `El texto de <b>${student.name.split(' ')[0]}</b> presenta dificultades transversales en la producción escrita. La <b>${weakest.label.toLowerCase()}</b> es el área más crítica (${weakest.score}/100): ${weakest.id === 'ortografia' ? 'errores ortográficos sistemáticos en palabras de alta frecuencia, ausencia de acentuación' : weakest.id === 'cohesion' ? 'frases cortas sin conexión, sin uso de conectores' : weakest.id === 'coherencia' ? 'el texto no logra mantener un hilo narrativo claro' : weakest.id === 'vocabulario' ? 'vocabulario muy restringido y repetitivo' : 'el escrito no se ajusta al género ni al destinatario'}. Requiere apoyo focalizado en producción escrita guiada antes de avanzar a textos más complejos. <i>Nivel general: por lograr.</i>`;
+  }
+  return txt;
+}
+
+// ============= ANÁLISIS DETALLADO DE VOZ =============
+function getVoiceAnalysis(student) {
+  let seed = 0;
+  for (let i = 0; i < student.name.length; i++) seed = (seed * 17 + student.name.charCodeAt(i)) & 0xffffffff;
+  const rnd = (i) => {
+    const x = Math.sin(seed + i * 7919) * 10000;
+    return x - Math.floor(x);
+  };
+  const q = student.flu.quality;
+  // Parámetros prosódicos según calidad
+  let entonacion, ritmo, pausas, autocorr;
+  if (q === 'fluid') {
+    entonacion = { v: 'Expresiva', cls: 'vp-good' };
+    ritmo = { v: 'Uniforme', cls: 'vp-good' };
+    pausas = { v: 'Naturales', cls: 'vp-good' };
+    autocorr = { v: 'Espontáneas', cls: 'vp-good' };
+  } else if (q === 'shortunits') {
+    entonacion = { v: 'Adecuada', cls: 'vp-good' };
+    ritmo = { v: 'Mayormente uniforme', cls: 'vp-mid' };
+    pausas = { v: 'Frecuentes en frases largas', cls: 'vp-mid' };
+    autocorr = { v: 'Ocasionales', cls: 'vp-good' };
+  } else if (q === 'wordbyword') {
+    entonacion = { v: 'Plana', cls: 'vp-mid' };
+    ritmo = { v: 'Irregular', cls: 'vp-mid' };
+    pausas = { v: 'Frecuentes entre palabras', cls: 'vp-mid' };
+    autocorr = { v: 'Pocas', cls: 'vp-mid' };
+  } else if (q === 'syllabic') {
+    entonacion = { v: 'Ausente', cls: 'vp-bad' };
+    ritmo = { v: 'Muy lento, silábico', cls: 'vp-bad' };
+    pausas = { v: 'Entre sílabas', cls: 'vp-bad' };
+    autocorr = { v: 'Casi ausentes', cls: 'vp-bad' };
+  } else {
+    entonacion = { v: 'No lectura', cls: 'vp-bad' };
+    ritmo = { v: 'No lectura', cls: 'vp-bad' };
+    pausas = { v: '—', cls: 'vp-bad' };
+    autocorr = { v: '—', cls: 'vp-bad' };
+  }
+  // Tipos de error tipificados (suman aproximadamente flu.errors)
+  const total = student.flu.errors || 0;
+  const omisiones = Math.round(total * (0.3 + rnd(1) * 0.2));
+  const sustituciones = Math.round(total * (0.3 + rnd(2) * 0.2));
+  const repeticiones = Math.max(0, Math.round(total * (0.15 + rnd(3) * 0.15)));
+  const autocorrecciones = Math.max(0, total - omisiones - sustituciones - repeticiones);
+  return {
+    entonacion, ritmo, pausas, autocorr,
+    errors: { omisiones, sustituciones, repeticiones, autocorrecciones },
+    aiText: buildVoiceAiText(student, q, total)
+  };
+}
+
+function buildVoiceAiText(student, q, totalErrors) {
+  const name = student.name.split(' ')[0];
+  const pcpm = student.flu.pcpm;
+  if (q === 'fluid') {
+    return `<b>${name}</b> lee con fluidez expresiva: respeta signos de puntuación, modula la entonación según el contenido y agrupa palabras en frases con sentido. A ${pcpm} PCPM, su velocidad está dentro del rango esperado para 4° básico (≥138 considerada alta) y los pocos errores observados (${totalErrors}) son mayoritariamente autocorregidos durante la lectura, lo que evidencia monitoreo lector activo. <i>Calidad: lectura fluida.</i>`;
+  }
+  if (q === 'shortunits') {
+    return `<b>${name}</b> lee en unidades cortas con sentido: agrupa de a dos o tres palabras y mantiene una entonación adecuada, aunque pierde fluidez en oraciones más largas. Su velocidad de ${pcpm} PCPM lo ubica dentro del rango esperado. Los ${totalErrors} errores detectados son en su mayoría sustituciones de palabras similares y se observan pausas entre cláusulas. <i>Calidad: unidades cortas.</i>`;
+  }
+  if (q === 'wordbyword') {
+    return `<b>${name}</b> lee palabra por palabra: pronuncia cada término correctamente pero sin agruparlas en frases, con entonación plana y pausas frecuentes entre cada palabra. Su velocidad de ${pcpm} PCPM está bajo lo esperado para el nivel. Los ${totalErrors} errores son principalmente sustituciones y omisiones. La comprensión del texto leído puede estar comprometida por la falta de prosodia. <i>Calidad: palabra a palabra. Requiere refuerzo.</i>`;
+  }
+  if (q === 'syllabic') {
+    return `<b>${name}</b> presenta lectura silábica: separa cada palabra en sílabas para decodificarla, con pausas marcadas entre sílabas y sin entonación. La velocidad de ${pcpm} PCPM está muy bajo lo esperado para 4° básico. Los ${totalErrors} errores incluyen omisiones, sustituciones y dificultad sostenida. <b>Requiere apoyo prioritario en decodificación y fluidez lectora.</b> <i>Calidad: lectura silábica.</i>`;
+  }
+  return `<b>${name}</b> no logra realizar la lectura del texto propuesto. <b>Requiere intervención urgente en alfabetización inicial.</b> <i>Calidad: no lector.</i>`;
+}
 
 // ============= FLUIDEZ — Rúbrica Fundación Educacional Arauco =============
 // Niveles de calidad (de mayor a menor calidad para mostrar el "techo" arriba)
@@ -1142,7 +1640,7 @@ function renderSectionAnalysis() {
       <div class="sec-analysis">
         <div class="sec-letter ${letterCls}">${sec.id}</div>
         <div class="sec-info">
-          <div class="sec-title">${sec.label}</div>
+          <div class="sec-title">${sec.label}${sec.type === "text" ? ' <span class="sec-type-pill sec-type-text">Texto leído</span>' : sec.type === "audio" ? ' <span class="sec-type-pill sec-type-audio">Audio escuchado</span>' : ""}</div>
           <div class="sec-subtitle">${sec.desc}</div>
           <div class="sec-narrative">${buildSectionNarrative(sec, dist)}</div>
           <div class="sec-mini-dist">
@@ -1262,6 +1760,15 @@ function renderFluency() {
 }
 
 // ============= TABLA ESTUDIANTES =============
+let _stuFilter = '';
+function filterStudents() {
+  _stuFilter = (document.getElementById('stuSearch').value || '').toLowerCase().trim();
+  renderStudents();
+}
+function getFilteredStudents() {
+  if (!_stuFilter) return STUDENTS;
+  return STUDENTS.filter(s => s.name.toLowerCase().includes(_stuFilter));
+}
 function renderStudents() {
   const sorted = [...STUDENTS].sort((a, b) => a.E2.score - b.E2.score);
   document.getElementById('stuBody').innerHTML = sorted.map(s => {
@@ -1281,6 +1788,10 @@ function renderStudents() {
         <td class="row-arrow-cell"><svg class="row-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></td>
       </tr>`;
   }).join('');
+
+  const _all = STUDENTS.length, _shown = getFilteredStudents().length;
+  const _m = document.getElementById('stuFilterMeta'); if (_m) _m.innerHTML = _stuFilter ? `Mostrando <b>${_shown}</b> de <b>${_all}</b>` : '';
+  const _t = document.getElementById('stuTotal'); if (_t) _t.textContent = _all;
 }
 
 // ============= STUDENT DETAIL =============
@@ -1440,6 +1951,72 @@ function openStudent(name) {
             </div>
           </div>
         </section>
+
+        <!-- ANÁLISIS DETALLADO DE VOZ -->
+        <section class="section">
+          <div class="section-head"><div class="section-title">Análisis de lectura oral</div></div>
+          <div class="ai-card">
+            <div class="ai-card-head">
+              <div class="ai-card-title">Diagnóstico prosódico y de errores</div>
+              
+            </div>
+            <div class="ai-paragraph">${getVoiceAnalysis(s).aiText}</div>
+            <div style="font-size: 11.5px; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 10px;">Parámetros prosódicos</div>
+            <div class="voice-params">
+              ${(() => { const va = getVoiceAnalysis(s); return `
+                <div class="voice-param"><div class="voice-param-label">Entonación</div><div class="voice-param-value ${va.entonacion.cls}">${va.entonacion.v}</div></div>
+                <div class="voice-param"><div class="voice-param-label">Ritmo</div><div class="voice-param-value ${va.ritmo.cls}">${va.ritmo.v}</div></div>
+                <div class="voice-param"><div class="voice-param-label">Pausas</div><div class="voice-param-value ${va.pausas.cls}">${va.pausas.v}</div></div>
+                <div class="voice-param"><div class="voice-param-label">Autocorrección</div><div class="voice-param-value ${va.autocorr.cls}">${va.autocorr.v}</div></div>
+              `; })()}
+            </div>
+            <div style="font-size: 11.5px; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 14px;">Tipificación de errores</div>
+            <div class="error-types">
+              ${(() => { const e = getVoiceAnalysis(s).errors; return `
+                <div class="error-type"><div class="error-type-num">${e.omisiones}</div><div class="error-type-label">Omisiones</div></div>
+                <div class="error-type"><div class="error-type-num">${e.sustituciones}</div><div class="error-type-label">Sustituciones</div></div>
+                <div class="error-type"><div class="error-type-num">${e.repeticiones}</div><div class="error-type-label">Repeticiones</div></div>
+                <div class="error-type"><div class="error-type-num">${e.autocorrecciones}</div><div class="error-type-label">Autocorrecc.</div></div>
+              `; })()}
+            </div>
+          </div>
+        </section>
+
+        <!-- ANÁLISIS DETALLADO DE ESCRITURA -->
+        <section class="section">
+          <div class="section-head"><div class="section-title">Análisis de escritura</div></div>
+          ${(() => {
+            const wa = getWritingAnalysis(s);
+            const rubricHtml = wa.dims.map(d => `
+              <div class="rubric-dim">
+                <div>
+                  <div class="rubric-dim-name">${d.label}</div>
+                  <div style="font-size: 11px; color: var(--text-3); margin-top: 2px;">${d.desc}</div>
+                </div>
+                <div class="rubric-dim-bar"><div class="rubric-dim-bar-fill dim-${d.level}" style="width: ${d.score}%"></div></div>
+                <div class="rubric-dim-level dim-${d.level}">${d.levelLabel}</div>
+              </div>
+            `).join('');
+            return `
+              <div class="ai-card">
+                <div class="ai-card-head">
+                  <div class="ai-card-title">Texto escrito por el estudiante</div>
+                  <div class="ai-card-source">Texto capturado</div>
+                </div>
+                <div class="manuscript-card">${wa.sample}</div>
+
+                <div class="ai-card-head" style="margin-top: 24px;">
+                  <div class="ai-card-title">Diagnóstico de producción escrita</div>
+                  
+                </div>
+                <div class="ai-paragraph">${wa.aiText}</div>
+
+                <div style="font-size: 11.5px; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 14px;">Desglose por dimensión</div>
+                <div class="rubric-dims">${rubricHtml}</div>
+              </div>
+            `;
+          })()}
+        </section>
       </div>
 
       <div>
@@ -1478,6 +2055,34 @@ function openStudent(name) {
 }
 
 function closeStudent() { showView('dash'); window.scrollTo(0, 0); }
+
+// ============= MODO OSCURO =============
+function applyDarkTheme(isDark) {
+  document.body.classList.toggle('dark', isDark);
+  const label = document.getElementById('themeLabel');
+  if (label) label.textContent = isDark ? 'Claro' : 'Oscuro';
+  try { localStorage.setItem('phonos.theme', isDark ? 'dark' : 'light'); } catch (e) {}
+}
+function toggleDarkMode() {
+  const isDark = !document.body.classList.contains('dark');
+  applyDarkTheme(isDark);
+}
+(function initTheme() {
+  let saved = null;
+  try { saved = localStorage.getItem('phonos.theme'); } catch (e) {}
+  let isDark;
+  if (saved === 'dark') isDark = true;
+  else if (saved === 'light') isDark = false;
+  else isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyDarkTheme(isDark);
+})();
+document.addEventListener('keydown', (e) => {
+  if ((e.key === 'd' || e.key === 'D') && !e.metaKey && !e.ctrlKey && !e.altKey) {
+    const tag = document.activeElement && document.activeElement.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    toggleDarkMode();
+  }
+});
 </script>
 
 </body>

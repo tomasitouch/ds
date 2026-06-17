@@ -1,6 +1,6 @@
-# Edutek · Prototipo del reporte
+# Phonos · Prototipo del reporte
 
-Prototipo del sistema de reportería diagnóstica de lectoescritura **Edutek**, desarrollado en el marco del proyecto Innova de Ingeniería UC (ING2030).
+Prototipo del sistema de reportería diagnóstica de lectoescritura **Phonos**, desarrollado en el marco del proyecto Innova de Ingeniería UC (ING2030).
 
 ## Páginas
 
@@ -15,15 +15,15 @@ Desde la landing (`index.html`), ir a la sección "Acceso al reporte". Las crede
 
 ## El producto
 
-Edutek **no** es una plataforma de intervención. Es un **sistema de reportería**. El flujo real:
+Phonos **no** es una plataforma de intervención. Es un **sistema de reportería**. El flujo real:
 
-1. El equipo Edutek aplica la prueba diagnóstica de lectoescritura en el colegio.
+1. El equipo Phonos aplica la prueba diagnóstica de lectoescritura en el colegio.
 2. Las respuestas manuscritas se procesan y se clasifica a cada estudiante por nivel (Insuficiente / Elemental / Adecuado).
 3. Se envía un **link al correo del profesor** con el reporte del trimestre.
 4. El profesor abre el link y ve los resultados visualizados.
 5. El ciclo se repite tres veces por semestre. Cada nuevo informe muestra la evolución acumulada.
 
-El profesor **decide qué hacer con esa información**. Edutek entrega el diagnóstico, no la intervención.
+El profesor **decide qué hacer con esa información**. Phonos entrega el diagnóstico, no la intervención.
 
 ## Notas técnicas
 

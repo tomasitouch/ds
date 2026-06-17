@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Phonos · Demo evaluación oral</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAFA;
+    --panel: #FFFFFF;
+    --border: #EBEBEB;
+    --border-mid: #DCDCDC;
+    --text: #0A0A0A;
+    --text-2: #525252;
+    --text-3: #8A8A8A;
+    --accent: #2563EB;
+    --accent-soft: #EFF4FE;
+    --green: #047857;
+    --green-soft: #ECFDF5;
+    --amber: #B45309;
+    --amber-soft: #FFFBEB;
+    --red: #B91C1C;
+    --red-soft: #FEF2F2;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  button { font-family: inherit; cursor: pointer; }
+
+  /* Topbar */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-mark {
+    width: 30px; height: 30px;
+    background: var(--text); color: #fff;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px;
+  }
+  .brand-name { font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
+  .brand-logo { height: 34px; width: auto; display: block; }
+  .brand-suffix { font-size: 12px; color: var(--text-3); margin-left: 4px; font-weight: 500; }
+  .topbar-back {
+    font-size: 13px; color: var(--text-2); text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .topbar-back:hover { color: var(--text); }
+
+  /* Main */
+  .main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 56px 32px 80px;
+  }
+  h1 {
+    font-size: 28px; font-weight: 700;
+    letter-spacing: -0.03em; margin-bottom: 8px;
+  }
+  .lead {
+    font-size: 15px;
+    color: var(--text-2);
+    margin-bottom: 36px;
+    line-height: 1.6;
+  }
+
+  /* Browser support warning */
+  .warn-banner {
+    padding: 12px 16px;
+    background: var(--amber-soft);
+    border: 1px solid #FCD34D;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: var(--amber);
+    display: none;
+  }
+  .warn-banner.show { display: block; }
+
+  /* Sentence card */
+  .sentence-card {
+    padding: 36px 36px 32px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .sentence-num {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+  .sentence-text {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.4;
+    color: var(--text);
+    padding: 16px 0;
+  }
+  .sentence-meta {
+    font-size: 12px;
+    color: var(--text-3);
+    margin-top: 14px;
+  }
+
+  /* Record button */
+  .actions {
+    display: flex; gap: 10px; justify-content: center; align-items: center;
+    margin-bottom: 28px; flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 22px;
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border-mid);
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .btn:hover { background: #F4F4F4; border-color: #C8C8C8; }
+  .btn-record {
+    background: var(--text);
+    color: #fff;
+    border-color: var(--text);
+    padding: 14px 28px;
+    font-size: 15px;
+  }
+  .btn-record:hover { background: #1F1F1F; }
+  .btn-record.recording {
+    background: var(--red);
+    border-color: var(--red);
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  .btn-record .dot {
+    width: 9px; height: 9px;
+    background: #fff;
+    border-radius: 50%;
+  }
+  .btn-record.recording .dot {
+    background: #fff;
+    animation: blink 0.8s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(185, 28, 28, 0.6); }
+    50% { box-shadow: 0 0 0 14px rgba(185, 28, 28, 0); }
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* Live transcript */
+  .live {
+    padding: 18px 22px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 24px;
+    display: none;
+  }
+  .live.show { display: block; }
+  .live-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-3);
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .live-pulse {
+    width: 8px; height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+    animation: blink 1s ease-in-out infinite;
+  }
+  .live-timer {
+    margin-left: auto;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+    font-weight: 600;
+  }
+  .live-text {
+    font-size: 16px;
+    color: var(--text);
+    min-height: 28px;
+    line-height: 1.5;
+  }
+  .live-text-empty {
+    color: var(--text-3);
+    font-style: italic;
+  }
+
+  /* Results */
+  .results {
+    display: none;
+  }
+  .results.show { display: block; }
+
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .metric {
+    padding: 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .metric-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+  .metric-value {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1;
+  }
+  .metric-value small {
+    font-size: 13px;
+    color: var(--text-3);
+    font-weight: 500;
+  }
+  .metric-meta {
+    font-size: 11.5px;
+    color: var(--text-2);
+    margin-top: 6px;
+  }
+  .metric-good .metric-value { color: var(--green); }
+  .metric-warn .metric-value { color: var(--amber); }
+  .metric-bad .metric-value { color: var(--red); }
+
+  /* Diff */
+  .card {
+    padding: 22px 26px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 16px;
+  }
+  .section-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-3);
+    margin-bottom: 10px;
+  }
+  .word-diff {
+    font-size: 16px;
+    line-height: 1.9;
+  }
+  .word {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin: 2px;
+  }
+  .word-ok { background: var(--green-soft); color: var(--green); font-weight: 500; }
+  .word-bad { background: var(--red-soft); color: var(--red); font-weight: 500; text-decoration: line-through; }
+
+  /* Original / transcribed */
+  .compare-grid {
+    display: grid; gap: 14px;
+  }
+  .compare-row {
+    padding: 14px 16px;
+    background: var(--bg);
+    border-radius: 8px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .compare-row b { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; display: block; margin-bottom: 5px; }
+
+  /* Audio */
+  audio {
+    width: 100%;
+    margin-top: 6px;
+  }
+
+  /* Footer */
+  .footer-info {
+    margin-top: 40px;
+    padding: 16px 18px;
+    background: var(--panel);
+    border: 1px dashed var(--border-mid);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--text-2);
+    line-height: 1.55;
+  }
+  .footer-info b { color: var(--text); }
+
+  @media (max-width: 720px) {
+    .topbar { padding: 14px 22px; }
+    .main { padding: 36px 22px 64px; }
+    h1 { font-size: 22px; }
+    .sentence-text { font-size: 22px; }
+    .sentence-card { padding: 28px 22px 24px; }
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+    .metric-value { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="brand" style="text-decoration: none; color: inherit;">
+    <div class="brand-mark">E</div>
+    <img src="phonos-logo.png" alt="Phonos" class="brand-logo" /><span class="brand-suffix">· Demo voz</span>
+  </a>
+  <a href="index.html" class="topbar-back">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Volver al inicio
+  </a>
+</header>
+
+<main class="main">
+  <h1>Evaluación de fluidez lectora</h1>
+  <p class="lead">
+    Lee la oración en voz alta. El sistema graba tu audio, transcribe lo que dijiste y calcula
+    tu velocidad lectora (PCPM), precisión y palabras leídas correctamente.
+  </p>
+
+  <div class="warn-banner" id="warnBanner">
+    <b>⚠ Compatibilidad limitada:</b> la transcripción automática funciona en Chrome o Edge.
+    En Firefox podrás grabar pero la transcripción no estará disponible. Safari móvil no soporta MediaRecorder.
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-num" id="sentenceNum">Oración 1 de 5</div>
+    <div class="sentence-text" id="sentence">El sol brilla con fuerza sobre el lago tranquilo.</div>
+    <div class="sentence-meta" id="sentenceMeta">9 palabras · meta 4° básico: ~113 PCPM</div>
+  </div>
+
+  <div class="actions">
+    <button id="recordBtn" class="btn-record btn">
+      <span class="dot"></span>
+      <span id="recordLabel">Iniciar grabación</span>
+    </button>
+    <button id="nextBtn" class="btn">Siguiente oración →</button>
+  </div>
+
+  <div class="live" id="liveBox">
+    <div class="live-label">
+      <span class="live-pulse"></span>
+      Transcripción en vivo
+      <span class="live-timer" id="timer">00:00.0</span>
+    </div>
+    <div class="live-text live-text-empty" id="liveText">Esperando que comiences a leer…</div>
+  </div>
+
+  <div class="results" id="results">
+    <div class="metrics">
+      <div class="metric" id="metTime">
+        <div class="metric-label">Tiempo</div>
+        <div class="metric-value">— <small>s</small></div>
+      </div>
+      <div class="metric" id="metPcpm">
+        <div class="metric-label">Velocidad</div>
+        <div class="metric-value">— <small>PCPM</small></div>
+        <div class="metric-meta">meta: 113</div>
+      </div>
+      <div class="metric" id="metAccuracy">
+        <div class="metric-label">Precisión</div>
+        <div class="metric-value">— <small>%</small></div>
+      </div>
+      <div class="metric" id="metCorrect">
+        <div class="metric-label">Correctas</div>
+        <div class="metric-value">— <small>/ —</small></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-label">Comparación palabra por palabra</div>
+      <div class="word-diff" id="wordDiff"></div>
+      <div style="font-size: 11.5px; color: var(--text-3); margin-top: 10px;">
+        Verde: leíste correctamente · Rojo tachado: no detectada o pronunciada distinto
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-label">Original vs transcrito</div>
+      <div class="compare-grid">
+        <div class="compare-row">
+          <b>Texto a leer</b>
+          <div id="originalText">—</div>
+        </div>
+        <div class="compare-row">
+          <b>Lo que el sistema escuchó</b>
+          <div id="transcribedText">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-label">Tu grabación</div>
+      <audio id="audioPlayer" controls></audio>
+    </div>
+  </div>
+
+  <div class="footer-info">
+    <b>Cómo funciona este demo:</b> usa la <b>Web Speech API</b> del navegador (Chrome / Edge) para transcribir en
+    tiempo real. La grabación de audio se hace con <b>MediaRecorder API</b>. En la versión productiva, Phonos
+    procesará el audio en el servidor con <b>WhisperX</b> para mayor precisión, detección de pausas y análisis
+    fonético detallado. Toda la información de este demo queda solo en tu navegador.
+  </div>
+</main>
+
+<script>
+// ============= Sentences for 4° básico =============
+const SENTENCES = [
+  { text: "El sol brilla con fuerza sobre el lago tranquilo.",         meta: "10 palabras · meta 4° básico: ~113 PCPM" },
+  { text: "María plantó flores rojas y amarillas en el jardín.",        meta: "10 palabras · texto descriptivo simple" },
+  { text: "Los pájaros cantan al amanecer en el bosque profundo.",      meta: "10 palabras · vocabulario natural" },
+  { text: "Mi hermano lee un libro de aventuras todas las noches.",     meta: "10 palabras · narrativo cotidiano" },
+  { text: "La maestra explicó el problema de matemáticas con paciencia.", meta: "10 palabras · vocabulario académico" }
+];
+
+let currentIdx = 0;
+let mediaRecorder = null;
+let audioChunks = [];
+let recognition = null;
+let transcript = '';
+let isRecording = false;
+let startTime = 0;
+let timerInterval = null;
+
+// ============= Init =============
+function loadSentence(idx) {
+  const s = SENTENCES[idx];
+  document.getElementById('sentenceNum').textContent = `Oración ${idx + 1} de ${SENTENCES.length}`;
+  document.getElementById('sentence').textContent = s.text;
+  document.getElementById('sentenceMeta').textContent = s.meta;
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('liveBox').classList.remove('show');
+}
+
+function checkBrowserSupport() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const MR = window.MediaRecorder;
+  const banner = document.getElementById('warnBanner');
+  if (!SR || !MR) {
+    banner.classList.add('show');
+  }
+}
+
+// ============= Record button =============
+document.getElementById('recordBtn').addEventListener('click', async () => {
+  if (isRecording) {
+    stopRecording();
+  } else {
+    await startRecording();
+  }
+});
+
+async function startRecording() {
+  // Reset state
+  audioChunks = [];
+  transcript = '';
+  document.getElementById('results').classList.remove('show');
+
+  // Get microphone
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch (e) {
+    alert('No pude acceder al micrófono. Por favor permite el acceso e intenta de nuevo.');
+    return;
+  }
+
+  // Setup MediaRecorder
+  if (window.MediaRecorder) {
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+    mediaRecorder.onstop = onRecordingStopped;
+    mediaRecorder.start();
+  }
+
+  // Setup SpeechRecognition (transcripción en vivo)
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SR) {
+    recognition = new SR();
+    recognition.lang = 'es-CL';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    const liveText = document.getElementById('liveText');
+    recognition.onresult = (event) => {
+      let final = '', interim = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) final += event.results[i][0].transcript + ' ';
+        else interim += event.results[i][0].transcript;
+      }
+      // Acumular el texto final + el interim actual
+      const stable = (transcript + final).trim();
+      transcript = stable;
+      const display = (stable + ' ' + interim).trim();
+      liveText.textContent = display || 'Esperando que comiences a leer…';
+      liveText.classList.toggle('live-text-empty', !display);
+    };
+    recognition.onerror = (e) => console.warn('Speech recognition error:', e.error);
+    try { recognition.start(); } catch (e) { /* ignore */ }
+  }
+
+  // UI: change button + show live box
+  isRecording = true;
+  startTime = Date.now();
+  const btn = document.getElementById('recordBtn');
+  btn.classList.add('recording');
+  document.getElementById('recordLabel').textContent = 'Detener grabación';
+  document.getElementById('liveBox').classList.add('show');
+  document.getElementById('liveText').textContent = 'Esperando que comiences a leer…';
+  document.getElementById('liveText').classList.add('live-text-empty');
+
+  // Start timer
+  timerInterval = setInterval(() => {
+    const elapsed = (Date.now() - startTime) / 1000;
+    const mins = Math.floor(elapsed / 60);
+    const secs = (elapsed % 60).toFixed(1);
+    document.getElementById('timer').textContent =
+      String(mins).padStart(2, '0') + ':' + secs.padStart(4, '0');
+  }, 100);
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+  if (recognition) {
+    try { recognition.stop(); } catch (e) {}
+  }
+  if (timerInterval) clearInterval(timerInterval);
+
+  isRecording = false;
+  const btn = document.getElementById('recordBtn');
+  btn.classList.remove('recording');
+  document.getElementById('recordLabel').textContent = 'Iniciar grabación';
+}
+
+function onRecordingStopped() {
+  // Crear el blob de audio
+  const blob = new Blob(audioChunks, { type: 'audio/webm' });
+  const url = URL.createObjectURL(blob);
+  document.getElementById('audioPlayer').src = url;
+
+  // Esperar un poco para que recognition emita los últimos resultados
+  setTimeout(() => {
+    analyzeReading();
+  }, 400);
+}
+
+// ============= Análisis =============
+function normalize(text) {
+  return text.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quitar tildes
+    .replace(/[.,!?;:¿¡()]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function analyzeReading() {
+  const original = SENTENCES[currentIdx].text;
+  const elapsed = (Date.now() - startTime) / 1000; // segundos
+
+  const originalWords = normalize(original).split(' ').filter(Boolean);
+  const transcribedWords = normalize(transcript).split(' ').filter(Boolean);
+  const transcribedSet = new Set(transcribedWords);
+
+  // Algoritmo simple: ¿Cada palabra del original aparece en lo transcrito?
+  // (matching por palabra, sin orden estricto — adecuado para fluidez)
+  let correctWords = 0;
+  const wordResults = originalWords.map(w => {
+    const found = transcribedSet.has(w);
+    if (found) correctWords++;
+    return { word: w, correct: found };
+  });
+
+  const accuracy = originalWords.length > 0
+    ? Math.round((correctWords / originalWords.length) * 100) : 0;
+  const pcpm = elapsed > 0
+    ? Math.round((correctWords / elapsed) * 60) : 0;
+
+  // Render metrics
+  document.getElementById('metTime').querySelector('.metric-value').innerHTML =
+    `${elapsed.toFixed(1)} <small>s</small>`;
+
+  const pcpmCell = document.getElementById('metPcpm');
+  pcpmCell.querySelector('.metric-value').innerHTML = `${pcpm} <small>PCPM</small>`;
+  pcpmCell.classList.remove('metric-good', 'metric-warn', 'metric-bad');
+  if (pcpm >= 113) pcpmCell.classList.add('metric-good');
+  else if (pcpm >= 80) pcpmCell.classList.add('metric-warn');
+  else pcpmCell.classList.add('metric-bad');
+
+  const accCell = document.getElementById('metAccuracy');
+  accCell.querySelector('.metric-value').innerHTML = `${accuracy}<small>%</small>`;
+  accCell.classList.remove('metric-good', 'metric-warn', 'metric-bad');
+  if (accuracy >= 95) accCell.classList.add('metric-good');
+  else if (accuracy >= 75) accCell.classList.add('metric-warn');
+  else accCell.classList.add('metric-bad');
+
+  document.getElementById('metCorrect').querySelector('.metric-value').innerHTML =
+    `${correctWords} <small>/ ${originalWords.length}</small>`;
+
+  // Render word diff
+  const diff = document.getElementById('wordDiff');
+  diff.innerHTML = wordResults.map(r =>
+    `<span class="word ${r.correct ? 'word-ok' : 'word-bad'}">${r.word}</span>`
+  ).join(' ');
+
+  // Render original / transcribed
+  document.getElementById('originalText').textContent = original;
+  document.getElementById('transcribedText').textContent =
+    transcript.trim() || '(no se detectó audio. ¿Probaste con un browser compatible?)';
+
+  // Show results
+  document.getElementById('results').classList.add('show');
+}
+
+// ============= Next sentence =============
+document.getElementById('nextBtn').addEventListener('click', () => {
+  if (isRecording) stopRecording();
+  currentIdx = (currentIdx + 1) % SENTENCES.length;
+  loadSentence(currentIdx);
+});
+
+// ============= Init =============
+loadSentence(0);
+checkBrowserSupport();
+</script>
+
+</body>
+</html>
