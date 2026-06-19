@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Phonos · Toma de datos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -482,6 +482,102 @@
   body.dark .photo-preview img { background: rgba(0,0,0,0.3); }
   body.dark .modal { background: var(--panel); border: 1px solid var(--border); }
 
+
+  /* ===== FIX RESPONSIVE MÓVIL ===== */
+  * { min-width: 0; }
+  .layout, .capture-area, .student-list { min-width: 0; }
+
+  @media (max-width: 880px) {
+    .topbar { padding: 10px 14px; gap: 8px; flex-wrap: nowrap; }
+    .brand-logo { height: 38px; }
+    .crumb { display: none; }
+    .brand-row { gap: 0; }
+    .topbar-actions { gap: 6px; flex-shrink: 0; }
+    .btn-process span { display: none; }
+    .btn-process {
+      padding: 8px 12px;
+      font-size: 0; gap: 0;
+    }
+    .btn-process::after {
+      content: 'Procesar';
+      font-size: 13px; font-weight: 600;
+    }
+    .btn { padding: 7px 9px; }
+
+    .course-bar { padding: 12px 14px; gap: 8px; }
+    .course-select { min-width: 0; width: 100%; flex: 1; font-size: 12.5px; padding: 8px 12px; }
+    .course-progress { width: 100%; margin-left: 0; font-size: 11.5px; gap: 8px; }
+    .progress-bar-out { width: 80px; flex-shrink: 0; }
+
+    .layout {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+    .student-list {
+      max-height: 180px;
+      overflow-y: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      padding: 10px 8px;
+    }
+    .student-list-head { padding: 0 6px 8px; font-size: 10.5px; }
+    .student-item { padding: 7px 8px; gap: 8px; grid-template-columns: 22px 1fr auto; }
+    .student-num { font-size: 10px; }
+    .student-name { font-size: 12.5px; }
+
+    .capture-area { padding: 18px 14px 60px; }
+    .capture-title { font-size: 20px; }
+    .capture-meta { font-size: 12.5px; }
+    .capture-title::before { width: 3px; height: 18px; margin-right: 9px; vertical-align: 4px; }
+
+    .section { padding: 16px 14px; margin-bottom: 12px; border-radius: 12px; }
+    .section-title { font-size: 11px; margin-bottom: 10px; }
+    .section-prompt { padding: 11px 12px; font-size: 12.5px; }
+    .reading-text { padding: 16px 16px; font-size: 15px; line-height: 1.75; border-radius: 8px; }
+
+    .recorder { padding: 14px 14px; gap: 14px; }
+    .record-btn { width: 60px; height: 60px; }
+    .record-btn::before { width: 18px; height: 18px; }
+    .record-btn:not(.recording)::before { width: 18px; height: 18px; }
+    .record-timer { font-size: 22px; }
+    .record-status { font-size: 11.5px; }
+
+    .photo-area { grid-template-columns: 1fr; gap: 8px; }
+    .photo-action { padding: 16px 12px; gap: 8px; }
+    .photo-action svg { width: 26px; height: 26px; }
+    .photo-action b { font-size: 13px; }
+    .photo-action span { font-size: 11.5px; }
+
+    .action-bar { padding: 14px 0 4px; flex-direction: column; gap: 8px; }
+    .action-bar .btn { width: 100%; padding: 12px 16px; min-width: 0; }
+
+    .empty-state { padding: 40px 20px; }
+    .empty-state svg { width: 48px; height: 48px; }
+    .empty-state h3 { font-size: 16px; }
+    .empty-state p { font-size: 12.5px; }
+
+    .toast { left: 14px; right: 14px; bottom: 14px; max-width: none; }
+    .modal { padding: 24px 20px; }
+    .modal h3 { font-size: 17px; }
+    .modal p { font-size: 13px; }
+  }
+
+  @media (max-width: 480px) {
+    .brand-logo { height: 34px; }
+    .btn-process::after { font-size: 12px; }
+    .topbar-actions .btn { padding: 6px 8px; }
+    .course-progress { font-size: 11px; }
+    .progress-bar-out { width: 60px; }
+    .capture-area { padding: 14px 12px 60px; }
+    .section { padding: 14px 12px; }
+    .reading-text { padding: 14px 14px; font-size: 14px; }
+    .recorder { padding: 12px; flex-direction: row; }
+    .record-btn { width: 54px; height: 54px; }
+    .record-timer { font-size: 20px; }
+    .photo-action { padding: 14px 10px; }
+    .photo-preview img { max-height: 280px; }
+  }
+
 </style>
 </head>
 <body>
@@ -500,9 +596,7 @@
       <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
     </button>
-    <a class="btn" href="profesor.html" title="Ver dashboard">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-    </a>
+
   </div>
 </header>
 
@@ -564,10 +658,9 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
     <h3>Datos enviados</h3>
-    <p>El procesamiento está en marcha. El reporte del curso quedará disponible en el dashboard en cuanto termine.</p>
+    <p>Las capturas fueron enviadas al sistema de procesamiento. El equipo Phonos te confirmará por correo cuando el reporte del curso esté listo.</p>
     <div class="modal-actions">
-      <button class="btn" onclick="closeModal('modalDone')">Seguir aquí</button>
-      <a class="btn btn-primary" href="profesor.html">Ir al dashboard</a>
+      <button class="btn btn-primary" onclick="closeModal('modalDone')">Entendido</button>
     </div>
   </div>
 </div>
@@ -943,7 +1036,7 @@ function onProcessClick() {
   }
   document.getElementById('modalConfirmText').innerHTML = `
     Vas a enviar las capturas de <b>${complete}/${total}</b> estudiantes (${partial - complete} parciales).
-    El procesamiento corre en segundo plano y los reportes quedan en el dashboard cuando termina.
+    El procesamiento corre en segundo plano. Recibirás una confirmación cuando el informe esté listo.
   `;
   openModal('modalConfirm');
 }
