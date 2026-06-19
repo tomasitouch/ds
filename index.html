@@ -487,6 +487,13 @@
     .hero-title { font-size: 32px; }
     .steps { grid-template-columns: 1fr; }
   }
+
+  /* Audience cards collapsan a 1 columna en mobile */
+  @media (max-width: 720px) {
+    section #para-quien .audience,
+    .audience { grid-template-columns: 1fr !important; }
+  }
+  /* clase ancla para idempotencia: audience-mobile-fix */
 </style>
 </head>
 <body>
@@ -602,22 +609,39 @@
       Sin instalación, sin login complejo, sin trabajo extra.
     </p>
 
-    <div class="audience" style="grid-template-columns: 1fr; max-width: 480px; margin: 36px auto 0;">
+    <div class="audience" style="grid-template-columns: 1fr 1fr; max-width: 920px; margin: 36px auto 0;">
       <div class="audience-card">
         <div class="audience-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
         </div>
-        <div class="audience-title">Profesores y profesoras</div>
-        <div class="audience-sub">Recibe un link por correo con el reporte del trimestre. Visualización clara, sin acciones requeridas.</div>
+        <div class="audience-title">Dashboard del docente</div>
+        <div class="audience-sub">Reporte del curso ya procesado. Visualización clara, sin acciones requeridas.</div>
         <ul class="audience-features">
           <li>Distribución del curso por nivel: Insuficiente, Elemental, Adecuado.</li>
           <li>Movimientos entre evaluaciones: quiénes subieron, bajaron o se mantuvieron.</li>
           <li>Desempeño por sección con descripción de cada habilidad.</li>
           <li>Trayectoria individual de cada estudiante a través de las evaluaciones.</li>
-          <li>Evolución acumulada del curso a lo largo del semestre.</li>
         </ul>
         <a href="profesor.html" class="audience-cta">
           Ver reporte
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+
+      <div class="audience-card">
+        <div class="audience-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+        <div class="audience-title">Toma de datos</div>
+        <div class="audience-sub">Web app que usa el evaluador en terreno para capturar audio y escritura de cada estudiante.</div>
+        <ul class="audience-features">
+          <li>Selector de curso y de estudiantes del curso.</li>
+          <li>Grabación de audio de la lectura oral con cronómetro.</li>
+          <li>Captura de foto del manuscrito con cámara o desde archivo.</li>
+          <li>Estado de progreso y botón general para procesar todo.</li>
+        </ul>
+        <a href="captura.html" class="audience-cta">
+          Empezar evaluación
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
         </a>
       </div>

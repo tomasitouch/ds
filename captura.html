@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>Phonos · Toma de datos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAF8FE;
+    --panel: #FFFFFF;
+    --border: #ECE8F4;
+    --border-mid: #D7D2E4;
+    --text: #1A0E2E;
+    --text-2: #4B4259;
+    --text-3: #8A82A0;
+    --accent: #7C3AED;
+    --accent-soft: #F3E8FF;
+    --brand-tint: #F7F2FE;
+    --green: #047857;
+    --green-soft: #ECFDF5;
+    --amber: #B45309;
+    --amber-soft: #FFFBEB;
+    --red: #B91C1C;
+    --red-soft: #FEF2F2;
+  }
+  body.dark {
+    --bg: #0F0E14;
+    --panel: #1A1825;
+    --border: rgba(255,255,255,0.08);
+    --border-mid: rgba(255,255,255,0.15);
+    --text: #F5F3FA;
+    --text-2: rgba(255,255,255,0.75);
+    --text-3: rgba(255,255,255,0.5);
+    --accent: #A78BFA;
+    --accent-soft: rgba(167, 139, 250, 0.18);
+    --brand-tint: rgba(167, 139, 250, 0.10);
+    --green: #34D399;
+    --green-soft: rgba(52, 211, 153, 0.16);
+    --amber: #FBBF24;
+    --amber-soft: rgba(251, 191, 36, 0.18);
+    --red: #F87171;
+    --red-soft: rgba(248, 113, 113, 0.18);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow-x: hidden; max-width: 100vw; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  button, input, select { font-family: inherit; font-size: inherit; }
+
+  /* TOPBAR */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+    position: sticky; top: 0; z-index: 10;
+    gap: 16px;
+  }
+  .topbar::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #7C3AED 0%, #A78BFA 50%, #FBBF24 100%);
+  }
+  .brand-row { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+  .brand-logo { height: 50px; width: auto; display: block; }
+  .crumb {
+    font-size: 12px; color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 700;
+    padding-left: 16px; margin-left: 4px;
+    border-left: 1px solid var(--border-mid);
+  }
+
+  .topbar-actions { display: flex; align-items: center; gap: 8px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 8px 14px;
+    background: transparent; color: var(--text);
+    border: 1px solid var(--border-mid); border-radius: 8px;
+    font-weight: 500; font-size: 13px; cursor: pointer;
+    transition: all 0.12s; text-decoration: none;
+  }
+  .btn svg { width: 14px; height: 14px; }
+  .btn:hover { background: var(--brand-tint); border-color: var(--accent); }
+  .btn-primary {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+  }
+  .btn-primary:hover { background: #6D28D9; border-color: #6D28D9; }
+  .btn-danger {
+    background: var(--red); color: #fff; border-color: var(--red);
+  }
+  .btn-process {
+    background: linear-gradient(90deg, #7C3AED 0%, #A78BFA 100%);
+    color: #fff; border: none; padding: 9px 16px; font-weight: 600;
+  }
+  .btn-process:hover { background: linear-gradient(90deg, #6D28D9 0%, #8B5CF6 100%); }
+  .theme-toggle .icon-moon { display: inline-block; }
+  .theme-toggle .icon-sun { display: none; }
+  body.dark .theme-toggle .icon-moon { display: none; }
+  body.dark .theme-toggle .icon-sun { display: inline-block; }
+  body.dark .btn { color: var(--text); border-color: var(--border-mid); }
+
+  /* COURSE SELECTOR */
+  .course-bar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 24px;
+    background: var(--brand-tint);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .course-select {
+    flex: 1; min-width: 240px; max-width: 380px;
+    padding: 9px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border-mid);
+    border-radius: 8px;
+    color: var(--text); font-weight: 600; font-size: 13px;
+    cursor: pointer;
+  }
+  .course-progress {
+    display: flex; align-items: center; gap: 10px;
+    margin-left: auto;
+    font-size: 12.5px; color: var(--text-2);
+  }
+  .progress-bar-out {
+    width: 140px; height: 6px;
+    background: var(--border); border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-bar-in {
+    height: 100%; background: linear-gradient(90deg, #7C3AED, #A78BFA);
+    transition: width 0.3s;
+  }
+  .progress-label b { color: var(--text); font-weight: 700; }
+
+  /* LAYOUT */
+  .layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 0;
+    min-height: calc(100vh - 130px);
+  }
+  @media (max-width: 880px) {
+    .layout { grid-template-columns: 1fr; }
+    .student-list { max-height: 280px; overflow-y: auto; border-right: none; border-bottom: 1px solid var(--border); }
+  }
+
+  /* STUDENT LIST */
+  .student-list {
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    padding: 16px 12px;
+    overflow-y: auto;
+  }
+  .student-list-head {
+    font-size: 11px; color: var(--text-3); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 0 8px 12px; margin-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .student-item {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    gap: 10px; align-items: center;
+    padding: 9px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 2px;
+    transition: background 0.12s;
+  }
+  .student-item:hover { background: var(--brand-tint); }
+  .student-item.active {
+    background: var(--accent-soft);
+    box-shadow: inset 3px 0 0 var(--accent);
+  }
+  .student-item.active .student-name { color: var(--accent); font-weight: 700; }
+  .student-num {
+    font-size: 11px; color: var(--text-3); font-weight: 600;
+    text-align: center;
+  }
+  .student-name {
+    font-size: 13.5px; color: var(--text); font-weight: 500;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .student-status {
+    width: 18px; height: 18px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .student-status svg { width: 18px; height: 18px; }
+  .status-empty { color: var(--text-3); opacity: 0.3; }
+  .status-partial { color: var(--amber); }
+  .status-complete { color: var(--green); }
+
+  /* MAIN CAPTURE AREA */
+  .capture-area {
+    padding: 32px 36px;
+    overflow-y: auto;
+  }
+  @media (max-width: 720px) { .capture-area { padding: 20px 18px; } }
+
+  .capture-header { margin-bottom: 28px; }
+  .capture-title {
+    font-size: 26px; font-weight: 700;
+    letter-spacing: -0.025em; color: var(--text);
+    margin-bottom: 6px;
+  }
+  .capture-title::before {
+    content: ''; display: inline-block; vertical-align: 6px;
+    width: 4px; height: 22px;
+    background: var(--accent); border-radius: 2px; margin-right: 12px;
+  }
+  .capture-meta { color: var(--text-2); font-size: 13.5px; }
+
+  .empty-state {
+    padding: 80px 40px;
+    text-align: center;
+    color: var(--text-3);
+  }
+  .empty-state svg {
+    width: 64px; height: 64px;
+    color: var(--text-3); opacity: 0.4;
+    margin-bottom: 18px;
+  }
+  .empty-state h3 {
+    font-size: 18px; color: var(--text-2); font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .empty-state p { font-size: 13.5px; max-width: 360px; margin: 0 auto; }
+
+  /* SECTIONS */
+  .section {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 26px;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-size: 11.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.09em;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .section-prompt {
+    background: var(--brand-tint);
+    padding: 14px 16px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    font-size: 13.5px;
+    color: var(--text-2);
+    line-height: 1.65;
+  }
+  .section-prompt b { color: var(--text); font-weight: 600; }
+
+  .reading-text {
+    font-size: 17px; line-height: 1.85;
+    color: var(--text);
+    padding: 22px 26px;
+    background: #FFFBF0;
+    border: 1px solid #F2E6C6;
+    border-radius: 10px;
+    margin-bottom: 22px;
+  }
+  body.dark .reading-text {
+    background: rgba(251, 191, 36, 0.06);
+    border-color: rgba(251, 191, 36, 0.25);
+    color: var(--text);
+  }
+  .reading-text .word-count {
+    display: block; font-size: 11.5px; color: var(--text-3);
+    margin-top: 12px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+
+  /* AUDIO RECORDER */
+  .recorder {
+    display: flex; align-items: center; gap: 20px;
+    padding: 22px 24px;
+    background: var(--brand-tint);
+    border-radius: 12px;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 520px) {
+    .recorder { flex-direction: column; align-items: stretch; gap: 14px; }
+  }
+  .record-btn {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: var(--red);
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.15);
+  }
+  .record-btn:hover { transform: scale(1.05); }
+  .record-btn.recording {
+    background: var(--red);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  .record-btn.recording::before {
+    content: '';
+    width: 22px; height: 22px;
+    background: #fff; border-radius: 4px;
+  }
+  .record-btn:not(.recording)::before {
+    content: '';
+    width: 22px; height: 22px;
+    background: #fff; border-radius: 50%;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.15); }
+    50% { box-shadow: 0 0 0 12px rgba(185, 28, 28, 0.0); }
+  }
+  .record-info { flex: 1; min-width: 0; }
+  .record-timer {
+    font-size: 26px; font-weight: 700;
+    letter-spacing: 0.02em; color: var(--text);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 4px;
+  }
+  .record-status {
+    font-size: 12.5px; color: var(--text-2);
+  }
+  .record-status.is-recording { color: var(--red); font-weight: 600; }
+  .record-status.is-done { color: var(--green); font-weight: 600; }
+  .record-actions { display: flex; gap: 8px; }
+
+  audio { width: 100%; margin-top: 12px; }
+  audio::-webkit-media-controls-panel { background: var(--brand-tint); }
+
+  /* PHOTO UPLOAD */
+  .photo-area {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  @media (max-width: 720px) { .photo-area { grid-template-columns: 1fr; } }
+
+  .photo-action {
+    padding: 22px 18px;
+    background: var(--brand-tint);
+    border: 2px dashed var(--border-mid);
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    transition: all 0.15s;
+    color: var(--text-2);
+  }
+  .photo-action:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .photo-action svg { width: 32px; height: 32px; }
+  .photo-action b { font-size: 14px; font-weight: 600; }
+  .photo-action span { font-size: 12px; color: var(--text-3); }
+  .photo-action:hover span { color: var(--accent); }
+
+  .photo-preview {
+    position: relative;
+    background: var(--brand-tint);
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 12px;
+  }
+  .photo-preview img {
+    width: 100%; max-height: 360px;
+    object-fit: contain;
+    border-radius: 8px;
+    background: #fff;
+  }
+  .photo-preview-actions {
+    display: flex; gap: 8px;
+    margin-top: 10px;
+  }
+
+  /* CTA BAR (guardar) */
+  .action-bar {
+    display: flex; gap: 10px;
+    padding: 20px 0 8px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+  .action-bar .btn { padding: 11px 22px; font-size: 14px; font-weight: 600; }
+  .action-bar .btn-primary { min-width: 180px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    padding: 14px 20px;
+    background: var(--text);
+    color: var(--bg);
+    border-radius: 10px;
+    font-size: 13.5px; font-weight: 500;
+    z-index: 100;
+    opacity: 0; transform: translateY(20px);
+    transition: all 0.3s;
+    pointer-events: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    max-width: 320px;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .toast.success { background: var(--green); color: #fff; }
+  .toast.error { background: var(--red); color: #fff; }
+
+  /* MODAL */
+  .modal-bg {
+    position: fixed; inset: 0;
+    background: rgba(15, 14, 20, 0.55);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 200;
+    padding: 20px;
+  }
+  .modal-bg.show { display: flex; }
+  .modal {
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 460px;
+    width: 100%;
+    text-align: center;
+  }
+  .modal h3 {
+    font-size: 20px; font-weight: 700; color: var(--text);
+    margin-bottom: 8px; letter-spacing: -0.02em;
+  }
+  .modal p { color: var(--text-2); font-size: 14px; margin-bottom: 22px; line-height: 1.6; }
+  .modal-actions { display: flex; gap: 10px; justify-content: center; }
+  .modal-actions .btn { padding: 11px 22px; font-weight: 600; }
+
+  .modal-icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent);
+    margin: 0 auto 18px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-icon svg { width: 30px; height: 30px; }
+  .modal-icon.success { background: var(--green-soft); color: var(--green); }
+
+  .spinner {
+    display: inline-block;
+    width: 28px; height: 28px;
+    border: 3px solid var(--accent-soft);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* HIDDEN FILE INPUT */
+  .hidden-input { display: none; }
+
+  /* DARK MODE specific */
+  body.dark .topbar { background: var(--panel); border-bottom-color: var(--border); }
+  body.dark .course-bar { background: rgba(167, 139, 250, 0.08); }
+  body.dark .student-list { background: var(--panel); border-right-color: var(--border); }
+  body.dark .student-item:hover { background: rgba(167, 139, 250, 0.10); }
+  body.dark .student-item.active { background: rgba(167, 139, 250, 0.18); }
+  body.dark .section { background: var(--panel); border-color: var(--border); }
+  body.dark .section-prompt { background: rgba(167, 139, 250, 0.08); }
+  body.dark .recorder { background: rgba(167, 139, 250, 0.08); }
+  body.dark .photo-action { background: rgba(167, 139, 250, 0.08); border-color: var(--border-mid); }
+  body.dark .photo-preview { background: rgba(167, 139, 250, 0.08); }
+  body.dark .photo-preview img { background: rgba(0,0,0,0.3); }
+  body.dark .modal { background: var(--panel); border: 1px solid var(--border); }
+
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand-row">
+    <img src="phonos-logo.png" alt="Phonos" class="brand-logo" />
+    <span class="crumb">Toma de datos</span>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn btn-process" onclick="onProcessClick()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Procesar
+    </button>
+    <button class="btn theme-toggle" onclick="toggleDarkMode()" title="Tema (D)">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    </button>
+    <a class="btn" href="profesor.html" title="Ver dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    </a>
+  </div>
+</header>
+
+<div class="course-bar">
+  <select class="course-select" id="courseSelect" onchange="onCourseChange()">
+    <option value="lc-4b">4° Básico B · Esc. Los Cóndores</option>
+    <option value="lc-3a">3° Básico A · Esc. Los Cóndores</option>
+    <option value="lc-5b">5° Básico B · Esc. Los Cóndores</option>
+  </select>
+  <div class="course-progress">
+    <div class="progress-label"><b id="progDone">0</b> de <b id="progTotal">30</b> estudiantes</div>
+    <div class="progress-bar-out"><div class="progress-bar-in" id="progBar" style="width: 0%;"></div></div>
+  </div>
+</div>
+
+<div class="layout">
+  <aside class="student-list" id="studentList">
+    <div class="student-list-head">Estudiantes del curso</div>
+  </aside>
+
+  <main class="capture-area" id="captureArea">
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+      <h3>Selecciona un estudiante</h3>
+      <p>Para empezar la captura, elige un nombre de la lista de la izquierda. Vas a poder grabar su lectura y tomar la foto de su escritura.</p>
+    </div>
+  </main>
+</div>
+
+<input type="file" accept="image/*" capture="environment" class="hidden-input" id="photoInput" />
+
+<div class="toast" id="toast"></div>
+
+<div class="modal-bg" id="modalConfirm">
+  <div class="modal">
+    <div class="modal-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    </div>
+    <h3>Procesar evaluación</h3>
+    <p id="modalConfirmText">Vas a enviar las capturas al sistema de procesamiento. El reporte estará disponible en el dashboard cuando termine.</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modalConfirm')">Cancelar</button>
+      <button class="btn btn-primary" onclick="doProcess()">Procesar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalProcessing">
+  <div class="modal">
+    <div class="spinner" style="margin: 0 auto 18px; display: block;"></div>
+    <h3>Procesando capturas…</h3>
+    <p>Estamos enviando los datos al sistema. No cierres esta ventana.</p>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalDone">
+  <div class="modal">
+    <div class="modal-icon success">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h3>Datos enviados</h3>
+    <p>El procesamiento está en marcha. El reporte del curso quedará disponible en el dashboard en cuanto termine.</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modalDone')">Seguir aquí</button>
+      <a class="btn btn-primary" href="profesor.html">Ir al dashboard</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============= DATA =============
+const COURSES = {
+  'lc-4b': {
+    name: '4° Básico B · Esc. Los Cóndores',
+    students: [
+      'Antonia Reyes','Mateo Soto','Camila Ortega','Thomas Pizarro','Florencia Soto',
+      'Lucas Navarro','Sofía Méndez','Benjamín Álvarez','Catalina Pérez','Diego Muñoz',
+      'Emilia Gómez','Joaquín Vergara','Isidora Rojas','Matías Hernández','Fernanda Castro',
+      'Agustina Vera','Simón Aravena','Javiera Leiva','Cristóbal Tapia','María Paz Contreras',
+      'Rosa Mellado','Valentina Ríos','Pablo Sandoval','Renata Espinoza','Ignacio Lagos',
+      'Constanza Bravo','Gabriel Fuentes','Trinidad Maturana','Vicente Ñancupil','Franco Álvarez'
+    ],
+    readingText: 'Era una mañana clara cuando subimos al cerro con mi familia. El camino estaba empinado y por momentos costaba seguir. Mi hermana corría adelante, llena de energía, mientras mi papá se quedaba atrás cuidando que no nos perdiéramos. Cruzamos un pequeño arroyo y vimos pájaros que cantaban en los árboles. Después de una hora llegamos a la cima y el paisaje era hermoso: los cerros se extendían hasta el horizonte. Nos sentamos a descansar y comimos las galletas que llevábamos en la mochila. Cuando bajamos estábamos cansados pero felices, y prometimos volver pronto a hacer otra caminata por la montaña.',
+    readingTitle: 'Paseo a la montaña',
+    readingWords: 115,
+    writingPrompt: 'Cuéntanos sobre un paseo o una salida que hayas hecho con tu familia. Describe el lugar, lo que hicieron y cómo te sentiste.'
+  },
+  'lc-3a': {
+    name: '3° Básico A · Esc. Los Cóndores',
+    students: [
+      'Amparo Soto','Tomás Reyes','Lucía Vargas','Diego Sandoval','Olivia Pérez',
+      'Martín Carrasco','Florencia Muñoz','Bautista Rojas','Trinidad Aguilar','León Sepúlveda',
+      'Catalina Lagos','Vicente Espinoza','Pía Núñez','Pedro Henríquez','Antonia Bravo',
+      'Joaquín Salinas','Emma Ortega','Mateo Riveros','Isabella Cáceres','Cristóbal Pizarro',
+      'Renata Fuentes','Felipe Maturana','Magdalena Tapia','Borja González','Sofía Aravena'
+    ],
+    readingText: 'El perro de mi vecina se llama Toto. Es muy chico, café, y siempre mueve la cola cuando me ve. Todas las tardes salgo a darle un paseo por la plaza. A Toto le gusta correr detrás de las hojas que el viento arrastra. A veces se cansa y se sienta a descansar bajo un árbol. Cuando vuelve a casa, toma agua y se queda dormido en su cojín. Es mi amigo favorito del barrio.',
+    readingTitle: 'Toto, el perro de la vecina',
+    readingWords: 75,
+    writingPrompt: 'Escribe sobre tu mascota o sobre un animal que te gustaría tener. Cuenta cómo es y qué hacen juntos.'
+  },
+  'lc-5b': {
+    name: '5° Básico B · Esc. Los Cóndores',
+    students: [
+      'Felipe Andrade','Magdalena Soto','Vicente Maturana','Catalina Rojas','Ignacio Salinas',
+      'Antonia Vergara','Tomás Henríquez','Florencia Ortega','Joaquín Lagos','Isidora Pérez',
+      'Cristóbal Espinoza','Renata Aguilar','Bautista Carrasco','Pía Ñancupil','Mateo Mellado',
+      'Sofía Sandoval','León Bravo','Trinidad Riveros','Diego Núñez','Emma Fuentes',
+      'Borja Pizarro','Olivia González','Martín Tapia','Lucía Cáceres','Pedro Reyes',
+      'Amparo Aravena','Magdalena Sepúlveda','Felipe Contreras'
+    ],
+    readingText: 'En el sur de Chile hay bosques antiguos donde los árboles miden más de cuarenta metros de altura. Algunos, como las araucarias, pueden vivir más de mil años. Estos árboles producen piñones que las familias mapuches han recolectado por generaciones, alimento y símbolo cultural. Hoy estos bosques están protegidos por parques nacionales, donde investigadores estudian cómo el cambio climático afecta a las especies más antiguas. Visitar uno de estos lugares es entender que los árboles tienen una historia más larga que la nuestra.',
+    readingTitle: 'Los bosques milenarios del sur',
+    readingWords: 90,
+    writingPrompt: 'Escribe sobre un lugar de la naturaleza que te haya impresionado. Describe lo que viste y por qué te marcó.'
+  }
+};
+
+let currentCourse = 'lc-4b';
+let currentStudent = null;
+let mediaRecorder = null;
+let audioChunks = [];
+let recordStart = 0;
+let recordTimerId = null;
+let currentRecordingURL = null;
+
+// ============= LOCALSTORAGE HELPERS =============
+function captureKey(courseId, studentName) {
+  return `phonos.capture:${courseId}:${studentName}`;
+}
+function getCapture(courseId, studentName) {
+  try {
+    return JSON.parse(localStorage.getItem(captureKey(courseId, studentName)) || '{}');
+  } catch (e) { return {}; }
+}
+function setCapture(courseId, studentName, data) {
+  const merged = { ...getCapture(courseId, studentName), ...data, savedAt: Date.now() };
+  try {
+    localStorage.setItem(captureKey(courseId, studentName), JSON.stringify(merged));
+    return true;
+  } catch (e) {
+    showToast('No se pudo guardar (espacio lleno). Intenta procesar los datos para liberar espacio.', 'error');
+    return false;
+  }
+}
+
+// ============= STATUS =============
+function getStudentStatus(courseId, studentName) {
+  const c = getCapture(courseId, studentName);
+  if (c.photo && c.audioRecorded) return 'complete';
+  if (c.photo || c.audioRecorded) return 'partial';
+  return 'empty';
+}
+function statusIconSvg(status) {
+  if (status === 'complete') {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+  }
+  if (status === 'partial') {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/></svg>';
+  }
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>';
+}
+
+// ============= RENDER STUDENT LIST =============
+function renderStudentList() {
+  const list = document.getElementById('studentList');
+  const head = '<div class="student-list-head">Estudiantes del curso</div>';
+  const students = COURSES[currentCourse].students;
+  const items = students.map((name, i) => {
+    const status = getStudentStatus(currentCourse, name);
+    const active = name === currentStudent ? 'active' : '';
+    return `
+      <div class="student-item ${active}" onclick="selectStudent('${name.replace(/'/g, "\\'")}')">
+        <div class="student-num">${String(i + 1).padStart(2, '0')}</div>
+        <div class="student-name">${name}</div>
+        <div class="student-status status-${status}">${statusIconSvg(status)}</div>
+      </div>`;
+  }).join('');
+  list.innerHTML = head + items;
+  updateProgress();
+}
+
+function updateProgress() {
+  const students = COURSES[currentCourse].students;
+  const total = students.length;
+  const done = students.filter(n => getStudentStatus(currentCourse, n) === 'complete').length;
+  document.getElementById('progDone').textContent = done;
+  document.getElementById('progTotal').textContent = total;
+  document.getElementById('progBar').style.width = `${(done / total) * 100}%`;
+}
+
+// ============= SELECT STUDENT =============
+function selectStudent(name) {
+  // Si hay grabación pendiente, detenerla
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    stopRecording();
+  }
+  currentStudent = name;
+  renderStudentList();
+  renderCaptureArea();
+  document.getElementById('captureArea').scrollTop = 0;
+}
+
+// ============= RENDER CAPTURE AREA =============
+function renderCaptureArea() {
+  if (!currentStudent) return;
+  const cap = getCapture(currentCourse, currentStudent);
+  const course = COURSES[currentCourse];
+  const audioInfo = cap.audioRecorded
+    ? `<div class="record-status is-done">✓ Grabación guardada · ${cap.audioDurationSec || 0}s</div>`
+    : `<div class="record-status">Listo para grabar</div>`;
+  const photoArea = cap.photo
+    ? `<div class="photo-preview">
+         <img src="${cap.photo}" alt="Manuscrito de ${currentStudent}" />
+         <div class="photo-preview-actions">
+           <button class="btn" onclick="document.getElementById('photoInput').click()">Volver a tomar</button>
+           <button class="btn btn-danger" onclick="clearPhoto()">Quitar foto</button>
+         </div>
+       </div>`
+    : `<div class="photo-area">
+         <div class="photo-action" onclick="capturePhoto()">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+           <b>Tomar foto</b>
+           <span>Cámara del dispositivo</span>
+         </div>
+         <div class="photo-action" onclick="uploadPhoto()">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+           <b>Subir imagen</b>
+           <span>Desde la galería</span>
+         </div>
+       </div>`;
+
+  document.getElementById('captureArea').innerHTML = `
+    <div class="capture-header">
+      <div class="capture-title">${currentStudent}</div>
+      <div class="capture-meta">${course.name}</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">1 · Lectura oral</div>
+      <div class="section-prompt">
+        <b>Indicación al evaluador:</b> Pide al estudiante que lea el siguiente texto en voz alta. Inicia la grabación antes de que empiece y deténla cuando termine.
+      </div>
+      <div class="reading-text">
+        ${course.readingText}
+        <span class="word-count">${course.readingTitle} · ${course.readingWords} palabras</span>
+      </div>
+      <div class="recorder">
+        <button class="record-btn" id="recBtn" onclick="toggleRecord()" aria-label="Grabar"></button>
+        <div class="record-info">
+          <div class="record-timer" id="recTimer">${cap.audioDurationSec ? formatTime(cap.audioDurationSec) : '00:00'}</div>
+          ${audioInfo}
+        </div>
+        <div class="record-actions">
+          ${cap.audioRecorded ? `<button class="btn" onclick="clearAudio()">Borrar</button>` : ''}
+        </div>
+      </div>
+      ${currentRecordingURL ? `<audio controls src="${currentRecordingURL}"></audio>` : ''}
+    </div>
+
+    <div class="section">
+      <div class="section-title">2 · Producción escrita</div>
+      <div class="section-prompt">
+        <b>Indicación al evaluador:</b> Entrega papel y lápiz al estudiante con el siguiente enunciado. Cuando termine de escribir, captura una foto clara del manuscrito.
+      </div>
+      <div class="reading-text">${course.writingPrompt}</div>
+      ${photoArea}
+    </div>
+
+    <div class="action-bar">
+      <button class="btn btn-primary" onclick="saveStudent()">Guardar estudiante</button>
+      <button class="btn" onclick="clearStudent()">Limpiar capturas</button>
+    </div>
+  `;
+}
+
+// ============= AUDIO =============
+function formatTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+async function toggleRecord() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    stopRecording();
+    return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = e => { if (e.data.size) audioChunks.push(e.data); };
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      currentRecordingURL = URL.createObjectURL(blob);
+      stream.getTracks().forEach(t => t.stop());
+      const durationSec = Math.round((Date.now() - recordStart) / 1000);
+      // Persistimos solo metadata (no el audio crudo: ocuparía mucho espacio)
+      setCapture(currentCourse, currentStudent, {
+        audioRecorded: true,
+        audioDurationSec: durationSec
+      });
+      renderCaptureArea();
+      renderStudentList();
+      showToast(`Grabación de ${durationSec}s lista`, 'success');
+    };
+    mediaRecorder.start();
+    recordStart = Date.now();
+    document.getElementById('recBtn').classList.add('recording');
+    document.getElementById('recTimer').textContent = '00:00';
+    recordTimerId = setInterval(() => {
+      const sec = Math.round((Date.now() - recordStart) / 1000);
+      const timer = document.getElementById('recTimer');
+      if (timer) timer.textContent = formatTime(sec);
+    }, 250);
+  } catch (e) {
+    showToast('No se pudo acceder al micrófono. Verifica los permisos del navegador.', 'error');
+  }
+}
+function stopRecording() {
+  if (!mediaRecorder || mediaRecorder.state !== 'recording') return;
+  mediaRecorder.stop();
+  clearInterval(recordTimerId);
+  document.getElementById('recBtn').classList.remove('recording');
+}
+function clearAudio() {
+  setCapture(currentCourse, currentStudent, { audioRecorded: false, audioDurationSec: 0 });
+  if (currentRecordingURL) { URL.revokeObjectURL(currentRecordingURL); currentRecordingURL = null; }
+  renderCaptureArea();
+  renderStudentList();
+}
+
+// ============= FOTO =============
+function capturePhoto() {
+  const input = document.getElementById('photoInput');
+  input.setAttribute('capture', 'environment');
+  input.click();
+}
+function uploadPhoto() {
+  const input = document.getElementById('photoInput');
+  input.removeAttribute('capture');
+  input.click();
+}
+document.getElementById('photoInput').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    showToast('El archivo no es una imagen', 'error');
+    return;
+  }
+  try {
+    // Comprimir imagen para que entre en localStorage
+    const dataURL = await compressImage(file, 1100, 0.78);
+    setCapture(currentCourse, currentStudent, { photo: dataURL, photoFilename: file.name });
+    renderCaptureArea();
+    renderStudentList();
+    showToast('Foto capturada', 'success');
+  } catch (err) {
+    showToast('No se pudo procesar la imagen', 'error');
+  }
+  e.target.value = '';
+});
+
+function compressImage(file, maxWidth, quality) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const ratio = img.width > maxWidth ? maxWidth / img.width : 1;
+        const w = Math.round(img.width * ratio);
+        const h = Math.round(img.height * ratio);
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function clearPhoto() {
+  setCapture(currentCourse, currentStudent, { photo: null, photoFilename: null });
+  renderCaptureArea();
+  renderStudentList();
+  showToast('Foto eliminada', 'success');
+}
+
+// ============= GUARDAR / LIMPIAR ESTUDIANTE =============
+function saveStudent() {
+  const cap = getCapture(currentCourse, currentStudent);
+  if (!cap.photo && !cap.audioRecorded) {
+    showToast('Aún no hay capturas para este estudiante', 'error');
+    return;
+  }
+  setCapture(currentCourse, currentStudent, { confirmed: true });
+  showToast(`✓ ${currentStudent} guardado`, 'success');
+  renderStudentList();
+}
+function clearStudent() {
+  if (!confirm(`¿Borrar todas las capturas de ${currentStudent}?`)) return;
+  localStorage.removeItem(captureKey(currentCourse, currentStudent));
+  if (currentRecordingURL) { URL.revokeObjectURL(currentRecordingURL); currentRecordingURL = null; }
+  renderCaptureArea();
+  renderStudentList();
+  showToast('Capturas eliminadas', 'success');
+}
+
+// ============= CURSO =============
+function onCourseChange() {
+  currentCourse = document.getElementById('courseSelect').value;
+  currentStudent = null;
+  renderStudentList();
+  document.getElementById('captureArea').innerHTML = `
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+      <h3>Selecciona un estudiante</h3>
+      <p>Para empezar la captura, elige un nombre de la lista de la izquierda.</p>
+    </div>`;
+}
+
+// ============= PROCESAR =============
+function onProcessClick() {
+  const students = COURSES[currentCourse].students;
+  const total = students.length;
+  const partial = students.filter(n => getStudentStatus(currentCourse, n) !== 'empty').length;
+  const complete = students.filter(n => getStudentStatus(currentCourse, n) === 'complete').length;
+  if (partial === 0) {
+    showToast('No hay capturas para procesar todavía', 'error');
+    return;
+  }
+  document.getElementById('modalConfirmText').innerHTML = `
+    Vas a enviar las capturas de <b>${complete}/${total}</b> estudiantes (${partial - complete} parciales).
+    El procesamiento corre en segundo plano y los reportes quedan en el dashboard cuando termina.
+  `;
+  openModal('modalConfirm');
+}
+function doProcess() {
+  closeModal('modalConfirm');
+  openModal('modalProcessing');
+  setTimeout(() => {
+    closeModal('modalProcessing');
+    openModal('modalDone');
+  }, 2200);
+}
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+// ============= TOAST =============
+let toastTimer;
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + (type || '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ============= DARK MODE =============
+function applyDarkTheme(isDark) {
+  document.body.classList.toggle('dark', isDark);
+  try { localStorage.setItem('phonos.theme', isDark ? 'dark' : 'light'); } catch (e) {}
+}
+function toggleDarkMode() { applyDarkTheme(!document.body.classList.contains('dark')); }
+(function initTheme() {
+  let saved = null;
+  try { saved = localStorage.getItem('phonos.theme'); } catch (e) {}
+  let isDark;
+  if (saved === 'dark') isDark = true;
+  else if (saved === 'light') isDark = false;
+  else isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyDarkTheme(isDark);
+})();
+document.addEventListener('keydown', (e) => {
+  if ((e.key === 'd' || e.key === 'D') && !e.metaKey && !e.ctrlKey && !e.altKey) {
+    const tag = document.activeElement && document.activeElement.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+    toggleDarkMode();
+  }
+});
+
+// ============= INIT =============
+renderStudentList();
+
+</script>
+</body>
+</html>
