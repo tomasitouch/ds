@@ -105,6 +105,12 @@
     color: #fff; border: none; padding: 9px 16px; font-weight: 600;
   }
   .btn-process:hover { background: linear-gradient(90deg, #6D28D9 0%, #8B5CF6 100%); }
+  .btn-live-demo {
+    background: linear-gradient(90deg, #7C3AED 0%, #A78BFA 100%);
+    color: #fff; border: none; padding: 9px 16px; font-weight: 600;
+  }
+  .btn-live-demo:hover { background: linear-gradient(90deg, #6D28D9 0%, #8B5CF6 100%); }
+  .btn-live-demo:disabled { opacity: 0.6; cursor: not-allowed; }
   .theme-toggle .icon-moon { display: inline-block; }
   .theme-toggle .icon-sun { display: none; }
   body.dark .theme-toggle .icon-moon { display: none; }
@@ -724,6 +730,7 @@ let recordStart = 0;
 let recordTimerId = null;
 let currentRecordingURL = null;
 let currentAudioBlob = null; // sólo en memoria: se usa para el envío al demo en vivo
+let currentAudioMimeType = 'audio/webm'; // formato real detectado en toggleRecord()
 
 // ============= LOCALSTORAGE HELPERS =============
 function captureKey(courseId, studentName) {
@@ -872,7 +879,7 @@ function renderCaptureArea() {
       <button class="btn btn-primary" onclick="saveStudent()">Guardar estudiante</button>
       <button class="btn" onclick="clearStudent()">Limpiar capturas</button>
       ${window.PHONOS_API_BASE && cap.photo && currentAudioBlob
-        ? `<button class="btn btn-process" id="liveDemoBtn" onclick="sendToLiveDemo()">Enviar al demo en vivo</button>`
+        ? `<button class="btn btn-live-demo" id="liveDemoBtn" onclick="sendToLiveDemo()">Enviar al demo en vivo</button>`
         : ''}
     </div>
   `;
@@ -895,11 +902,19 @@ async function sendToLiveDemo() {
   const btn = document.getElementById('liveDemoBtn');
   if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
 
+  let step = 'presign';
   try {
-    const presignRes = await fetch(`${window.PHONOS_API_BASE}/presign`, { method: 'POST' });
-    if (!presignRes.ok) throw new Error(`presign HTTP ${presignRes.status}`);
+    const presignRes = await fetch(`${window.PHONOS_API_BASE}/presign`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      // El servidor presigna audio.<ext> con el content-type real que grabó
+      // este navegador (webm en Android, mp4 en iOS Safari, etc.)
+      body: JSON.stringify({ audioContentType: currentAudioMimeType }),
+    });
+    if (!presignRes.ok) throw new Error(`HTTP ${presignRes.status}`);
     const { sessionId, uploads } = await presignRes.json();
 
+    step = 'foto (lectura del dataURL)';
     const photoBlob = await (await fetch(cap.photo)).blob();
     const course = COURSES[currentCourse];
     const inputMeta = {
@@ -907,14 +922,17 @@ async function sendToLiveDemo() {
       expected_text: course.readingText,
     };
 
+    step = 'subir audio';
     await putToPresigned(uploads.audio, currentAudioBlob);
+    step = 'subir foto';
     await putToPresigned(uploads.photo, photoBlob);
+    step = 'subir input.json';
     // input.json se sube AL FINAL: su llegada dispara el scoring en la Lambda.
     await putToPresigned(uploads.input, new Blob([JSON.stringify(inputMeta)], { type: 'application/json' }));
 
     window.location.href = `resultado.html?id=${encodeURIComponent(sessionId)}`;
   } catch (err) {
-    showToast('No se pudo enviar al demo en vivo: ' + err.message, 'error');
+    showToast(`No se pudo enviar al demo en vivo (paso: ${step}): ${err.message}`, 'error');
     if (btn) { btn.disabled = false; btn.textContent = 'Enviar al demo en vivo'; }
   }
 }
@@ -934,6 +952,19 @@ function formatTime(sec) {
   const s = sec % 60;
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
+// iOS Safari nunca soportó contenedores webm en MediaRecorder (graba mp4/AAC);
+// Android Chrome sí soporta webm/opus. Hay que grabar y etiquetar el Blob con
+// el formato que el navegador realmente produce, no asumir uno fijo.
+function pickAudioMimeType() {
+  const candidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/aac', 'audio/ogg'];
+  if (window.MediaRecorder && MediaRecorder.isTypeSupported) {
+    for (const c of candidates) {
+      if (MediaRecorder.isTypeSupported(c)) return c;
+    }
+  }
+  return ''; // deja que el navegador elija su default
+}
+
 async function toggleRecord() {
   if (mediaRecorder && mediaRecorder.state === 'recording') {
     stopRecording();
@@ -942,10 +973,16 @@ async function toggleRecord() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     audioChunks = [];
-    mediaRecorder = new MediaRecorder(stream);
+    const preferredMimeType = pickAudioMimeType();
+    mediaRecorder = preferredMimeType
+      ? new MediaRecorder(stream, { mimeType: preferredMimeType })
+      : new MediaRecorder(stream);
     mediaRecorder.ondataavailable = e => { if (e.data.size) audioChunks.push(e.data); };
     mediaRecorder.onstop = () => {
-      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      // mediaRecorder.mimeType es el formato REAL que el navegador usó (puede
+      // no ser preferredMimeType si el navegador ignoró la opción).
+      currentAudioMimeType = mediaRecorder.mimeType || preferredMimeType || 'audio/webm';
+      const blob = new Blob(audioChunks, { type: currentAudioMimeType });
       currentAudioBlob = blob;
       currentRecordingURL = URL.createObjectURL(blob);
       stream.getTracks().forEach(t => t.stop());
