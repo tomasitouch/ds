@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- config.js lo genera el deploy de infra/ con la URL real de la API (ver infra/phonos_demo/stack.py). Sin deploy, el panel "Visitante en vivo" queda oculto. -->
+<script src="config.js" onerror="window.PHONOS_API_BASE = window.PHONOS_API_BASE || null;"></script>
 <style>
   :root {
     --bg: #FAF8FE;
@@ -1165,6 +1167,31 @@
     .capture-cta-sub { font-size: 11.5px; }
   }
 
+  /* VISITANTE EN VIVO (demo feria) */
+  .live-dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--red); margin-right: 6px;
+    animation: live-pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes live-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.75); }
+  }
+  .live-card-body {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .live-name { font-size: 18px; font-weight: 800; }
+  .live-meta { font-size: 12.5px; color: var(--text-3); margin-top: 2px; }
+  .live-metrics { display: flex; gap: 24px; flex-wrap: wrap; }
+  .live-metric { text-align: center; }
+  .live-metric-value { font-size: 20px; font-weight: 800; }
+  .live-metric-label { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; }
+  .live-card.is-loading { opacity: 0.6; }
+  @media (max-width: 640px) {
+    .live-card-body { flex-direction: column; align-items: flex-start; }
+  }
+
 </style>
 </head>
 <body>
@@ -1207,7 +1234,15 @@
         <p>Reporte de la <b>segunda evaluación diagnóstica del semestre</b> · Aplicada el 14 de abril 2026 · Procesada por el equipo Phonos · Próximo informe: 15 de julio.</p>
       </div>
 
-
+      <!-- VISITANTE EN VIVO (demo feria): ver config.js + pollLiveVisitor() -->
+      <section class="section" id="liveSection" style="display:none;">
+        <div class="section-head">
+          <div class="section-title">
+            <span class="live-dot"></span> Visitante en vivo
+          </div>
+        </div>
+        <div class="card" id="liveCard"></div>
+      </section>
 
       <!-- Resumen diagnóstico -->
       <div class="diag">
@@ -1577,7 +1612,105 @@ document.addEventListener('DOMContentLoaded', () => {
   renderSectionAnalysis();
   renderFluency();
   renderStudents();
+  initLiveVisitor();
 });
+
+// ============= VISITANTE EN VIVO (demo feria) =============
+// Hace polling a GET /latest y muestra al último visitante capturado en
+// captura.html, para que el reporte "se actualice" en vivo frente al
+// público. No toca STUDENTS (los 30 son ficticios/hardcodeados): esto es
+// una tarjeta aparte que solo aparece si hay al menos una captura real.
+const LIVE_POLL_INTERVAL_MS = 4000;
+let _liveLastSessionId = null;
+
+function initLiveVisitor() {
+  if (!window.PHONOS_API_BASE) return; // sin deploy/config.js: panel queda oculto
+  pollLiveVisitor();
+  setInterval(pollLiveVisitor, LIVE_POLL_INTERVAL_MS);
+}
+
+async function pollLiveVisitor() {
+  try {
+    const res = await fetch(`${window.PHONOS_API_BASE}/latest?limit=1`);
+    if (!res.ok) return;
+    const { items } = await res.json();
+    if (!items || !items.length) return;
+    renderLiveVisitor(items[0]);
+  } catch (err) {
+    // red intermitente en el stand: reintenta en el próximo poll, sin romper la UI
+  }
+}
+
+function liveFluencyLabel(category) {
+  const map = {
+    fluido: ['Lectura fluida', 'var(--green)'],
+    unidades_cortas: ['Unidades cortas', 'var(--accent)'],
+    palabra_a_palabra: ['Palabra a palabra', 'var(--amber)'],
+    silabico: ['Lectura silábica', 'var(--red)'],
+    no_lector: ['No lector', '#7F1D1D'],
+  };
+  return map[category] || [category || '—', 'var(--text-3)'];
+}
+
+function liveNivelColor(nivel) {
+  const map = {
+    Avanzado: 'var(--green)', Competente: 'var(--green)',
+    Básico: 'var(--amber)', Inicial: 'var(--amber)', Emergente: 'var(--red)',
+  };
+  return map[nivel] || 'var(--text-3)';
+}
+
+function renderLiveVisitor(item) {
+  const section = document.getElementById('liveSection');
+  const card = document.getElementById('liveCard');
+  section.style.display = '';
+
+  const isNew = item.sessionId !== _liveLastSessionId;
+  _liveLastSessionId = item.sessionId;
+
+  const reading = item.reading;
+  const writing = item.writing;
+  let metricsHtml = '';
+
+  if (reading && reading.ok) {
+    const [flLabel, flColor] = liveFluencyLabel(reading.fluency_category);
+    metricsHtml += `
+      <div class="live-metric">
+        <div class="live-metric-value">${Math.round(reading.ppm)}</div>
+        <div class="live-metric-label">PCPM</div>
+      </div>
+      <div class="live-metric">
+        <div class="live-metric-value" style="color:${flColor};">${flLabel}</div>
+        <div class="live-metric-label">Fluidez</div>
+      </div>`;
+  }
+  if (writing && writing.ok) {
+    metricsHtml += `
+      <div class="live-metric">
+        <div class="live-metric-value" style="color:${liveNivelColor(writing.nivelGlobal)};">${writing.nivelGlobal || '—'}</div>
+        <div class="live-metric-label">Escritura</div>
+      </div>`;
+  }
+  if (!metricsHtml) {
+    metricsHtml = '<div class="live-metric-label">Procesando…</div>';
+  }
+
+  card.className = 'card live-card' + (isNew ? '' : '');
+  card.innerHTML = `
+    <div class="live-card-body">
+      <div>
+        <div class="live-name">${escapeHtmlProfesor(item.studentName || 'Visitante')}</div>
+        <div class="live-meta">Capturado recién en el stand · actualizado cada ${LIVE_POLL_INTERVAL_MS / 1000}s</div>
+      </div>
+      <div class="live-metrics">${metricsHtml}</div>
+    </div>`;
+}
+
+function escapeHtmlProfesor(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
 
 function getMovement(s) {
   const r1 = LEVEL_RANK[s.E1.lvl], r2 = LEVEL_RANK[s.E2.lvl];
@@ -1829,7 +1962,7 @@ function getFilteredStudents() {
   return STUDENTS.filter(s => s.name.toLowerCase().includes(_stuFilter));
 }
 function renderStudents() {
-  const sorted = [...STUDENTS].sort((a, b) => a.E2.score - b.E2.score);
+  const sorted = [...getFilteredStudents()].sort((a, b) => a.E2.score - b.E2.score);
   document.getElementById('stuBody').innerHTML = sorted.map(s => {
     const move = getMovement(s);
     const moveSym = move === 'up' ? '↑' : move === 'down' ? '↓' : '→';
