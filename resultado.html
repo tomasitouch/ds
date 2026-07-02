@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Phonos · Resultado en vivo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="config.js" onerror="window.PHONOS_API_BASE = window.PHONOS_API_BASE || null;"></script>
+<style>
+  :root {
+    --bg: #FAF8FE;
+    --panel: #FFFFFF;
+    --border: #ECE8F4;
+    --border-mid: #D7D2E4;
+    --text: #1A0E2E;
+    --text-2: #4B4259;
+    --text-3: #8A82A0;
+    --accent: #7C3AED;
+    --accent-soft: #F3E8FF;
+    --brand-tint: #F7F2FE;
+    --green: #047857;
+    --green-soft: #ECFDF5;
+    --amber: #B45309;
+    --amber-soft: #FFFBEB;
+    --red: #B91C1C;
+    --red-soft: #FEF2F2;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .topbar {
+    display: flex; align-items: center; gap: 16px;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+    position: relative;
+  }
+  .topbar::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #7C3AED 0%, #A78BFA 50%, #FBBF24 100%);
+  }
+  .brand-logo { height: 42px; width: auto; display: block; }
+  .crumb {
+    font-size: 12px; color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 700;
+    padding-left: 16px; margin-left: 4px;
+    border-left: 1px solid var(--border-mid);
+  }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  .state { text-align: center; padding: 60px 20px; }
+  .spinner {
+    width: 44px; height: 44px; margin: 0 auto 20px;
+    border: 4px solid var(--border-mid); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .state h2 { font-size: 18px; margin-bottom: 6px; }
+  .state p { color: var(--text-2); font-size: 14px; }
+
+  .student-name { font-size: 26px; font-weight: 800; margin-bottom: 4px; }
+  .subtitle { color: var(--text-3); font-size: 13px; margin-bottom: 28px; }
+
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+    padding: 24px; margin-bottom: 20px;
+    opacity: 0; transform: translateY(12px);
+    animation: reveal 0.5s ease forwards;
+  }
+  @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
+  .card-title {
+    font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--accent); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title svg { width: 16px; height: 16px; }
+
+  .metric-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 6px; }
+  .metric {
+    background: var(--brand-tint); border-radius: 12px; padding: 14px;
+    text-align: center;
+  }
+  .metric-value { font-size: 24px; font-weight: 800; color: var(--text); }
+  .metric-label { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 600;
+  }
+  .pill-green { background: var(--green-soft); color: var(--green); }
+  .pill-amber { background: var(--amber-soft); color: var(--amber); }
+  .pill-red { background: var(--red-soft); color: var(--red); }
+
+  .reasoning { margin-top: 14px; font-size: 13.5px; color: var(--text-2); line-height: 1.6; }
+  .reasoning b { color: var(--text); }
+
+  .error-box {
+    background: var(--red-soft); color: var(--red); border-radius: 10px; padding: 12px 14px;
+    font-size: 13px;
+  }
+
+  .again {
+    display: block; text-align: center; margin-top: 12px;
+    color: var(--accent); font-size: 13.5px; font-weight: 600; text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <img src="phonos-logo.png" alt="Phonos" class="brand-logo" />
+  <span class="crumb">Demo en vivo</span>
+</header>
+
+<div class="wrap" id="app">
+  <div class="state">
+    <div class="spinner"></div>
+    <h2>Cargando…</h2>
+    <p>Preparando el resultado.</p>
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const sessionId = params.get('id');
+const POLL_INTERVAL_MS = 2000;
+const POLL_TIMEOUT_MS = 90000;
+let pollStart = Date.now();
+let polling = null;
+
+function renderState(icon, title, subtitle) {
+  document.getElementById('app').innerHTML = `
+    <div class="state">
+      <div class="spinner" style="${icon ? 'display:none;' : ''}"></div>
+      ${icon || ''}
+      <h2>${title}</h2>
+      <p>${subtitle}</p>
+    </div>`;
+}
+
+function fluencyPill(category) {
+  const map = {
+    fluido: ['pill-green', 'Fluido'],
+    unidades_cortas: ['pill-green', 'Unidades cortas'],
+    palabra_a_palabra: ['pill-amber', 'Palabra a palabra'],
+    silabico: ['pill-amber', 'Silábico'],
+    no_lector: ['pill-red', 'No lector'],
+  };
+  const [cls, label] = map[category] || ['pill-amber', category || '—'];
+  return `<span class="pill ${cls}">${label}</span>`;
+}
+
+function nivelPill(nivel) {
+  const map = {
+    Avanzado: 'pill-green',
+    Competente: 'pill-green',
+    Básico: 'pill-amber',
+    Inicial: 'pill-amber',
+    Emergente: 'pill-red',
+  };
+  const cls = map[nivel] || 'pill-amber';
+  return `<span class="pill ${cls}">${nivel || '—'}</span>`;
+}
+
+function renderResult(data) {
+  const reading = data.reading;
+  const writing = data.writing;
+
+  let readingCard = '';
+  if (reading) {
+    readingCard = reading.ok
+      ? `<div class="card" style="animation-delay:0.05s">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+            Lectura oral
+          </div>
+          <div class="metric-row">
+            <div class="metric"><div class="metric-value">${Math.round(reading.ppm)}</div><div class="metric-label">PPM</div></div>
+            <div class="metric"><div class="metric-value">${reading.speed_errors}</div><div class="metric-label">Errores</div></div>
+            <div class="metric"><div class="metric-value" style="font-size:16px;padding-top:4px;">${reading.speed_range}</div><div class="metric-label">Velocidad</div></div>
+          </div>
+          <div style="margin-top:14px;">${fluencyPill(reading.fluency_category)} <span style="color:var(--text-3);font-size:12.5px;"> · confianza ${reading.fluency_confidence}</span></div>
+          <div class="reasoning"><b>Nota del evaluador IA:</b> ${reading.fluency_reasoning || '—'}</div>
+        </div>`
+      : `<div class="card" style="animation-delay:0.05s">
+          <div class="card-title">Lectura oral</div>
+          <div class="error-box">No se pudo evaluar el audio: ${escapeHtml(reading.error || 'error desconocido')}</div>
+        </div>`;
+  }
+
+  let writingCard = '';
+  if (writing) {
+    writingCard = writing.ok
+      ? `<div class="card" style="animation-delay:0.15s">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
+            Producción escrita
+          </div>
+          <div style="margin-bottom:10px;">${nivelPill(writing.nivelGlobal)} <span style="color:var(--text-3);font-size:12.5px;"> · confianza ${writing.confianza}</span></div>
+          <div class="reasoning">${escapeHtml(writing.comentarios || '')}</div>
+        </div>`
+      : `<div class="card" style="animation-delay:0.15s">
+          <div class="card-title">Producción escrita</div>
+          <div class="error-box">No se pudo evaluar la foto: ${escapeHtml(writing.error || 'error desconocido')}</div>
+        </div>`;
+  }
+
+  document.getElementById('app').innerHTML = `
+    <div class="student-name">${escapeHtml(data.studentName || 'Visitante')}</div>
+    <div class="subtitle">Resultado del diagnóstico Phonos</div>
+    ${readingCard}
+    ${writingCard}
+    <a class="again" href="captura.html">← Volver a capturar</a>
+  `;
+}
+
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+async function poll() {
+  if (Date.now() - pollStart > POLL_TIMEOUT_MS) {
+    clearInterval(polling);
+    renderState('', 'Está demorando más de lo normal', 'Puede que el modelo siga procesando. Vuelve a intentarlo en un momento.');
+    return;
+  }
+  try {
+    const res = await fetch(`${window.PHONOS_API_BASE}/result?id=${encodeURIComponent(sessionId)}`);
+    if (res.status === 202) return; // sigue pendiente
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    clearInterval(polling);
+    renderResult(data);
+  } catch (err) {
+    // Error transitorio de red: seguimos reintentando hasta el timeout.
+  }
+}
+
+if (!sessionId) {
+  renderState('', 'Falta el identificador de sesión', 'Vuelve a la captura y envía la muestra al demo en vivo.');
+} else if (!window.PHONOS_API_BASE) {
+  renderState('', 'Demo en vivo no configurado', 'Falta config.js con la URL de la API (ver infra/).');
+} else {
+  renderState('', 'Procesando la muestra…', 'Evaluando lectura oral y escritura con los modelos de Phonos.');
+  poll();
+  polling = setInterval(poll, POLL_INTERVAL_MS);
+}
+</script>
+
+</body>
+</html>

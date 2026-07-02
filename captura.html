@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- config.js lo genera el deploy de infra/ con la URL real de la API (ver infra/phonos_demo/stack.py). Sin deploy, PHONOS_API_BASE queda undefined y el botón de demo en vivo se deshabilita. -->
+<script src="config.js" onerror="window.PHONOS_API_BASE = window.PHONOS_API_BASE || null;"></script>
 <style>
   :root {
     --bg: #FAF8FE;
@@ -721,6 +723,7 @@ let audioChunks = [];
 let recordStart = 0;
 let recordTimerId = null;
 let currentRecordingURL = null;
+let currentAudioBlob = null; // sólo en memoria: se usa para el envío al demo en vivo
 
 // ============= LOCALSTORAGE HELPERS =============
 function captureKey(courseId, studentName) {
@@ -868,8 +871,61 @@ function renderCaptureArea() {
     <div class="action-bar">
       <button class="btn btn-primary" onclick="saveStudent()">Guardar estudiante</button>
       <button class="btn" onclick="clearStudent()">Limpiar capturas</button>
+      ${window.PHONOS_API_BASE && cap.photo && currentAudioBlob
+        ? `<button class="btn btn-process" id="liveDemoBtn" onclick="sendToLiveDemo()">Enviar al demo en vivo</button>`
+        : ''}
     </div>
   `;
+}
+
+// ============= DEMO EN VIVO (feria) =============
+// Sube la muestra actual (audio en memoria + foto) a la API del demo AWS y
+// navega a resultado.html a esperar el scoring. No usa localStorage/Supabase:
+// ver infra/phonos_demo/stack.py.
+async function sendToLiveDemo() {
+  if (!window.PHONOS_API_BASE) {
+    showToast('Demo en vivo no configurado (falta config.js)', 'error');
+    return;
+  }
+  const cap = getCapture(currentCourse, currentStudent);
+  if (!cap.photo || !currentAudioBlob) {
+    showToast('Falta audio o foto para enviar', 'error');
+    return;
+  }
+  const btn = document.getElementById('liveDemoBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
+
+  try {
+    const presignRes = await fetch(`${window.PHONOS_API_BASE}/presign`, { method: 'POST' });
+    if (!presignRes.ok) throw new Error(`presign HTTP ${presignRes.status}`);
+    const { sessionId, uploads } = await presignRes.json();
+
+    const photoBlob = await (await fetch(cap.photo)).blob();
+    const course = COURSES[currentCourse];
+    const inputMeta = {
+      student_name: currentStudent,
+      expected_text: course.readingText,
+    };
+
+    await putToPresigned(uploads.audio, currentAudioBlob);
+    await putToPresigned(uploads.photo, photoBlob);
+    // input.json se sube AL FINAL: su llegada dispara el scoring en la Lambda.
+    await putToPresigned(uploads.input, new Blob([JSON.stringify(inputMeta)], { type: 'application/json' }));
+
+    window.location.href = `resultado.html?id=${encodeURIComponent(sessionId)}`;
+  } catch (err) {
+    showToast('No se pudo enviar al demo en vivo: ' + err.message, 'error');
+    if (btn) { btn.disabled = false; btn.textContent = 'Enviar al demo en vivo'; }
+  }
+}
+
+async function putToPresigned(upload, blob) {
+  const res = await fetch(upload.url, {
+    method: 'PUT',
+    headers: { 'Content-Type': upload.contentType },
+    body: blob,
+  });
+  if (!res.ok) throw new Error(`upload ${upload.key} HTTP ${res.status}`);
 }
 
 // ============= AUDIO =============
@@ -890,6 +946,7 @@ async function toggleRecord() {
     mediaRecorder.ondataavailable = e => { if (e.data.size) audioChunks.push(e.data); };
     mediaRecorder.onstop = () => {
       const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      currentAudioBlob = blob;
       currentRecordingURL = URL.createObjectURL(blob);
       stream.getTracks().forEach(t => t.stop());
       const durationSec = Math.round((Date.now() - recordStart) / 1000);
