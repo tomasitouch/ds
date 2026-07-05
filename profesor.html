@@ -1192,6 +1192,83 @@
     .live-card-body { flex-direction: column; align-items: flex-start; }
   }
 
+  /* TOGGLE de vista: en vivo ↔ ejemplo */
+  .view-toggle {
+    display: inline-flex; gap: 2px;
+    padding: 3px; margin-bottom: 28px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .view-toggle button {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 8px 16px;
+    background: transparent; border: none; border-radius: 7px;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    color: var(--text-2); cursor: pointer;
+    transition: all 0.12s;
+  }
+  .view-toggle button:hover { color: var(--text); }
+  .view-toggle button.active {
+    background: var(--panel); color: var(--text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .view-toggle button.active .live-dot { animation: live-pulse 1.4s ease-in-out infinite; }
+  .view-toggle .vt-dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--red);
+  }
+
+  /* CURSO DEMO EN VIVO: agregados + roster que crece */
+  .live-empty {
+    padding: 60px 30px; text-align: center; color: var(--text-3);
+    border: 1px dashed var(--border-mid); border-radius: 12px;
+  }
+  .live-empty h3 { font-size: 17px; color: var(--text-2); font-weight: 600; margin-bottom: 6px; }
+  .live-empty p { font-size: 13.5px; max-width: 420px; margin: 0 auto; }
+
+  .live-roster { display: flex; flex-direction: column; gap: 8px; }
+  .live-row {
+    display: grid;
+    grid-template-columns: 34px 1fr auto;
+    gap: 16px; align-items: center;
+    padding: 14px 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: background 0.2s;
+  }
+  .live-row.is-new { animation: live-row-in 1.2s ease; border-color: var(--accent); }
+  @keyframes live-row-in {
+    0% { background: var(--accent-soft); }
+    100% { background: var(--panel); }
+  }
+  .live-row-num {
+    font-size: 12px; color: var(--text-3); font-weight: 700;
+    text-align: center; font-variant-numeric: tabular-nums;
+  }
+  .live-row-name { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+  .live-row-sub { font-size: 11.5px; color: var(--text-3); margin-top: 2px; }
+  .live-row-metrics { display: flex; gap: 22px; flex-wrap: wrap; align-items: center; }
+  .live-rm { text-align: center; min-width: 48px; }
+  .live-rm-value { font-size: 17px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+  .live-rm-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+  .live-pill {
+    display: inline-flex; padding: 3px 10px;
+    font-size: 11.5px; font-weight: 600; border-radius: 12px;
+  }
+  .live-pending { font-size: 12px; color: var(--text-3); font-style: italic; }
+  .first-eval-note {
+    font-size: 12.5px; color: var(--text-3); line-height: 1.55;
+    padding: 12px 14px; background: var(--bg);
+    border: 1px dashed var(--border-mid); border-radius: 8px;
+  }
+  .live-highlight-row { animation: live-row-in 1.4s ease; }
+  @media (max-width: 640px) {
+    .live-row { grid-template-columns: 28px 1fr; gap: 10px; }
+    .live-row-metrics { grid-column: 1 / -1; padding-top: 10px; margin-top: 4px; border-top: 1px solid var(--border); gap: 18px; }
+  }
+
 </style>
 </head>
 <body>
@@ -1226,23 +1303,114 @@
 
   <main class="main">
 
-    <!-- DASHBOARD -->
+    <!-- TOGGLE de vista (solo con API/config.js: modo feria). Ver initViewToggle(). -->
+    <div class="view-toggle" id="viewToggle" style="display:none;">
+      <button id="vtLive" onclick="setDashboardView('live')"><span class="vt-dot live-dot"></span> Curso Demo · en vivo</button>
+      <button id="vtExample" onclick="setDashboardView('example')">4° Básico B</button>
+    </div>
+
+    <!-- VISTA EN VIVO (demo feria): mismos indicadores del ejemplo, poblados en
+         tiempo real desde /latest. Ver resultToLiveStudent() / renderLiveDemo(). -->
+    <div id="liveDashView" style="display:none;">
+      <div class="greeting">
+        <h2><span class="live-dot"></span>Curso Demo · en vivo</h2>
+        <p>Cada persona que sube su lectura y escritura en el stand aparece acá <b>en tiempo real</b>. Primera evaluación · se actualiza cada pocos segundos.</p>
+      </div>
+
+      <!-- Estado vacío mientras no hay participantes -->
+      <div id="liveEmpty"></div>
+
+      <!-- Todo el dashboard en vivo (oculto hasta que llega el primer resultado) -->
+      <div id="liveContent" style="display:none;">
+        <div class="diag">
+          <div class="diag-label">Resumen diagnóstico · en vivo</div>
+          <div class="diag-text" id="diagTextLive"></div>
+        </div>
+
+        <div class="stats" id="statsLive"></div>
+
+        <section class="section" style="margin-top: 40px;">
+          <div class="section-head"><div class="section-title">Estado del curso</div></div>
+          <div class="card">
+            <div class="dist" id="distLive"></div>
+            <div class="dist-leg" id="distLegLive"></div>
+            <div class="eval-chart">
+              <div class="eval-chart-label">Evolución del promedio</div>
+              <div class="first-eval-note">Primera evaluación — aún no hay evaluaciones anteriores para comparar.</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><div class="section-title">Movimientos desde la evaluación anterior</div></div>
+          <div class="card">
+            <div class="first-eval-note">Primera evaluación · sin evaluación anterior para comparar movimientos de nivel.</div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><div class="section-title">Análisis por habilidad</div></div>
+          <div class="sec-analysis-grid" id="secGridLive"></div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><div class="section-title">Fluidez lectora · evaluación oral</div></div>
+          <div class="fluency-card">
+            <div class="fluency-source">
+              <b>Texto utilizado:</b> "La biblioteca del pueblo" (88 palabras) ·
+              <b>Parámetros:</b> Fundación Educacional Arauco ·
+              <b>Métrica:</b> Palabras correctas por minuto (PCPM) y nivel de calidad lectora.
+            </div>
+            <div class="fluency-narrative" id="fluNarrativeLive"></div>
+            <div class="fluency-grid">
+              <div>
+                <div class="fluency-col-title">Calidad de lectura</div>
+                <div id="fluQualityLive"></div>
+              </div>
+              <div>
+                <div class="fluency-col-title">Velocidad de lectura</div>
+                <div id="fluSpeedLive"></div>
+              </div>
+            </div>
+            <div class="fluency-summary-strip" id="fluSummaryLive"></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><div class="section-title">Estudiantes · <span id="stuTotalLive">0</span> en total</div></div>
+          <div class="stu-toolbar">
+            <div class="stu-search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="stuSearchLive" placeholder="Buscar participante…" oninput="filterLiveStudents()" autocomplete="off" />
+            </div>
+            <div class="stu-filter-meta" id="stuFilterMetaLive"></div>
+          </div>
+          <div class="card" data-scroll style="padding: 0; overflow: hidden;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Participante</th>
+                  <th>Nivel</th>
+                  <th>Puntaje</th>
+                  <th>Fluidez</th>
+                  <th>PCPM</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="stuBodyLive"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- DASHBOARD (curso sintético de ejemplo) -->
     <div id="dashView">
 
       <div class="greeting">
         <h2>4° Básico B</h2>
         <p>Reporte de la <b>segunda evaluación diagnóstica del semestre</b> · Aplicada el 14 de abril 2026 · Procesada por el equipo Phonos · Próximo informe: 15 de julio.</p>
       </div>
-
-      <!-- VISITANTE EN VIVO (demo feria): ver config.js + pollLiveVisitor() -->
-      <section class="section" id="liveSection" style="display:none;">
-        <div class="section-head">
-          <div class="section-title">
-            <span class="live-dot"></span> Visitante en vivo
-          </div>
-        </div>
-        <div class="card" id="liveCard"></div>
-      </section>
 
       <!-- Resumen diagnóstico -->
       <div class="diag">
@@ -1612,30 +1780,55 @@ document.addEventListener('DOMContentLoaded', () => {
   renderSectionAnalysis();
   renderFluency();
   renderStudents();
-  initLiveVisitor();
+  initViewToggle();
 });
 
-// ============= VISITANTE EN VIVO (demo feria) =============
-// Hace polling a GET /latest y muestra al último visitante capturado en
-// captura.html, para que el reporte "se actualice" en vivo frente al
-// público. No toca STUDENTS (los 30 son ficticios/hardcodeados): esto es
-// una tarjeta aparte que solo aparece si hay al menos una captura real.
-const LIVE_POLL_INTERVAL_MS = 4000;
-let _liveLastSessionId = null;
-
-function initLiveVisitor() {
-  if (!window.PHONOS_API_BASE) return; // sin deploy/config.js: panel queda oculto
-  pollLiveVisitor();
-  setInterval(pollLiveVisitor, LIVE_POLL_INTERVAL_MS);
+// ============= VISTA: TOGGLE en vivo ↔ ejemplo =============
+// Con config.js (modo feria) el dashboard arranca en la vista EN VIVO y ofrece
+// un toggle para volver al curso sintético de ejemplo. Sin API, el toggle se
+// oculta y solo se muestra el ejemplo. No se toca STUDENTS (los 30 ficticios).
+function initViewToggle() {
+  if (!window.PHONOS_API_BASE) {
+    // sin deploy/config.js: sin vista en vivo, dejar el ejemplo como está
+    document.getElementById('dashView').style.display = 'block';
+    return;
+  }
+  document.getElementById('viewToggle').style.display = 'inline-flex';
+  initLiveDemo();
+  setDashboardView('live'); // feria: arranca en vivo
 }
 
-async function pollLiveVisitor() {
+function setDashboardView(view) {
+  const isLive = view === 'live';
+  document.getElementById('liveDashView').style.display = isLive ? 'block' : 'none';
+  document.getElementById('dashView').style.display = isLive ? 'none' : 'block';
+  // el drill-down del curso de ejemplo nunca convive con la vista en vivo
+  document.getElementById('studentView').classList.remove('active');
+  const vtLive = document.getElementById('vtLive');
+  const vtExample = document.getElementById('vtExample');
+  if (vtLive) vtLive.classList.toggle('active', isLive);
+  if (vtExample) vtExample.classList.toggle('active', !isLive);
+}
+
+// ============= CURSO DEMO EN VIVO (roster que crece) =============
+// Polling a GET /latest: cada persona capturada en captura.html aparece como
+// una fila (nombre + PCPM + fluidez + escritura), más recientes primero, con
+// agregados arriba. El recién llegado queda destacado.
+const LIVE_POLL_INTERVAL_MS = 4000;
+const LIVE_POLL_LIMIT = 100;
+let _liveTopSessionId = null;
+
+function initLiveDemo() {
+  pollLiveDemo();
+  setInterval(pollLiveDemo, LIVE_POLL_INTERVAL_MS);
+}
+
+async function pollLiveDemo() {
   try {
-    const res = await fetch(`${window.PHONOS_API_BASE}/latest?limit=1`);
+    const res = await fetch(`${window.PHONOS_API_BASE}/latest?limit=${LIVE_POLL_LIMIT}`);
     if (!res.ok) return;
     const { items } = await res.json();
-    if (!items || !items.length) return;
-    renderLiveVisitor(items[0]);
+    renderLiveDemo(items || []);
   } catch (err) {
     // red intermitente en el stand: reintenta en el próximo poll, sin romper la UI
   }
@@ -1660,49 +1853,440 @@ function liveNivelColor(nivel) {
   return map[nivel] || 'var(--text-3)';
 }
 
-function renderLiveVisitor(item) {
-  const section = document.getElementById('liveSection');
-  const card = document.getElementById('liveCard');
-  section.style.display = '';
+// ---- Adapter: resultado real (/latest) -> objeto tipo STUDENTS ----
+const FLUENCY_TO_QUALITY = { fluido: 'fluid', unidades_cortas: 'shortunits', palabra_a_palabra: 'wordbyword', silabico: 'syllabic', no_lector: 'nonreader' };
+const DIMENSION_DISPLAY = { proposito_organizacion: 'Propósito y organización', coherencia: 'Coherencia', cohesion: 'Cohesión', desarrollo_ideas: 'Desarrollo de ideas', vocabulario: 'Vocabulario', ortografia: 'Ortografía' };
+const QUALITY_SCORE = { fluid: 100, shortunits: 80, wordbyword: 55, syllabic: 35, nonreader: 10 };
+const NIVEL_LABEL = { 1: 'Emergente', 2: 'Inicial', 3: 'Básico', 4: 'Competente', 5: 'Avanzado' };
+const NIVEL_STR_TO_INT = { Emergente: 1, Inicial: 2, 'Básico': 3, Competente: 4, Avanzado: 5 };
+function clampLive(x, min, max) { return Math.max(min, Math.min(max, x)); }
 
-  const isNew = item.sessionId !== _liveLastSessionId;
-  _liveLastSessionId = item.sessionId;
+let _liveItems = [];
+let _liveStuFilter = '';
+let _detailFrom = 'example';
 
-  const reading = item.reading;
-  const writing = item.writing;
-  let metricsHtml = '';
+// Puntaje compuesto (transparente, ajustable en un solo lugar):
+//   lectura = 0.6·velocidad(PCPM) + 0.4·calidad ; escritura = promedio dimensiones (1–5)
+//   score = media de los ejes disponibles ; nivel: ≥70 Adecuado, ≥50 Elemental, resto Insuf.
+function resultToLiveStudent(item) {
+  const r = (item.reading && item.reading.ok) ? item.reading : null;
+  const w = (item.writing && item.writing.ok) ? item.writing : null;
 
-  if (reading && reading.ok) {
-    const [flLabel, flColor] = liveFluencyLabel(reading.fluency_category);
-    metricsHtml += `
-      <div class="live-metric">
-        <div class="live-metric-value">${Math.round(reading.ppm)}</div>
-        <div class="live-metric-label">PCPM</div>
-      </div>
-      <div class="live-metric">
-        <div class="live-metric-value" style="color:${flColor};">${flLabel}</div>
-        <div class="live-metric-label">Fluidez</div>
+  let flu = null, readingScore = null;
+  if (r) {
+    const quality = FLUENCY_TO_QUALITY[r.fluency_category] || 'wordbyword';
+    const pcpm = Math.round(r.ppm || 0);
+    flu = { quality, pcpm, errors: r.speed_errors != null ? r.speed_errors : 0 };
+    const speedComp = clampLive((pcpm / 150) * 100, 0, 100);
+    const qualComp = QUALITY_SCORE[quality] != null ? QUALITY_SCORE[quality] : 55;
+    readingScore = Math.round(0.6 * speedComp + 0.4 * qualComp);
+  }
+
+  let writingDims = [], writingScore = null;
+  if (w) {
+    writingDims = (w.dimensiones || []).map(d => {
+      const nivel = (d.nivel != null) ? Number(d.nivel) : null;
+      const level = nivel == null ? null : (nivel >= 4 ? 'good' : nivel === 3 ? 'mid' : 'bad');
+      return { id: d.name, label: DIMENSION_DISPLAY[d.name] || d.name, nivel, level, levelLabel: nivel == null ? '—' : NIVEL_LABEL[nivel], reasoning: d.reasoning || '' };
+    });
+    const withNivel = writingDims.filter(d => d.nivel != null);
+    if (withNivel.length) {
+      writingScore = Math.round(withNivel.reduce((a, d) => a + ((d.nivel - 1) / 4) * 100, 0) / withNivel.length);
+    } else if (w.nivelGlobal && NIVEL_STR_TO_INT[w.nivelGlobal]) {
+      writingScore = Math.round(((NIVEL_STR_TO_INT[w.nivelGlobal] - 1) / 4) * 100);
+    }
+  }
+
+  const avail = [readingScore, writingScore].filter(x => x != null);
+  const score = avail.length ? Math.round(avail.reduce((a, b) => a + b, 0) / avail.length) : null;
+  const level = score == null ? null : (score >= 70 ? 'g' : score >= 50 ? 'a' : 'r');
+
+  return {
+    sessionId: item.sessionId, name: item.studentName || 'Visitante',
+    reading: r, writing: w, flu, writingDims,
+    nivelGlobal: w ? w.nivelGlobal : null, comentarios: w ? w.comentarios : '',
+    readingScore, writingScore, score, level,
+    sections: { A: readingScore, D: writingScore }
+  };
+}
+
+function renderLiveDemo(items) {
+  _liveItems = items || [];
+  const emptyEl = document.getElementById('liveEmpty');
+  const contentEl = document.getElementById('liveContent');
+  if (!_liveItems.length) {
+    contentEl.style.display = 'none';
+    emptyEl.innerHTML = `
+      <div class="live-empty">
+        <h3>Aún no hay participantes</h3>
+        <p>Cuando alguien suba su lectura y escritura desde la plataforma de captura, aparecerá acá automáticamente.</p>
       </div>`;
+    _liveTopSessionId = null;
+    return;
   }
-  if (writing && writing.ok) {
-    metricsHtml += `
-      <div class="live-metric">
-        <div class="live-metric-value" style="color:${liveNivelColor(writing.nivelGlobal)};">${writing.nivelGlobal || '—'}</div>
-        <div class="live-metric-label">Escritura</div>
+  emptyEl.innerHTML = '';
+  contentEl.style.display = 'block';
+
+  const students = _liveItems.map(resultToLiveStudent);
+  const topId = _liveItems[0].sessionId; // /latest viene nuevo→viejo
+  const topIsNew = _liveTopSessionId !== null && topId !== _liveTopSessionId;
+  _liveTopSessionId = topId;
+
+  renderLiveDiag(students);
+  renderLiveStats(students);
+  renderLiveDist(students);
+  renderLiveSectionAnalysis(students);
+  renderLiveFluency(students);
+  renderLiveStudents(students, topIsNew ? topId : null);
+}
+
+function renderLiveDiag(students) {
+  const scored = students.filter(s => s.score != null);
+  const total = students.length;
+  const adec = scored.filter(s => s.level === 'g').length;
+  const elem = scored.filter(s => s.level === 'a').length;
+  const insuf = scored.filter(s => s.level === 'r').length;
+  const withReading = students.filter(s => s.flu);
+  const avgPcpm = withReading.length ? Math.round(withReading.reduce((a, s) => a + s.flu.pcpm, 0) / withReading.length) : null;
+  const avgScore = scored.length ? Math.round(scored.reduce((a, s) => a + s.score, 0) / scored.length) : null;
+  const within = withReading.filter(s => { const q = QUALITY_LEVELS.find(x => x.id === s.flu.quality); return q && q.expected === 'within'; }).length;
+  document.getElementById('diagTextLive').innerHTML = `
+    En esta <b>primera evaluación en vivo</b>, ${total} participante${total === 1 ? '' : 's'} ${total === 1 ? 'ha subido' : 'han subido'} su muestra.
+    ${avgScore != null ? `El puntaje promedio es <b>${avgScore} / 100</b>. ` : ''}
+    ${scored.length ? `De los evaluados, <b>${adec} en nivel Adecuado</b>, ${elem} en Elemental y ${insuf} en Insuficiente. ` : ''}
+    ${withReading.length ? `En <b>fluidez lectora</b>, <span class="pos">${within} de ${withReading.length}</span> ${within === 1 ? 'está' : 'están'} dentro de lo esperado, con un promedio de <b>${avgPcpm} PCPM</b>.` : ''}
+  `;
+}
+
+function renderLiveStats(students) {
+  const scored = students.filter(s => s.score != null);
+  const total = students.length;
+  const avgScore = scored.length ? Math.round(scored.reduce((a, s) => a + s.score, 0) / scored.length) : null;
+  const adec = scored.filter(s => s.level === 'g').length;
+  const pctAdec = scored.length ? Math.round((adec / scored.length) * 100) : 0;
+  const withReading = students.filter(s => s.flu);
+  const avgPcpm = withReading.length ? Math.round(withReading.reduce((a, s) => a + s.flu.pcpm, 0) / withReading.length) : null;
+  document.getElementById('statsLive').innerHTML = `
+    <div class="stat">
+      <div class="stat-label">Promedio del curso</div>
+      <div class="stat-value">${avgScore != null ? avgScore : '—'}<span style="font-size:14px;color:var(--text-3);font-weight:500"> / 100</span></div>
+      <div class="stat-meta">${scored.length} evaluado${scored.length === 1 ? '' : 's'}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Nivel adecuado</div>
+      <div class="stat-value">${adec}<span style="font-size:14px;color:var(--text-3);font-weight:500"> / ${scored.length}</span></div>
+      <div class="stat-meta">${pctAdec}% de los evaluados</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Participantes</div>
+      <div class="stat-value">${total}</div>
+      <div class="stat-meta">capturados en vivo</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">PCPM promedio</div>
+      <div class="stat-value">${avgPcpm != null ? avgPcpm : '—'}</div>
+      <div class="stat-meta">${withReading.length} con lectura</div>
+    </div>`;
+}
+
+function renderLiveDist(students) {
+  const scored = students.filter(s => s.score != null);
+  const total = scored.length || 1;
+  const g = scored.filter(s => s.level === 'g').length;
+  const a = scored.filter(s => s.level === 'a').length;
+  const r = scored.filter(s => s.level === 'r').length;
+  document.getElementById('distLive').innerHTML = `
+    <div class="dist-seg" style="width:${(g / total) * 100}%; background: var(--green);"></div>
+    <div class="dist-seg" style="width:${(a / total) * 100}%; background: var(--amber);"></div>
+    <div class="dist-seg" style="width:${(r / total) * 100}%; background: var(--red);"></div>`;
+  document.getElementById('distLegLive').innerHTML = `
+    <div class="dist-leg-item"><span class="dot dot-g"></span> Adecuado <b>${g}</b></div>
+    <div class="dist-leg-item"><span class="dot dot-a"></span> Elemental <b>${a}</b></div>
+    <div class="dist-leg-item"><span class="dot dot-r"></span> Insuficiente <b>${r}</b></div>`;
+}
+
+function renderLiveSectionAnalysis(students) {
+  const defs = [
+    { id: 'A', label: 'Lectura oral', desc: 'Velocidad y calidad de la lectura en voz alta.', pick: s => s.readingScore },
+    { id: 'D', label: 'Escritura', desc: 'Producción escrita: propósito, coherencia, cohesión, vocabulario y ortografía.', pick: s => s.writingScore }
+  ];
+  document.getElementById('secGridLive').innerHTML = defs.map(def => {
+    const vals = students.map(def.pick).filter(v => v != null);
+    if (!vals.length) {
+      return `
+        <div class="sec-analysis">
+          <div class="sec-letter sec-letter-mid">${def.id}</div>
+          <div class="sec-info">
+            <div class="sec-title">${def.label}</div>
+            <div class="sec-subtitle">${def.desc}</div>
+            <div class="sec-narrative" style="color: var(--text-3);">Aún sin datos suficientes para esta habilidad.</div>
+          </div>
+          <div class="sec-metrics"><div class="sec-score-big">—</div><div class="sec-score-meta">/100</div></div>
+        </div>`;
+    }
+    const total = vals.length;
+    const avg = Math.round(vals.reduce((a, b) => a + b, 0) / total);
+    let g = 0, a = 0, r = 0;
+    vals.forEach(v => { if (v >= 75) g++; else if (v >= 50) a++; else r++; });
+    const letterCls = avg >= 75 ? 'sec-letter-good' : avg >= 60 ? 'sec-letter-mid' : 'sec-letter-bad';
+    const pctAdec = Math.round((g / total) * 100);
+    let narrative;
+    if (avg >= 75) narrative = `<b>Fortaleza del grupo.</b> El ${pctAdec}% domina esta habilidad.`;
+    else if (avg >= 60) narrative = `Nivel <b>elemental</b> en el grupo. ${r > 0 ? `${r} participante${r === 1 ? '' : 's'} aún en insuficiente.` : ''}`;
+    else narrative = `<b>Área débil del grupo.</b> Solo ${pctAdec}% alcanza adecuado.`;
+    return `
+      <div class="sec-analysis">
+        <div class="sec-letter ${letterCls}">${def.id}</div>
+        <div class="sec-info">
+          <div class="sec-title">${def.label}</div>
+          <div class="sec-subtitle">${def.desc}</div>
+          <div class="sec-narrative">${narrative}</div>
+          <div class="sec-mini-dist">
+            <div class="dist-seg" style="width:${(g / total) * 100}%; background: var(--green);"></div>
+            <div class="dist-seg" style="width:${(a / total) * 100}%; background: var(--amber);"></div>
+            <div class="dist-seg" style="width:${(r / total) * 100}%; background: var(--red);"></div>
+          </div>
+          <div class="sec-mini-counts">
+            <span><span class="dot dot-g"></span> ${g} adec</span>
+            <span><span class="dot dot-a"></span> ${a} elem</span>
+            <span><span class="dot dot-r"></span> ${r} insuf</span>
+          </div>
+        </div>
+        <div class="sec-metrics">
+          <div class="sec-score-big">${avg}</div>
+          <div class="sec-score-meta">/100</div>
+        </div>
       </div>`;
+  }).join('');
+}
+
+function renderLiveFluency(students) {
+  const withReading = students.filter(s => s.flu);
+  const total = withReading.length;
+  const nEl = document.getElementById('fluNarrativeLive');
+  const qEl = document.getElementById('fluQualityLive');
+  const sEl = document.getElementById('fluSpeedLive');
+  const sumEl = document.getElementById('fluSummaryLive');
+  if (!total) {
+    nEl.innerHTML = '<span style="color: var(--text-3);">Aún no hay lecturas evaluadas.</span>';
+    qEl.innerHTML = ''; sEl.innerHTML = ''; sumEl.innerHTML = '';
+    return;
   }
-  if (!metricsHtml) {
-    metricsHtml = '<div class="live-metric-label">Procesando…</div>';
+  const qualityCounts = {}; QUALITY_LEVELS.forEach(q => qualityCounts[q.id] = 0);
+  withReading.forEach(s => qualityCounts[s.flu.quality] = (qualityCounts[s.flu.quality] || 0) + 1);
+  const speedCounts = { high: 0, mid: 0, low: 0, vlow: 0 };
+  withReading.forEach(s => speedCounts[speedCategory(s.flu.pcpm)]++);
+  const withinF = s => { const q = QUALITY_LEVELS.find(x => x.id === s.flu.quality); return q && q.expected === 'within'; };
+  const belowF = s => { const q = QUALITY_LEVELS.find(x => x.id === s.flu.quality); return q && q.expected === 'below'; };
+  const vbelowF = s => { const q = QUALITY_LEVELS.find(x => x.id === s.flu.quality); return q && q.expected === 'verybelow'; };
+  const within = withReading.filter(withinF).length;
+  const below = withReading.filter(belowF).length;
+  const veryBelow = withReading.filter(vbelowF).length;
+  const avgPcpm = Math.round(withReading.reduce((a, s) => a + s.flu.pcpm, 0) / total);
+  nEl.innerHTML = `
+    <span class="pos">${within} de ${total}</span> ${within === 1 ? 'está' : 'están'} <b>dentro de lo esperado</b>.
+    ${below > 0 ? `<span class="neg">${below}</span> bajo lo esperado.` : ''}
+    ${veryBelow > 0 ? ` <span class="neg">${veryBelow}</span> muy bajo lo esperado (requieren refuerzo prioritario).` : ''}
+    El <b>promedio es ${avgPcpm} PCPM</b>, categoría <b>${SPEED_LEVELS.find(s => speedCategory(avgPcpm) === s.id).label}</b>.`;
+  const qMax = Math.max(1, ...Object.values(qualityCounts));
+  qEl.innerHTML = QUALITY_LEVELS.map(q => {
+    const c = qualityCounts[q.id]; const pct = Math.round((c / total) * 100);
+    const ec = q.expected === 'verybelow' ? 'expected-vlow' : q.expected === 'below' ? 'expected-low' : '';
+    return `<div class="flu-row ${ec}"><div class="flu-row-label">${q.label}<small>${q.desc}</small></div><div class="flu-row-count">${c}</div><div class="flu-row-pct">${pct}%</div><div class="flu-row-bar-wrap"><div class="flu-row-bar" style="width:${(c / qMax) * 100}%; background:${q.color};"></div></div></div>`;
+  }).join('');
+  const sMax = Math.max(1, ...Object.values(speedCounts));
+  sEl.innerHTML = SPEED_LEVELS.map(sp => {
+    const c = speedCounts[sp.id]; const pct = Math.round((c / total) * 100);
+    const ec = sp.expected === 'verybelow' ? 'expected-vlow' : sp.expected === 'below' ? 'expected-low' : '';
+    return `<div class="flu-row ${ec}"><div class="flu-row-label">${sp.label}<small>${sp.range}</small></div><div class="flu-row-count">${c}</div><div class="flu-row-pct">${pct}%</div><div class="flu-row-bar-wrap"><div class="flu-row-bar" style="width:${(c / sMax) * 100}%; background:${sp.color};"></div></div></div>`;
+  }).join('');
+  const pctWithin = Math.round((within / total) * 100);
+  sumEl.innerHTML = `
+    <div class="fss-item"><div class="fss-label">Dentro de lo esperado</div><div class="fss-value" style="color: var(--green);">${within}<small> / ${total}</small></div><div class="fss-meta">${pctWithin}% de las lecturas</div></div>
+    <div class="fss-item"><div class="fss-label">Requieren refuerzo</div><div class="fss-value" style="color: var(--amber);">${below + veryBelow}<small> / ${total}</small></div><div class="fss-meta">${below} bajo · ${veryBelow} muy bajo</div></div>
+    <div class="fss-item"><div class="fss-label">PCPM promedio</div><div class="fss-value">${avgPcpm}<small> pcpm</small></div><div class="fss-meta">Texto: La biblioteca del pueblo · 88 palabras</div></div>`;
+}
+
+function filterLiveStudents() {
+  _liveStuFilter = (document.getElementById('stuSearchLive').value || '').toLowerCase().trim();
+  if (_liveItems.length) renderLiveStudents(_liveItems.map(resultToLiveStudent), null);
+}
+
+function renderLiveStudents(students, highlightId) {
+  let list = students;
+  if (_liveStuFilter) list = list.filter(s => s.name.toLowerCase().includes(_liveStuFilter));
+  document.getElementById('stuBodyLive').innerHTML = list.map(s => {
+    const hl = (highlightId && s.sessionId === highlightId) ? ' class="live-highlight-row"' : '';
+    const levelCell = s.level ? `<span class="level level-${s.level}">${LEVEL_LABEL[s.level]}</span>` : `<span class="live-pending">Procesando…</span>`;
+    const scoreCell = s.score != null ? s.score : '—';
+    let fluCell = '—';
+    if (s.flu) { const q = QUALITY_LEVELS.find(x => x.id === s.flu.quality); fluCell = `<span class="quality-pill q-${s.flu.quality}">${q ? q.label : s.flu.quality}</span>`; }
+    const pcpmCell = s.flu ? s.flu.pcpm : '—';
+    return `
+      <tr${hl} onclick="openLiveStudent('${s.sessionId}')">
+        <td data-label="Participante"><span class="stu-name">${escapeHtmlProfesor(s.name)}</span></td>
+        <td data-label="Nivel">${levelCell}</td>
+        <td data-label="Puntaje"><span class="stu-score">${scoreCell}</span></td>
+        <td data-label="Fluidez">${fluCell}</td>
+        <td data-label="PCPM"><span class="stu-score">${pcpmCell}</span></td>
+        <td class="row-arrow-cell"><svg class="row-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></td>
+      </tr>`;
+  }).join('');
+  const _t = document.getElementById('stuTotalLive'); if (_t) _t.textContent = students.length;
+  const _m = document.getElementById('stuFilterMetaLive'); if (_m) _m.innerHTML = _liveStuFilter ? `Mostrando <b>${list.length}</b> de <b>${students.length}</b>` : '';
+}
+
+// ---- Drill-down en vivo (foto + audio + análisis IA real) ----
+function openLiveStudent(sessionId) {
+  const item = _liveItems.find(i => i.sessionId === sessionId);
+  if (!item) return;
+  const s = resultToLiveStudent(item);
+  _detailFrom = 'live';
+  document.getElementById('liveDashView').style.display = 'none';
+  document.getElementById('dashView').style.display = 'none';
+  document.getElementById('studentView').classList.add('active');
+  document.getElementById('studentContent').innerHTML = buildLiveStudentDetail(s);
+  window.scrollTo(0, 0);
+}
+
+function buildLiveStudentNarrative(s) {
+  const lvl = s.level ? LEVEL_LABEL[s.level] : '—';
+  let t = s.score != null ? `Está en nivel <b>${lvl}</b> (puntaje ${s.score}/100). ` : `Su evaluación aún se está procesando. `;
+  if (s.flu) { const q = QUALITY_LEVELS.find(x => x.id === s.flu.quality); t += `Su lectura es <b>${q ? q.label.toLowerCase() : ''}</b> a ${s.flu.pcpm} PCPM. `; }
+  if (s.writingScore != null) t += `En escritura obtuvo ${s.writingScore}/100${s.nivelGlobal ? ` (nivel ${s.nivelGlobal})` : ''}.`;
+  return t;
+}
+
+function buildLiveStudentDetail(s) {
+  const api = window.PHONOS_API_BASE;
+  const photoUrl = `${api}/photo?id=${encodeURIComponent(s.sessionId)}`;
+  const audioUrl = `${api}/audio?id=${encodeURIComponent(s.sessionId)}`;
+  const q = s.flu ? QUALITY_LEVELS.find(x => x.id === s.flu.quality) : null;
+  const speed = s.flu ? SPEED_LEVELS.find(x => x.id === speedCategory(s.flu.pcpm)) : null;
+  const lvlLabel = s.level ? LEVEL_LABEL[s.level] : 'Procesando';
+  const lvlPill = s.level ? `<span class="level level-${s.level}" style="font-size: 11px; vertical-align: middle;">${lvlLabel}</span>` : `<span class="live-pending">Procesando…</span>`;
+
+  // Estado combinado de fluidez
+  let overallStatus = 'ok', statusText = '';
+  if (q && speed) {
+    if (q.expected === 'verybelow' || speed.expected === 'verybelow') { overallStatus = 'bad'; statusText = `<b>Muy bajo lo esperado.</b> Requiere refuerzo prioritario en lectura oral.`; }
+    else if (q.expected === 'below' || speed.expected === 'below') { overallStatus = 'warn'; statusText = `<b>Bajo lo esperado.</b> Lectura ${q.label.toLowerCase()} a ${s.flu.pcpm} PCPM.`; }
+    else { overallStatus = 'ok'; statusText = `<b>Dentro de lo esperado.</b> ${q.label} a ${s.flu.pcpm} PCPM (categoría ${speed.label}).`; }
   }
 
-  card.className = 'card live-card' + (isNew ? '' : '');
-  card.innerHTML = `
-    <div class="live-card-body">
+  const skillRows = [{ label: 'Lectura oral', v: s.readingScore }, { label: 'Escritura', v: s.writingScore }].map(k => {
+    if (k.v == null) return `<div class="stu-sec-row"><div class="stu-sec-head"><div class="stu-sec-name">${k.label}</div><div class="stu-sec-score-cell"><span class="stu-sec-score-num">—</span></div></div></div>`;
+    const color = k.v >= 75 ? 'var(--green)' : k.v >= 50 ? 'var(--amber)' : 'var(--red)';
+    return `<div class="stu-sec-row"><div class="stu-sec-head"><div class="stu-sec-name">${k.label}</div><div class="stu-sec-score-cell"><span class="stu-sec-score-num">${k.v}</span></div></div><div class="stu-sec-bars"><div class="stu-sec-bar-track"><div class="stu-sec-bar-fill" style="width:${k.v}%; background:${color};"></div></div></div></div>`;
+  }).join('');
+
+  const stuFluHtml = s.flu ? `
+    <div class="stu-flu-grid">
+      <div><div class="stu-flu-block-label">Calidad de lectura</div><div class="stu-flu-quality" style="color: ${q.color};">${q.label}</div><div class="stu-flu-meta">${q.desc}</div></div>
+      <div><div class="stu-flu-block-label">Velocidad</div><div class="stu-flu-pcpm">${s.flu.pcpm} <small>PCPM</small></div><div class="stu-flu-meta">Categoría: <b style="color: ${speed.color};">${speed.label}</b> (${speed.range})</div></div>
+    </div>
+    <div class="stu-flu-status ${overallStatus}">${statusText}</div>
+    <div class="stu-flu-stats">
+      <div><span>Tiempo</span><b>—</b></div>
+      <div><span>Errores</span><b>${s.flu.errors}</b></div>
+      <div><span>Texto leído</span><b>La biblioteca del pueblo · 88 palabras</b></div>
+    </div>` : `<div class="first-eval-note">No se evaluó la lectura oral en esta captura.</div>`;
+
+  const r = s.reading;
+  const voiceHtml = r ? `
+    <audio controls preload="none" src="${audioUrl}" style="width:100%; margin-bottom:14px;"></audio>
+    <div class="ai-paragraph">${escapeHtmlProfesor(r.fluency_reasoning || '—')}</div>
+    <div style="font-size: 11.5px; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 12px;">Parámetros acústicos</div>
+    <div class="voice-params">
+      <div class="voice-param"><div class="voice-param-label">Gap medio entre palabras</div><div class="voice-param-value">${r.mean_gap_ms != null ? r.mean_gap_ms + ' ms' : '—'}</div></div>
+      <div class="voice-param"><div class="voice-param-label">Pausas largas</div><div class="voice-param-value">${r.long_pause_ratio != null ? Math.round(r.long_pause_ratio * 100) + '%' : '—'}</div></div>
+      <div class="voice-param"><div class="voice-param-label">Ritmo</div><div class="voice-param-value">${r.speech_rate_wps != null ? r.speech_rate_wps + ' pal/s' : '—'}</div></div>
+      <div class="voice-param"><div class="voice-param-label">Errores detectados</div><div class="voice-param-value">${r.speed_errors != null ? r.speed_errors : '—'}</div></div>
+    </div>` : `<div class="first-eval-note">No se evaluó la lectura oral en esta captura.</div>`;
+
+  const w = s.writing;
+  const dimsHtml = s.writingDims.length ? s.writingDims.map(d => `
+    <div class="rubric-dim">
+      <div><div class="rubric-dim-name">${d.label}</div></div>
+      <div class="rubric-dim-bar"><div class="rubric-dim-bar-fill ${d.level ? 'dim-' + d.level : ''}" style="width:${d.nivel != null ? ((d.nivel - 1) / 4) * 100 : 0}%"></div></div>
+      <div class="rubric-dim-level ${d.level ? 'dim-' + d.level : ''}">${d.levelLabel}</div>
+    </div>`).join('') : '<div class="first-eval-note">Sin desglose de dimensiones.</div>';
+  const writingHtml = w ? `
+    <div class="ai-card">
+      <div class="ai-card-head"><div class="ai-card-title">Manuscrito capturado</div><div class="ai-card-source">Foto real</div></div>
+      <div class="manuscript-card"><img src="${photoUrl}" alt="Manuscrito de ${escapeHtmlProfesor(s.name)}" style="display:block; width:100%; height:auto; border-radius:6px;" onerror="this.style.display='none';" /></div>
+      <div class="ai-card-head" style="margin-top: 24px;"><div class="ai-card-title">Diagnóstico de producción escrita</div></div>
+      <div class="ai-paragraph">${escapeHtmlProfesor(w.comentarios || '—')}</div>
+      <div style="font-size: 11.5px; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 14px;">Desglose por dimensión</div>
+      <div class="rubric-dims">${dimsHtml}</div>
+    </div>` : `<div class="first-eval-note">No se evaluó la escritura en esta captura.</div>`;
+
+  const skills = [{ label: 'Lectura oral', v: s.readingScore }, { label: 'Escritura', v: s.writingScore }].filter(k => k.v != null).sort((a, b) => b.v - a.v);
+  let strengthHtml;
+  if (skills.length) {
+    const top = skills[0], bottom = skills[skills.length - 1];
+    strengthHtml = `
+      <div class="strength-box sb-pos"><div class="sb-label">Fortaleza</div><div class="sb-text"><b>${top.label}</b> (${top.v}/100).</div></div>
+      <div class="strength-box sb-neg"><div class="sb-label">Área a fortalecer</div><div class="sb-text"><b>${bottom.label}</b> (${bottom.v}/100).</div></div>`;
+  } else {
+    strengthHtml = `<div class="first-eval-note">Aún procesando la evaluación de ${escapeHtmlProfesor(s.name)}.</div>`;
+  }
+
+  return `
+    <div class="student-header">
       <div>
-        <div class="live-name">${escapeHtmlProfesor(item.studentName || 'Visitante')}</div>
-        <div class="live-meta">Capturado recién en el stand · actualizado cada ${LIVE_POLL_INTERVAL_MS / 1000}s</div>
+        <div class="student-name-big">${escapeHtmlProfesor(s.name)}</div>
+        <div class="student-meta-big">Curso Demo · en vivo · Nivel actual ${lvlPill}</div>
       </div>
-      <div class="live-metrics">${metricsHtml}</div>
+    </div>
+
+    <div class="diag" style="margin-top: 0; margin-bottom: 28px;">
+      <div class="diag-label">Diagnóstico individual</div>
+      <div class="diag-text">${buildLiveStudentNarrative(s)}</div>
+    </div>
+
+    <div class="student-grid">
+      <div>
+        <section class="section">
+          <div class="section-head"><div class="section-title">Trayectoria del semestre</div></div>
+          <div class="card"><div class="first-eval-note">Primera evaluación — aún no hay evaluaciones anteriores para trazar una trayectoria.</div></div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><div class="section-title">Desempeño por habilidad</div></div>
+          <div class="card">${skillRows}</div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><div class="section-title">Fluidez lectora</div></div>
+          <div class="stu-fluency">${stuFluHtml}</div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><div class="section-title">Análisis de lectura oral</div></div>
+          <div class="ai-card">
+            <div class="ai-card-head"><div class="ai-card-title">Diagnóstico prosódico y de errores</div><div class="ai-card-source">IA · audio real</div></div>
+            ${voiceHtml}
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><div class="section-title">Análisis de escritura</div></div>
+          ${writingHtml}
+        </section>
+      </div>
+
+      <div>
+        <section class="section">
+          <div class="section-head"><div class="section-title">Fortaleza y área a fortalecer</div></div>
+          ${strengthHtml}
+        </section>
+
+        <section class="section">
+          <div class="section-head"><div class="section-title">Cambio del semestre</div></div>
+          <div class="card"><div class="first-eval-note">Primera evaluación · sin evaluación anterior para comparar.</div></div>
+        </section>
+      </div>
     </div>`;
 }
 
@@ -2013,6 +2597,8 @@ function buildStudentNarrative(s) {
 function openStudent(name) {
   const s = STUDENTS.find(x => x.name === name);
   if (!s) return;
+  _detailFrom = 'example';
+  document.getElementById('liveDashView').style.display = 'none';
   showView('student');
 
   // Trayectoria
@@ -2246,7 +2832,15 @@ function openStudent(name) {
   window.scrollTo(0, 0);
 }
 
-function closeStudent() { showView('dash'); window.scrollTo(0, 0); }
+function closeStudent() {
+  document.getElementById('studentView').classList.remove('active');
+  if (_detailFrom === 'live') {
+    setDashboardView('live');
+  } else {
+    showView('dash');
+  }
+  window.scrollTo(0, 0);
+}
 
 // ============= MODO OSCURO =============
 function applyDarkTheme(isDark) {

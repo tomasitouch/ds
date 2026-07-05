@@ -208,6 +208,30 @@
   .status-partial { color: var(--amber); }
   .status-complete { color: var(--green); }
 
+  /* DEMO: agregar / quitar participante */
+  .demo-add { display: flex; gap: 8px; padding: 4px 8px 12px; }
+  .demo-add-input {
+    flex: 1; min-width: 0; padding: 9px 11px;
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--border-mid); border-radius: 8px;
+    font-size: 13px;
+  }
+  .demo-add-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .demo-add-btn { padding: 9px 12px; white-space: nowrap; flex-shrink: 0; }
+  .demo-empty-hint {
+    padding: 10px 12px; margin: 0 8px 8px;
+    font-size: 12.5px; color: var(--text-3);
+    background: var(--brand-tint); border-radius: 8px; line-height: 1.5;
+  }
+  .student-item--demo { grid-template-columns: 28px 1fr auto auto; }
+  .demo-remove {
+    width: 22px; height: 22px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; border: none; cursor: pointer;
+    color: var(--text-3); font-size: 18px; line-height: 1; border-radius: 6px;
+  }
+  .demo-remove:hover { background: var(--red-soft); color: var(--red); }
+
   /* MAIN CAPTURE AREA */
   .capture-area {
     padding: 32px 36px;
@@ -610,6 +634,7 @@
 
 <div class="course-bar">
   <select class="course-select" id="courseSelect" onchange="onCourseChange()">
+    <option value="demo">🎤 Demo en vivo · Feria</option>
     <option value="lc-4b">4° Básico B · Esc. Los Cóndores</option>
     <option value="lc-3a">3° Básico A · Esc. Los Cóndores</option>
     <option value="lc-5b">5° Básico B · Esc. Los Cóndores</option>
@@ -676,6 +701,19 @@
 <script>
 // ============= DATA =============
 const COURSES = {
+  // Curso de feria: roster vacío que se llena en vivo con los nombres que la
+  // gente ingresa (persistido en localStorage bajo phonos.demoRoster). El
+  // texto de lectura apunta a adolescente/adulto porque el visitante del stand
+  // no es un alumno real (el scorer lo aproxima a 6° básico).
+  'demo': {
+    name: '🎤 Demo en vivo · Feria',
+    isDemo: true,
+    students: [],
+    readingText: 'La biblioteca del pueblo abría sus puertas cada tarde, justo cuando el sol empezaba a bajar detrás de los cerros. Dentro, el aire olía a papel viejo y a madera. Don Ernesto, el bibliotecario, conocía a cada visitante por su nombre y siempre tenía un libro guardado para alguien. Los niños llegaban corriendo después de clases y se sentaban en el suelo a leer cuentos de aventuras. Con el tiempo, ese lugar pequeño se convirtió en el corazón del pueblo, donde las historias pasaban de mano en mano.',
+    readingTitle: 'La biblioteca del pueblo',
+    readingWords: 88,
+    writingPrompt: 'Cuéntanos sobre un libro, una película o un lugar que te haya marcado. Describe qué fue, cómo era y por qué te quedó grabado.'
+  },
   'lc-4b': {
     name: '4° Básico B · Esc. Los Cóndores',
     students: [
@@ -722,7 +760,7 @@ const COURSES = {
   }
 };
 
-let currentCourse = 'lc-4b';
+let currentCourse = 'demo'; // la feria arranca en el curso demo (1ª opción del selector)
 let currentStudent = null;
 let mediaRecorder = null;
 let audioChunks = [];
@@ -752,6 +790,50 @@ function setCapture(courseId, studentName, data) {
   }
 }
 
+// ============= ROSTER DEMO (por dispositivo) =============
+// El curso 'demo' no trae alumnos fijos: la gente ingresa su nombre en el
+// stand y se acumulan en localStorage, de modo que este dispositivo recuerda
+// a quién ya capturó. El dashboard del profesor agrega todo vía S3, no esto.
+const DEMO_ROSTER_KEY = 'phonos.demoRoster';
+function loadDemoRoster() {
+  let names = [];
+  try { names = JSON.parse(localStorage.getItem(DEMO_ROSTER_KEY) || '[]'); } catch (e) { names = []; }
+  if (!Array.isArray(names)) names = [];
+  COURSES['demo'].students = names;
+  return names;
+}
+function saveDemoRoster(names) {
+  COURSES['demo'].students = names;
+  try { localStorage.setItem(DEMO_ROSTER_KEY, JSON.stringify(names)); } catch (e) {}
+}
+function addDemoParticipant() {
+  const input = document.getElementById('demoNameInput');
+  if (!input) return;
+  const name = input.value.trim();
+  if (!name) { showToast('Escribe un nombre', 'error'); return; }
+  const roster = COURSES['demo'].students;
+  if (roster.some(n => n.toLowerCase() === name.toLowerCase())) {
+    showToast('Ese nombre ya está en la lista', 'error');
+    selectStudent(name);
+    return;
+  }
+  roster.push(name);
+  saveDemoRoster(roster);
+  input.value = '';
+  selectStudent(name); // re-renderiza lista + área de captura y lo deja activo
+}
+function removeDemoParticipant(name) {
+  if (!confirm(`¿Quitar a ${name} de la lista y borrar sus capturas?`)) return;
+  const roster = COURSES['demo'].students.filter(n => n !== name);
+  saveDemoRoster(roster);
+  localStorage.removeItem(captureKey('demo', name));
+  if (currentStudent === name) currentStudent = null;
+  renderStudentList();
+  if (!currentStudent) {
+    document.getElementById('captureArea').innerHTML = emptyStateHtml();
+  }
+}
+
 // ============= STATUS =============
 function getStudentStatus(courseId, studentName) {
   const c = getCapture(courseId, studentName);
@@ -770,21 +852,46 @@ function statusIconSvg(status) {
 }
 
 // ============= RENDER STUDENT LIST =============
+function emptyStateHtml() {
+  return `
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+      <h3>Selecciona un participante</h3>
+      <p>Para empezar la captura, elige un nombre de la lista de la izquierda.</p>
+    </div>`;
+}
+
 function renderStudentList() {
   const list = document.getElementById('studentList');
-  const head = '<div class="student-list-head">Estudiantes del curso</div>';
+  const isDemo = COURSES[currentCourse].isDemo;
+  const head = `<div class="student-list-head">${isDemo ? 'Participantes (demo)' : 'Estudiantes del curso'}</div>`;
+  const addUi = isDemo
+    ? `<div class="demo-add">
+         <input type="text" id="demoNameInput" class="demo-add-input" placeholder="Nombre del participante"
+                onkeydown="if(event.key==='Enter'){event.preventDefault();addDemoParticipant();}" />
+         <button class="btn btn-primary demo-add-btn" onclick="addDemoParticipant()">＋ Agregar</button>
+       </div>`
+    : '';
   const students = COURSES[currentCourse].students;
+  const emptyHint = (isDemo && students.length === 0)
+    ? `<div class="demo-empty-hint">Agrega el nombre de la persona para capturar su lectura y escritura.</div>`
+    : '';
   const items = students.map((name, i) => {
     const status = getStudentStatus(currentCourse, name);
     const active = name === currentStudent ? 'active' : '';
+    const escaped = name.replace(/'/g, "\\'");
+    const removeBtn = isDemo
+      ? `<button class="demo-remove" title="Quitar" onclick="event.stopPropagation();removeDemoParticipant('${escaped}')">×</button>`
+      : '';
     return `
-      <div class="student-item ${active}" onclick="selectStudent('${name.replace(/'/g, "\\'")}')">
+      <div class="student-item ${isDemo ? 'student-item--demo' : ''} ${active}" onclick="selectStudent('${escaped}')">
         <div class="student-num">${String(i + 1).padStart(2, '0')}</div>
         <div class="student-name">${name}</div>
         <div class="student-status status-${status}">${statusIconSvg(status)}</div>
+        ${removeBtn}
       </div>`;
   }).join('');
-  list.innerHTML = head + items;
+  list.innerHTML = head + addUi + emptyHint + items;
   updateProgress();
 }
 
@@ -794,7 +901,7 @@ function updateProgress() {
   const done = students.filter(n => getStudentStatus(currentCourse, n) === 'complete').length;
   document.getElementById('progDone').textContent = done;
   document.getElementById('progTotal').textContent = total;
-  document.getElementById('progBar').style.width = `${(done / total) * 100}%`;
+  document.getElementById('progBar').style.width = `${total ? (done / total) * 100 : 0}%`;
 }
 
 // ============= SELECT STUDENT =============
@@ -1109,13 +1216,9 @@ function clearStudent() {
 function onCourseChange() {
   currentCourse = document.getElementById('courseSelect').value;
   currentStudent = null;
+  if (COURSES[currentCourse].isDemo) loadDemoRoster();
   renderStudentList();
-  document.getElementById('captureArea').innerHTML = `
-    <div class="empty-state">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
-      <h3>Selecciona un estudiante</h3>
-      <p>Para empezar la captura, elige un nombre de la lista de la izquierda.</p>
-    </div>`;
+  document.getElementById('captureArea').innerHTML = emptyStateHtml();
 }
 
 // ============= PROCESAR =============
@@ -1179,6 +1282,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ============= INIT =============
+if (COURSES[currentCourse].isDemo) loadDemoRoster();
 renderStudentList();
 
 </script>
