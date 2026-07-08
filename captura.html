@@ -703,15 +703,16 @@
 const COURSES = {
   // Curso de feria: roster vacío que se llena en vivo con los nombres que la
   // gente ingresa (persistido en localStorage bajo phonos.demoRoster). El
-  // texto de lectura apunta a adolescente/adulto porque el visitante del stand
-  // no es un alumno real (el scorer lo aproxima a 6° básico).
+  // visitante del stand es un adulto, no un alumno real: se usa un trabalenguas
+  // (texto difícil) y el scorer lo evalúa siempre con la rúbrica de 6° básico
+  // (el grado más alto soportado). Ambos criterios quedan estandarizados así.
   'demo': {
     name: '🎤 Demo en vivo · Feria',
     isDemo: true,
     students: [],
-    readingText: 'La biblioteca del pueblo abría sus puertas cada tarde, justo cuando el sol empezaba a bajar detrás de los cerros. Dentro, el aire olía a papel viejo y a madera. Don Ernesto, el bibliotecario, conocía a cada visitante por su nombre y siempre tenía un libro guardado para alguien. Los niños llegaban corriendo después de clases y se sentaban en el suelo a leer cuentos de aventuras. Con el tiempo, ese lugar pequeño se convirtió en el corazón del pueblo, donde las historias pasaban de mano en mano.',
-    readingTitle: 'La biblioteca del pueblo',
-    readingWords: 88,
+    readingText: 'El cielo está encapotado y a la vez enladrillado, ¿quién lo desencapotará y lo desenladrillará? El desencapotador y desenladrillador que lo desencapote y lo desenladrille, buen desencapotador y desenladrillador será. Pero si el cielo encapotado se enladrilla con ladrillos que no son de desencapotar, el desencapotador enladrillador que logre desenladrillar lo encapotado, un gran desenladrillador de cielos encapotados y enladrillados será.',
+    readingTitle: 'Trabalenguas: el cielo encapotado',
+    readingWords: 61,
     writingPrompt: 'Cuéntanos sobre un libro, una película o un lugar que te haya marcado. Describe qué fue, cómo era y por qué te quedó grabado.'
   },
   'lc-4b': {
